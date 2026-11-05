@@ -618,6 +618,7 @@
   @media (hover: hover) and (pointer: fine) {
     #root .home-pop-card:hover {
       z-index: 2;
+      transform: translateY(-4px) rotateX(2deg) rotateY(-1deg);
       box-shadow: 0 16px 30px rgb(55 38 20 / 16%);
     }
 
@@ -636,6 +637,12 @@
     filter: drop-shadow(0 9px 7px rgb(43 23 24 / 20%)) !important;
   }
 
+  #root .home-pop-card[data-touch-active="true"] {
+    z-index: 2;
+    transform: translateY(-2px) rotateX(1deg) scale(1.01);
+    box-shadow: 0 12px 24px rgb(55 38 20 / 15%);
+  }
+
   #root section[aria-labelledby="reels-title"] video {
     object-fit: contain;
   }
@@ -651,6 +658,10 @@
     #root .home-pop-card[data-touch-active="true"] {
       border-color: #d7b85b;
       box-shadow: 0 0 0 1px rgb(215 184 91 / 58%), 0 0 18px rgb(215 184 91 / 32%), 0 10px 24px rgb(55 38 20 / 10%);
+    }
+
+    #root .home-pop-card[data-touch-active="true"] {
+      transform: translateY(-2px) rotateX(1deg) scale(1.01);
     }
 
     #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img),

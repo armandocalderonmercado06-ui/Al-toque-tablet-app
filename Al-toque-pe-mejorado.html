@@ -3212,7 +3212,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=59" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=60" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -7977,6 +7977,7 @@
         if (event.type === 'pointerdown') {
           card.dataset.touchStartX = String(event.clientX);
           card.dataset.touchStartY = String(event.clientY);
+          card.dataset.touchActive = 'true';
           if (image) delete image.dataset.touchActive;
           return;
         }
@@ -7984,7 +7985,9 @@
           const startX = Number(card.dataset.touchStartX);
           const startY = Number(card.dataset.touchStartY);
           const movedOverImage = event.target.closest('.home-pop-card-media');
-          if (image && movedOverImage && Math.hypot(event.clientX - startX, event.clientY - startY) > 8) {
+          const moved = Math.hypot(event.clientX - startX, event.clientY - startY) > 8;
+          if (moved) delete card.dataset.touchActive;
+          if (image && movedOverImage && moved) {
             image.dataset.touchActive = 'true';
           } else if (image) {
             delete image.dataset.touchActive;
@@ -7993,6 +7996,7 @@
         }
         delete card.dataset.touchStartX;
         delete card.dataset.touchStartY;
+        delete card.dataset.touchActive;
         if (image) delete image.dataset.touchActive;
       };
       const handleHomeProductSelection = (event, dish) => {

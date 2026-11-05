@@ -92,6 +92,8 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.doesNotMatch(stylesheet, /\.home-pop-card:hover \.home-pop-card-media > img/);
   assert.doesNotMatch(stylesheet, /\.home-pop-card:focus-within \.home-pop-card-media > img/);
   assert.doesNotMatch(stylesheet, /\.home-pop-card\[data-selected="true"\].*\.home-pop-card-media > img/);
+  assert.match(stylesheet, /#root \.home-pop-card:hover\s*\{[^}]*transform:\s*translateY\(-4px\)/s);
+  assert.match(stylesheet, /#root \.home-pop-card\[data-touch-active="true"\]\s*\{[^}]*transform:\s*translateY\(-2px\)/s);
   assert.match(stylesheet, /transform:\s*perspective\(1000px\)\s*translateZ\(24px\)\s*scale\(1\.05\)\s*!important;/);
   assert.match(stylesheet, /#root \.home-pop-card\[data-selected="true"\]/);
   assert.match(stylesheet, /@keyframes tabletHomeCardGoldGlow/);
