@@ -93,8 +93,6 @@
     border-radius: 12px;
     background: transparent;
     box-shadow: none;
-    opacity: 1 !important;
-    pointer-events: auto !important;
     transform: none;
   }
 
