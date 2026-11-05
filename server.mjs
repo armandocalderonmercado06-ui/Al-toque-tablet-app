@@ -85,6 +85,7 @@ const PUBLIC_ASSETS = new Set([
   'promo-profesor-martin-referencia.png',
   'promo-al-toque-banner.png',
   'gorritos-welcome-hat.png',
+  'miraflores-logo-transparent.png',
   'splash-clean-reference.png',
   'splash-warm-reference.png',
   'Combo costa.png',

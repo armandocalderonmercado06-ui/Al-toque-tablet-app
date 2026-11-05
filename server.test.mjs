@@ -45,6 +45,17 @@ test('serves the Reel watermark image as a public PNG asset', async (t) => {
   assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
 });
 
+test('serves the campus location logo used by the home carousel', async (t) => {
+  const testDataDir = await createReelsTestDirectory();
+  const server = await createReelsTestServer(t, testDataDir);
+  const response = await fetch(`http://127.0.0.1:${server.address().port}/miraflores-logo-transparent.png`);
+  const image = Buffer.from(await response.arrayBuffer());
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('content-type'), 'image/png');
+  assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+});
+
 test('serves the tablet stylesheet and includes it in the application page', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
@@ -64,6 +75,9 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.equal(stylesheetResponse.headers.get('content-type'), 'text/css; charset=utf-8');
   assert.match(stylesheet, /@media \(min-width: 768px\)/);
   assert.doesNotMatch(stylesheet, /max-width:\s*1366px/);
+  assert.match(page, /aria-label="Información del campus" aria-roledescription="carrusel"/);
+  assert.match(page, /timeZone: 'America\/Lima'/);
+  assert.match(stylesheet, /#root \.home-feature-carousel/);
 });
 
 test('serves the offline JavaScript and font assets from local paths', async (t) => {

@@ -209,6 +209,198 @@
     object-fit: contain;
   }
 
+  #root .home-feature-carousel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+    min-height: 250px;
+    overflow: hidden;
+  }
+
+  #root .home-feature-slide {
+    grid-area: 1 / 1;
+    min-width: 0;
+    transform: translateX(100%);
+    visibility: hidden;
+  }
+
+  #root .home-feature-slide--active,
+  #root .home-feature-slide--exit-left {
+    visibility: visible;
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  #root .home-feature-slide--active {
+    transform: translateX(0);
+  }
+
+  #root .home-feature-slide--exit-left {
+    transform: translateX(-100%);
+  }
+
+  #root .campus-service-card {
+    position: relative;
+    display: flex;
+    min-height: 250px;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding: clamp(24px, 4vw, 48px);
+    border: 1px solid rgb(255 255 255 / 30%);
+    border-radius: 24px;
+    isolation: isolate;
+    background: linear-gradient(135deg, #68162f 0%, #861c3e 55%, #a32649 100%);
+    box-shadow: 0 8px 18px rgb(43 23 24 / 16%);
+    color: #fff;
+  }
+
+  #root .campus-service-card--online {
+    background: linear-gradient(135deg, #087b48 0%, #15945d 55%, #27a36b 100%);
+  }
+
+  #root .campus-service-card::before {
+    position: absolute;
+    z-index: -1;
+    top: -88px;
+    right: -38px;
+    width: 140px;
+    height: 140px;
+    border: 1px solid rgb(255 255 255 / 18%);
+    border-radius: 50%;
+    box-shadow: 0 0 0 18px rgb(255 255 255 / 5%), 0 0 0 38px rgb(255 255 255 / 4%);
+    content: "";
+    pointer-events: none;
+  }
+
+  #root .campus-service-description {
+    max-width: 900px;
+    color: #fff;
+    font-size: clamp(22px, 3vw, 34px) !important;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  #root .campus-service-highlight {
+    padding: 0 0.15em;
+    border-radius: 0.2em;
+    background: linear-gradient(110deg, #f5bd3f, #ffe28a 48%, #f5bd3f);
+    color: #351c1c;
+    white-space: nowrap;
+  }
+
+  #root .campus-service-location-logo {
+    display: inline-block;
+    width: auto;
+    max-width: min(42vw, 320px);
+    height: 2em;
+    object-fit: contain;
+    vertical-align: middle;
+  }
+
+  #root .campus-service-status {
+    border-color: rgb(255 255 255 / 25%);
+    background: rgb(255 255 255 / 15%);
+    font-size: clamp(14px, 1.5vw, 18px) !important;
+  }
+
+  #root .campus-service-status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    flex: 0 0 10px;
+    border-radius: 50%;
+    background: #d7ffe6;
+    box-shadow: 0 0 0 4px rgb(255 255 255 / 16%);
+  }
+
+  #root .campus-service-card-toggle {
+    display: flex;
+    min-width: 40px;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(255 255 255 / 24%);
+    border-radius: 50%;
+    background: rgb(255 255 255 / 8%);
+    color: inherit;
+    transition: transform 250ms ease, background 200ms ease;
+  }
+
+  #root .campus-service-card--expanded .campus-service-card-toggle {
+    transform: rotate(180deg);
+  }
+
+  #root .campus-service-details {
+    display: grid;
+    grid-template-rows: 0fr;
+    margin-top: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: grid-template-rows 300ms ease, opacity 220ms ease, margin-top 300ms ease, visibility 300ms;
+  }
+
+  #root .campus-service-card--expanded .campus-service-details {
+    grid-template-rows: 1fr;
+    margin-top: 18px;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  #root .campus-service-details-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  #root .campus-service-detail {
+    font-size: clamp(16px, 1.8vw, 21px) !important;
+  }
+
+  #root .campus-service-schedule {
+    border: 1px solid rgb(255 255 255 / 22%);
+    border-radius: 16px;
+    background: rgb(36 16 25 / 16%);
+  }
+
+  #root .campus-service-schedule-label {
+    font-size: clamp(12px, 1.3vw, 16px) !important;
+  }
+
+  #root .campus-service-schedule-hours {
+    font-size: clamp(13px, 1.5vw, 17px) !important;
+  }
+
+  #root .home-mood-slide {
+    display: flex;
+    min-height: 250px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    padding: clamp(24px, 4vw, 48px);
+    border: 1px solid #eee8dc;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #fffaf1, #fff 72%);
+    box-shadow: 0 8px 22px rgb(55 38 20 / 7%);
+  }
+
+  #root .home-mood-slide .home-headline-message {
+    max-width: 900px;
+    margin: 0;
+    font-size: clamp(24px, 3vw, 36px) !important;
+  }
+
+  #root .home-mood-slide .home-mood-option {
+    padding: 10px 16px;
+    font-size: clamp(15px, 1.6vw, 19px) !important;
+  }
+
+  #root .home-feature-carousel .home-luxury-card {
+    height: 100%;
+  }
+
+  #root .home-current-time {
+    margin-bottom: -12px;
+  }
+
   #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"],
   #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] {
     display: grid;
@@ -515,6 +707,15 @@
   #root .splash-screen .splash-sticker {
     width: 93px;
     height: 93px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #root .home-feature-slide--active,
+    #root .home-feature-slide--exit-left,
+    #root .campus-service-card-toggle,
+    #root .campus-service-details {
+      transition: none;
+    }
   }
 
   #root .app-watermark {

@@ -3212,7 +3212,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=49" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=50" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -6404,6 +6404,51 @@
       return 'night';
     }
 
+    function getCampusServiceStatus(date = new Date()) {
+      const timeParts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'America/Lima',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23'
+      }).formatToParts(date);
+      const parts = Object.fromEntries(timeParts.map(({ type, value }) => [type, value]));
+      const minuteOfDay = Number(parts.hour) * 60 + Number(parts.minute);
+
+      if ((minuteOfDay >= 600 && minuteOfDay < 800) || (minuteOfDay >= 810 && minuteOfDay < 1080) || (minuteOfDay >= 1200 && minuteOfDay < 1320)) {
+        const closesAt = minuteOfDay < 800 ? '1:20 p. m.' : minuteOfDay < 1080 ? '6:00 p. m.' : '10:00 p. m.';
+        return {
+          state: 'online',
+          label: 'En línea',
+          title: '¡Ya estamos en línea!',
+          detail: `Recibimos pedidos hasta las ${closesAt}`
+        };
+      }
+
+      if (minuteOfDay >= 800 && minuteOfDay < 810) {
+        return {
+          state: 'offline',
+          label: 'Refrigerio',
+          title: 'Pausa para recargar',
+          detail: 'Retomamos los pedidos a la 1:30 p. m.'
+        };
+      }
+
+      const nextOpening = minuteOfDay < 600
+        ? '10:00 a. m.'
+        : minuteOfDay < 810
+          ? '1:30 p. m.'
+          : minuteOfDay < 1200
+            ? '8:00 p. m.'
+            : '10:00 a. m. de mañana';
+
+      return {
+        state: 'offline',
+        label: 'Fuera de línea',
+        title: 'Ahora estamos fuera de línea',
+        detail: `Volvemos a recibir pedidos a las ${nextOpening}`
+      };
+    }
+
     function ReelsScreen({ onNavigate }) {
       const generateReelsProfileId = () => {
         if (window.crypto?.randomUUID) return window.crypto.randomUUID();
@@ -7624,6 +7669,9 @@
     function HomeScreen({ onNavigate, onOpenCustomize, mood, setMood, showMusicButton, onOpenMusic }) {
       const [timeString, setTimeString] = useState('');
       const [dayPart, setDayPart] = useState(() => getDayPart(new Date().getHours()));
+      const [serviceStatus, setServiceStatus] = useState(() => getCampusServiceStatus());
+      const [isServiceCardExpanded, setIsServiceCardExpanded] = useState(false);
+      const [homeCarousel, setHomeCarousel] = useState({ active: 0, exiting: null });
       const [headline, setHeadline] = useState('');
       const [homeCardStickerId, setHomeCardStickerId] = useState(9);
       const [cardMessageIndex, setCardMessageIndex] = useState(() => Math.floor(Math.random() * HOME_AI_CARD_MESSAGES.length));
@@ -7641,11 +7689,30 @@
           hours = hours ? hours : 12;
           setTimeString(`${dayName}, ${hours}:${minutes} ${ampm}`);
           setDayPart(getDayPart(now.getHours()));
+          setServiceStatus(getCampusServiceStatus(now));
         };
 
         updateTime();
         const timer = setInterval(updateTime, 10000);
         return () => clearInterval(timer);
+      }, []);
+
+      useEffect(() => {
+        let transitionTimer;
+        const timer = setInterval(() => {
+          setHomeCarousel((carousel) => ({
+            active: (carousel.active + 1) % 3,
+            exiting: carousel.active
+          }));
+          clearTimeout(transitionTimer);
+          transitionTimer = setTimeout(() => {
+            setHomeCarousel((carousel) => ({ ...carousel, exiting: null }));
+          }, 700);
+        }, 30000);
+        return () => {
+          clearInterval(timer);
+          clearTimeout(transitionTimer);
+        };
       }, []);
 
       useEffect(() => {
@@ -7740,62 +7807,132 @@
             </div>
           </div>
 
-          <div>
-            <p className="text-[11px] font-bold text-brand tracking-wider uppercase mb-1">{timeString || 'LUNES, 12:38 P. M.'}</p>
-            <h2 className="home-headline-message font-title font-semibold text-[21px] leading-tight mb-3">
-              {headline || HOME_MESSAGES[dayPart][mood][0]}
-            </h2>
-            <div className="flex flex-wrap gap-1.5" role="group" aria-label="Selecciona cómo te sientes hoy">
-              {HOME_MOODS.map((option) => (
-                <button
-                  key={option.id}
-                  type="button"
-                  aria-pressed={mood === option.id}
-                  onClick={() => setMood(option.id)}
-                  className={`home-mood-option rounded-full border px-2.5 py-1 text-[10px] font-semibold ${mood === option.id ? 'border-brand bg-brand text-white' : 'border-gray-200 bg-white text-gray-500 hover:border-brand/40 hover:text-brand'}`}
-                >
-                  <span aria-hidden="true">{option.icon}</span> {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          <p className="home-current-time text-[11px] font-bold text-brand tracking-wider uppercase mb-1">
+            {timeString || 'LUNES, 12:38 P. M.'}
+          </p>
 
-          <section
-            className="home-luxury-card"
-            aria-label="Tarjeta motivadora de Al Toque IA"
-          >
-            <span className="home-card-sparkle" style={{ top: '17px', right: '23%', animationDelay: '0ms' }} aria-hidden="true"></span>
-            <span className="home-card-sparkle" style={{ top: '52px', right: '12px', animationDelay: '720ms' }} aria-hidden="true"></span>
-            <span className="home-card-sparkle" style={{ bottom: '16px', right: '31%', animationDelay: '1440ms' }} aria-hidden="true"></span>
-            <span className="home-card-sparkle" style={{ bottom: '33px', left: '12px', animationDelay: '2100ms' }} aria-hidden="true"></span>
-            <div className="flex items-center gap-2.5">
-              <div className="min-w-0 flex-1">
-                <p className="home-luxury-card-kicker">Al Toque IA · para ti hoy</p>
-                <div key={cardMessageIndex} className="home-card-page" aria-live="polite">
-                  <h3 className="home-card-prompt-title">{HOME_AI_CARD_MESSAGES[cardMessageIndex].title}</h3>
-                  <p className="home-card-note">{HOME_AI_CARD_MESSAGES[cardMessageIndex].description}</p>
+          <section className="home-feature-carousel" aria-label="Información del campus" aria-roledescription="carrusel">
+            <div
+              className={`home-feature-slide ${homeCarousel.active === 0 ? 'home-feature-slide--active' : ''} ${homeCarousel.exiting === 0 ? 'home-feature-slide--exit-left' : ''}`}
+              aria-hidden={homeCarousel.active !== 0}
+            >
+              <section
+                className={`campus-service-card ${serviceStatus.state === 'online' ? 'campus-service-card--online' : 'campus-service-card--offline'} ${isServiceCardExpanded ? 'campus-service-card--expanded' : ''}`}
+                aria-label={`Servicio de delivery: ${serviceStatus.label}`}
+              >
+                <div className="relative z-10">
+                  <p className="campus-service-description">
+                    Delivery de <span className="campus-service-highlight">COMIDA</span> para estudiantes del campus de{' '}
+                    <img
+                      src="/miraflores-logo-transparent.png?v=3"
+                      alt="Miraflores"
+                      className="campus-service-location-logo"
+                    />
+                  </p>
+                  <div className="mt-2 flex items-center justify-end gap-2">
+                    <span className="campus-service-status inline-flex shrink-0 items-center gap-2 rounded-full border border-white/25 bg-white/15 px-2.5 py-1.5 font-extrabold" aria-live="polite">
+                      <span className="campus-service-status-dot" aria-hidden="true"></span>
+                      {serviceStatus.label}
+                    </span>
+                    <button
+                      type="button"
+                      className="campus-service-card-toggle shrink-0"
+                      aria-label={isServiceCardExpanded ? 'Ocultar horario de atención' : 'Mostrar horario de atención'}
+                      aria-expanded={isServiceCardExpanded}
+                      aria-controls="campus-service-details"
+                      onClick={() => setIsServiceCardExpanded((expanded) => !expanded)}
+                    >
+                      <i data-lucide="chevron-down" className="h-4 w-4"></i>
+                    </button>
+                  </div>
                 </div>
-                <p className="home-card-encouragement" aria-live="polite">
-                  {headline || HOME_MOOD_NOTES[mood]}
-                </p>
-                <div className="relative z-10 mt-2 flex items-center justify-end">
-                  <button
-                    type="button"
-                    onClick={() => onNavigate('ai')}
-                    aria-label="Probar IA Al Toque"
-                    className="w-8 h-8 shrink-0 rounded-full bg-[#d8bd76] flex items-center justify-center text-[#351c1c] shadow-md hover:scale-105 transition-transform active:scale-95"
-                  >
-                    <i data-lucide="arrow-right" className="w-4 h-4"></i>
-                  </button>
+                <div id="campus-service-details" className="campus-service-details" aria-hidden={!isServiceCardExpanded}>
+                  <div className="campus-service-details-inner relative z-10">
+                    <h2 className="font-title text-lg font-extrabold leading-tight">{serviceStatus.title}</h2>
+                    <p className="campus-service-detail mt-1 font-bold text-white">{serviceStatus.detail}</p>
+                    <div className="campus-service-schedule mt-3 flex items-center justify-between gap-3 px-3 py-2.5">
+                      <div className="min-w-0">
+                        <p className="campus-service-schedule-label font-extrabold uppercase tracking-wider text-white/75">Horario de pedidos</p>
+                        <p className="campus-service-schedule-hours mt-0.5 font-bold leading-relaxed">10:00 a. m.–1:20 p. m. · 1:30–6:00 p. m. · 8:00–10:00 p. m.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => onNavigate('menu')}
+                        aria-label="Ver menú de Al Toque"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#68162f] shadow-md transition hover:scale-105 active:scale-95"
+                      >
+                        <i data-lucide="arrow-right" className="h-4 w-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+            <div
+              className={`home-feature-slide ${homeCarousel.active === 1 ? 'home-feature-slide--active' : ''} ${homeCarousel.exiting === 1 ? 'home-feature-slide--exit-left' : ''}`}
+              aria-hidden={homeCarousel.active !== 1}
+            >
+              <div className="home-mood-slide">
+                <h2 className="home-headline-message font-title font-semibold leading-tight">
+                  {headline || HOME_MESSAGES[dayPart][mood][0]}
+                </h2>
+                <div className="flex flex-wrap gap-1.5" role="group" aria-label="Selecciona cómo te sientes hoy">
+                  {HOME_MOODS.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      aria-pressed={mood === option.id}
+                      onClick={() => setMood(option.id)}
+                      className={`home-mood-option rounded-full border px-2.5 py-1 font-semibold ${mood === option.id ? 'border-brand bg-brand text-white' : 'border-gray-200 bg-white text-gray-500 hover:border-brand/40 hover:text-brand'}`}
+                    >
+                      <span aria-hidden="true">{option.icon}</span> {option.label}
+                    </button>
+                  ))}
                 </div>
               </div>
-              <img
-                key={homeCardStickerId}
-                src={getStickerAssetName(homeCardStickerId)}
-                alt=""
-                aria-hidden="true"
-                className="home-ai-sticker"
-              />
+            </div>
+            <div
+              className={`home-feature-slide ${homeCarousel.active === 2 ? 'home-feature-slide--active' : ''} ${homeCarousel.exiting === 2 ? 'home-feature-slide--exit-left' : ''}`}
+              aria-hidden={homeCarousel.active !== 2}
+            >
+              <section
+                className="home-luxury-card"
+                aria-label="Tarjeta motivadora de Al Toque IA"
+              >
+                <span className="home-card-sparkle" style={{ top: '17px', right: '23%', animationDelay: '0ms' }} aria-hidden="true"></span>
+                <span className="home-card-sparkle" style={{ top: '52px', right: '12px', animationDelay: '720ms' }} aria-hidden="true"></span>
+                <span className="home-card-sparkle" style={{ bottom: '16px', right: '31%', animationDelay: '1440ms' }} aria-hidden="true"></span>
+                <span className="home-card-sparkle" style={{ bottom: '33px', left: '12px', animationDelay: '2100ms' }} aria-hidden="true"></span>
+                <div className="flex items-center gap-2.5">
+                  <div className="min-w-0 flex-1">
+                    <p className="home-luxury-card-kicker">Al Toque IA · para ti hoy</p>
+                    <div key={cardMessageIndex} className="home-card-page" aria-live="polite">
+                      <h3 className="home-card-prompt-title">{HOME_AI_CARD_MESSAGES[cardMessageIndex].title}</h3>
+                      <p className="home-card-note">{HOME_AI_CARD_MESSAGES[cardMessageIndex].description}</p>
+                    </div>
+                    <p className="home-card-encouragement" aria-live="polite">
+                      {headline || HOME_MOOD_NOTES[mood]}
+                    </p>
+                    <div className="relative z-10 mt-2 flex items-center justify-end">
+                      <button
+                        type="button"
+                        onClick={() => onNavigate('ai')}
+                        aria-label="Probar IA Al Toque"
+                        className="w-8 h-8 shrink-0 rounded-full bg-[#d8bd76] flex items-center justify-center text-[#351c1c] shadow-md hover:scale-105 transition-transform active:scale-95"
+                      >
+                        <i data-lucide="arrow-right" className="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <img
+                    key={homeCardStickerId}
+                    src={getStickerAssetName(homeCardStickerId)}
+                    alt=""
+                    aria-hidden="true"
+                    className="home-ai-sticker"
+                  />
+                </div>
+              </section>
             </div>
           </section>
 
