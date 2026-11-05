@@ -75,7 +75,7 @@
 
   #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] {
     position: relative;
-    padding: 24px clamp(24px, 5vw, 64px) 104px !important;
+    padding: 0 clamp(24px, 5vw, 64px) 104px !important;
   }
 
   #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) {
@@ -112,7 +112,7 @@
     box-sizing: border-box;
     flex-wrap: nowrap;
     overflow: visible;
-    padding: 10px 20px;
+    padding: 34px 20px 10px;
     position: sticky;
     top: 0;
     z-index: 40;
