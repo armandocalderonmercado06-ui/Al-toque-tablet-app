@@ -103,10 +103,51 @@
   }
 
   #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > .home-top-bar {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: clamp(8px, 2vw, 24px);
     position: sticky;
     top: 0;
     z-index: 40;
     background: #fff !important;
+  }
+
+  #root .home-top-bar > .flex.items-center.space-x-2 {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  #root .home-top-bar > .flex.items-center.space-x-2 > div {
+    min-width: 0;
+  }
+
+  #root .home-top-bar > .flex.items-center.space-x-2 h1,
+  #root .home-top-bar > .flex.items-center.space-x-2 p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #root .home-top-bar > .flex.items-center.gap-2 {
+    flex: 0 0 auto;
+    min-width: 0;
+    gap: clamp(4px, 1vw, 12px);
+  }
+
+  #root .home-top-bar > .flex.items-center.gap-2 > button {
+    flex: 0 0 auto;
+  }
+
+  #root .home-top-bar > .flex.items-center.gap-2 > button[aria-label="Abrir Reels"] {
+    padding-right: clamp(8px, 1.2vw, 12px);
+    padding-left: clamp(8px, 1.2vw, 12px);
+    white-space: nowrap;
   }
 
   #root .tablet-music-row-button {
@@ -141,7 +182,7 @@
   }
 
   #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :first-child > div:last-child {
-    gap: 50px;
+    gap: clamp(4px, 1vw, 12px);
   }
 
   #root .home-luxury-card {
