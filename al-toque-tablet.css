@@ -460,6 +460,16 @@
     height: 18px;
   }
 
+  #root .splash-screen > .brand-splash-content,
+  #root .splash-screen > .brand-splash-reference {
+    transform: scale(3);
+  }
+
+  #root .splash-screen .splash-sticker {
+    width: 174px;
+    height: 174px;
+  }
+
   #root .app-watermark {
     left: 8px;
     width: calc(100% - 16px);
