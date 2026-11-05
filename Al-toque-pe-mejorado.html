@@ -3212,7 +3212,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=39" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=40" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -5367,6 +5367,8 @@
       const [toast, setToast] = useState(null);
       const [orderConfirmed, setOrderConfirmed] = useState(false);
       const [liveOrderId, setLiveOrderId] = useState(() => localStorage.getItem('altoque_current_order') || '');
+      const [isTabletLayout] = useState(() => window.matchMedia('(min-width: 768px)').matches);
+      const [playerSize, setPlayerSize] = useState(() => isTabletLayout ? 'compact' : 'large');
       const [isPlayerVisible, setIsPlayerVisible] = useState(true);
       const [isPlayerHiddenOnScroll, setIsPlayerHiddenOnScroll] = useState(false);
       const contentRef = useRef(null);
@@ -5702,12 +5704,28 @@
               isVisible={isPlayerVisible && activeTab === 'home'}
               isOnHome={activeTab === 'home'}
               isHiddenOnScroll={isPlayerHiddenOnScroll}
+              isTabletLayout={isTabletLayout}
+              playerSize={playerSize}
+              setPlayerSize={setPlayerSize}
               onShow={() => {
                 setIsPlayerVisible(true);
                 setIsPlayerHiddenOnScroll(false);
               }}
             />
-            {activeTab === 'home' && <HomeScreen onNavigate={setActiveTab} onOpenCustomize={setCustomizingDish} mood={homeMood} setMood={setHomeMood} />}
+            {activeTab === 'home' && (
+              <HomeScreen
+                onNavigate={setActiveTab}
+                onOpenCustomize={setCustomizingDish}
+                mood={homeMood}
+                setMood={setHomeMood}
+                showMusicButton={isTabletLayout}
+                onOpenMusic={() => {
+                  setPlayerSize('large');
+                  setIsPlayerVisible(true);
+                  setIsPlayerHiddenOnScroll(false);
+                }}
+              />
+            )}
             {activeTab === 'menu' && (
               <MenuScreen onOpenCustomize={setCustomizingDish} onAddBembos={addBembosToCart} onAddStarbucks={addToCart} isPromoDay={isOctoberPromoDay} />
             )}
@@ -5858,11 +5876,7 @@
       }
     ];
 
-    function MusicPlayer({ isVisible, isOnHome, isHiddenOnScroll, onShow }) {
-      const isTabletLayout = window.matchMedia('(min-width: 768px)').matches;
-      const [playerSize, setPlayerSize] = useState(
-        () => isTabletLayout ? 'compact' : 'large'
-      );
+    function MusicPlayer({ isVisible, isOnHome, isHiddenOnScroll, isTabletLayout, playerSize, setPlayerSize, onShow }) {
       const [currentTrack, setCurrentTrack] = useState(PLAYER_TRACKS[0]);
       const [audioHelp, setAudioHelp] = useState(null);
       const [bluetoothDeviceName, setBluetoothDeviceName] = useState('');
@@ -7607,7 +7621,7 @@
       );
     }
 
-    function HomeScreen({ onNavigate, onOpenCustomize, mood, setMood }) {
+    function HomeScreen({ onNavigate, onOpenCustomize, mood, setMood, showMusicButton, onOpenMusic }) {
       const [timeString, setTimeString] = useState('');
       const [dayPart, setDayPart] = useState(() => getDayPart(new Date().getHours()));
       const [headline, setHeadline] = useState('');
@@ -7688,7 +7702,7 @@
 
       return (
         <div className="space-y-5">
-          <div className="flex items-center justify-between pt-2">
+          <div className="home-top-bar flex items-center justify-between pt-2">
             <div className="flex items-center space-x-2">
               <img src="Captura de pantalla 2026-09-24 145818.png" alt="Logo Al Toque" className="w-10 h-10 rounded-full object-cover border border-brand/20" />
               <div>
@@ -7706,6 +7720,15 @@
                 <i data-lucide="clapperboard" className="h-4 w-4"></i>
                 <span className="text-[10px] font-bold">Reels</span>
               </button>
+              {showMusicButton && (
+                <button
+                  type="button"
+                  onClick={onOpenMusic}
+                  aria-label="Abrir reproductor de música"
+                  title="Abrir reproductor de música"
+                  className="tablet-music-row-button"
+                />
+              )}
               <button
                 type="button"
                 onClick={() => onNavigate('profile')}

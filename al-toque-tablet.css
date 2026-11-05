@@ -98,37 +98,33 @@
     transform: none;
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :first-child {
-    position: relative;
-    top: auto;
-    right: auto;
-    left: auto;
-    z-index: auto;
-    background: transparent !important;
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) {
+    display: none !important;
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) > div > div[class*="h-[250px]"] {
-    display: none;
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > .home-top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: #fff !important;
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) button[aria-label="Ampliar reproductor"] {
-    top: 2px;
-    right: 2px;
-    width: 34px;
-    height: 34px;
+  #root .tablet-music-row-button {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    align-items: center;
+    justify-content: center;
     border: 0;
     border-radius: 12px;
     background: #a90000;
     color: #fff;
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) button[aria-label="Ampliar reproductor"] svg {
-    display: none;
-  }
-
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) button[aria-label="Ampliar reproductor"]::before {
+  #root .tablet-music-row-button::before {
     content: "♫";
-    font-size: 22px !important;
+    font-size: 22px;
     line-height: 1;
   }
 
