@@ -336,14 +336,19 @@ function getRequestHostInfo(hostHeader, fallbackPort) {
 function sameOrigin(request) {
   const origin = request.headers.origin;
   if (!origin) return false;
-  const requestProtocol = request.socket.encrypted ? 'https:' : 'http:';
+  const forwardedProtocol = request.headers['x-forwarded-proto']?.split(',')[0].trim();
+  const requestProtocol = forwardedProtocol === 'https'
+    ? 'https:'
+    : forwardedProtocol === 'http'
+      ? 'http:'
+      : request.socket.encrypted ? 'https:' : 'http:';
   try {
     const parsedOrigin = new URL(origin);
     const allowedOrigins = new Set([`${requestProtocol}//${request.headers.host}`]);
     if (APP_SERVER_URL) allowedOrigins.add(new URL(APP_SERVER_URL).origin);
     if (allowedOrigins.has(parsedOrigin.origin)) return true;
 
-    const requestHostInfo = getRequestHostInfo(request.headers.host, request.socket.encrypted ? '443' : '80');
+    const requestHostInfo = getRequestHostInfo(request.headers.host, requestProtocol === 'https:' ? '443' : '80');
     const normalizedOriginHost = normalizeLocalHost(parsedOrigin.hostname);
     const normalizedRequestHost = normalizeLocalHost(requestHostInfo.hostname);
     const sameLocalLoopback = normalizedOriginHost === 'localhost' && normalizedRequestHost === 'localhost';

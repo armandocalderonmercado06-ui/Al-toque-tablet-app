@@ -316,6 +316,23 @@ test('accepts requests from localhost aliases when using the same local server p
   assert.equal(response.status, 201);
 });
 
+test('accepts same-origin requests forwarded over HTTPS', async (t) => {
+  const testDataDir = await createReelsTestDirectory();
+  const server = await createReelsTestServer(t, testDataDir);
+  const port = server.address().port;
+  const response = await fetch(`http://127.0.0.1:${port}/api/complaints`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Origin: `https://127.0.0.1:${port}`,
+      'X-Forwarded-Proto': 'https'
+    },
+    body: JSON.stringify({})
+  });
+
+  assert.equal(response.status, 400);
+});
+
 test('loads the public feed for a valid first-time viewer before profile creation', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
