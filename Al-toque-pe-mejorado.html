@@ -3212,7 +3212,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=60" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=61" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -5667,19 +5667,27 @@
         try {
           const savedProfile = JSON.parse(localStorage.getItem('altoque_profile'));
           if (savedProfile && typeof savedProfile === 'object' && !Array.isArray(savedProfile)) {
-            return { ...savedProfile, useOrderHistoryForRecommendations: true };
+            const hasMarketingConsent = savedProfile.salesUpdates === true
+              && Number.isFinite(savedProfile.salesUpdatesConsentAt);
+            return {
+              ...savedProfile,
+              salesUpdates: hasMarketingConsent,
+              salesUpdatesConsentAt: hasMarketingConsent ? savedProfile.salesUpdatesConsentAt : null,
+              useOrderHistoryForRecommendations: true
+            };
           }
           return {
             fullName: '',
             career: '',
             nickname: '',
             email: '',
-            salesUpdates: true,
+            salesUpdates: false,
+            salesUpdatesConsentAt: null,
             privacyAccepted: false,
             useOrderHistoryForRecommendations: true
           };
         } catch {
-          return { fullName: '', career: '', nickname: '', email: '', salesUpdates: true, privacyAccepted: false, useOrderHistoryForRecommendations: true };
+          return { fullName: '', career: '', nickname: '', email: '', salesUpdates: false, salesUpdatesConsentAt: null, privacyAccepted: false, useOrderHistoryForRecommendations: true };
         }
       });
       const [splashTheme, setSplashTheme] = useState(() => getStartupSplashTheme(profile.splashPreference || 'random'));
@@ -12762,6 +12770,9 @@
       const [complaintError, setComplaintError] = useState('');
       const [complaintReceipt, setComplaintReceipt] = useState(null);
       const [photoError, setPhotoError] = useState('');
+      const [isSendingMarketingConfirmation, setIsSendingMarketingConfirmation] = useState(false);
+      const [marketingEmailError, setMarketingEmailError] = useState('');
+      const [marketingEmailStatus, setMarketingEmailStatus] = useState('');
       const [showRiderAccess, setShowRiderAccess] = useState(false);
       const riderPinInputRef = useRef(null);
       const [riderPin, setRiderPin] = useState('');
@@ -12769,6 +12780,46 @@
       const [isCheckingRiderPin, setIsCheckingRiderPin] = useState(false);
       const photoInputRef = useRef(null);
       const updateProfile = (field, value) => setProfile((current) => ({ ...current, [field]: value }));
+      const handleSalesUpdatesChange = async (event) => {
+        if (!event.target.checked) {
+          setProfile((current) => ({ ...current, salesUpdates: false, salesUpdatesConsentAt: null }));
+          setMarketingEmailError('');
+          setMarketingEmailStatus('');
+          return;
+        }
+
+        const email = typeof profile.email === 'string' ? profile.email.trim() : '';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+          setMarketingEmailError('Ingresa un correo válido para enviarte la confirmación.');
+          document.getElementById('profile-email')?.focus();
+          return;
+        }
+
+        setIsSendingMarketingConfirmation(true);
+        setMarketingEmailError('');
+        setMarketingEmailStatus('');
+        try {
+          const response = await fetch('/api/marketing/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+          });
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(payload.error || `Error ${response.status}`);
+          setProfile((current) => ({
+            ...current,
+            salesUpdates: true,
+            salesUpdatesConsentAt: Date.now()
+          }));
+          setMarketingEmailStatus(payload.provider === 'hubspot'
+            ? '¡Listo! Registramos tu suscripción a recomendaciones y promociones.'
+            : '¡Listo! Te enviamos un correo para confirmar tu inscripción a Al Toque Pe.');
+        } catch (error) {
+          setMarketingEmailError(error.message || 'No se pudo enviar el correo de confirmación.');
+        } finally {
+          setIsSendingMarketingConfirmation(false);
+        }
+      };
       const submitComplaint = async (event) => {
         event.preventDefault();
         setIsSubmittingComplaint(true);
@@ -13154,8 +13205,29 @@
                 <input id="profile-nickname" value={profile.nickname} onChange={(e) => updateProfile('nickname', e.target.value)} placeholder="Cómo quieres que te llamemos" className="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-brand" />
               </div>
               <div>
-                <label htmlFor="profile-email" className="block text-[10px] font-bold text-gray-500 mb-1">Correo para tu pedido (opcional)</label>
-                <input id="profile-email" type="email" value={profile.email} onChange={(e) => updateProfile('email', e.target.value)} placeholder="tucorreo@upch.pe" className="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-brand" />
+                <label htmlFor="profile-email" className="block text-[10px] font-bold text-gray-500 mb-1">Correo para tu pedido o promociones (opcional)</label>
+                <input
+                  id="profile-email"
+                  type="email"
+                  autoComplete="email"
+                  value={profile.email}
+                  aria-invalid={Boolean(marketingEmailError)}
+                  aria-describedby={marketingEmailError ? 'marketing-email-error' : marketingEmailStatus ? 'marketing-email-status' : undefined}
+                  onChange={(event) => {
+                    const email = event.target.value;
+                    setProfile((current) => ({
+                      ...current,
+                      email,
+                      ...(current.email !== email && current.salesUpdates
+                        ? { salesUpdates: false, salesUpdatesConsentAt: null }
+                        : {})
+                    }));
+                    setMarketingEmailError('');
+                    setMarketingEmailStatus('');
+                  }}
+                  placeholder="tucorreo@upch.pe"
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-brand"
+                />
               </div>
               <div>
                 <label htmlFor="profile-phone" className="block text-[10px] font-bold text-gray-500 mb-1">Celular de contacto (opcional)</label>
@@ -13167,9 +13239,18 @@
                 <span>Acepto que mis datos se recopilen de manera no invasiva y se usen solo para mejorar ventas, promociones y la atención de mis pedidos.</span>
               </label>
               <label className="flex items-center gap-2 text-[10px] text-gray-500">
-                <input type="checkbox" checked={profile.salesUpdates} onChange={(e) => updateProfile('salesUpdates', e.target.checked)} className="accent-brand" />
+                <input
+                  type="checkbox"
+                  checked={profile.salesUpdates === true}
+                  disabled={isSendingMarketingConfirmation}
+                  onChange={handleSalesUpdatesChange}
+                  className="accent-brand"
+                />
                 Quiero recibir recomendaciones y promociones de Al Toque.
               </label>
+              {marketingEmailError && <p id="marketing-email-error" className="text-[10px] text-red-600" role="alert">{marketingEmailError}</p>}
+              {marketingEmailStatus && <p id="marketing-email-status" className="text-[10px] text-green-700" role="status">{marketingEmailStatus}</p>}
+              {isSendingMarketingConfirmation && <p className="text-[10px] text-gray-500" role="status">Enviando correo de confirmación…</p>}
               <button type="button" onClick={affiliateProfile} disabled={!profile.privacyAccepted} className="w-full rounded-xl bg-brand text-white py-2.5 text-xs font-bold disabled:opacity-40">Afiliar mi perfil</button>
               <p className="text-[9px] text-gray-400">Puedes cambiar o borrar estos datos desde tu perfil cuando quieras.</p>
             </div>

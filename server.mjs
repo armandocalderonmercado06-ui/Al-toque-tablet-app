@@ -15,6 +15,7 @@ const COIN_FILE = 'Moneda Al Toque.html';
 const PORT = Number(process.env.PORT || 4173);
 const HOST = process.env.HOST || '0.0.0.0';
 const APP_SERVER_URL = (process.env.APP_SERVER_URL || '').replace(/\/+$/, '');
+const MARKETING_SUBSCRIBE_URL = 'https://al-toque-upch.onrender.com/api/marketing/subscribe';
 const TLS_CERT_FILE = process.env.TLS_CERT_FILE || '';
 const TLS_KEY_FILE = process.env.TLS_KEY_FILE || '';
 const TURN_URL = process.env.TURN_URL || '';
@@ -1283,6 +1284,53 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
         trainingBadge: 'demo'
       }
     });
+  }
+
+  if (request.method === 'POST' && requestUrl.pathname === '/api/marketing/subscribe') {
+    if (!sameOrigin(request)) return json(response, 403, { error: 'Origen de solicitud no permitido.' });
+    let body;
+    try {
+      body = await readJson(request);
+    } catch (error) {
+      return json(response, error.status || 400, { error: error.message });
+    }
+
+    const email = body && typeof body === 'object' && !Array.isArray(body) && typeof body.email === 'string'
+      ? body.email.trim()
+      : '';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+      return json(response, 400, { error: 'Ingresa un correo válido para enviarte la confirmación.' });
+    }
+
+    let upstreamResponse;
+    try {
+      upstreamResponse = await fetchImpl(MARKETING_SUBSCRIBE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+        signal: AbortSignal.timeout(10_000)
+      });
+    } catch (error) {
+      console.error('No se pudo contactar el servicio de suscripción a promociones:', error.message);
+      return json(response, 502, { error: 'No se pudo enviar el correo de confirmación. Inténtalo nuevamente.' });
+    }
+
+    let payload;
+    try {
+      payload = await upstreamResponse.json();
+    } catch (error) {
+      console.error('El servicio de suscripción a promociones devolvió una respuesta inválida:', error.message);
+      return json(response, 502, { error: 'El servicio de suscripción no devolvió una respuesta válida.' });
+    }
+    if (!upstreamResponse.ok) {
+      const status = upstreamResponse.status >= 400 && upstreamResponse.status < 500 ? upstreamResponse.status : 502;
+      const message = typeof payload?.error === 'string' && payload.error.length <= 200
+        ? payload.error
+        : 'No se pudo enviar el correo de confirmación. Inténtalo nuevamente.';
+      return json(response, status, { error: message });
+    }
+
+    return json(response, 200, { provider: payload?.provider === 'hubspot' ? 'hubspot' : 'email' });
   }
 
   if (request.method === 'POST' && requestUrl.pathname === '/api/complaints') {

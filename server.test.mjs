@@ -8,13 +8,14 @@ import { join } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { composePrompt, createAlToqueServer, detectMenuIntent, getAssistantPersona, getLocalMenuAnswer, makeRiderSupportInstructions, selectMenuItem, shouldUseWebSearch, styleLocalAnswer } from './server.mjs';
 
-async function createReelsTestServer(t, testDataDir, reelsDeletePassword = 'test-reels-delete-password', persistenceStore) {
+async function createReelsTestServer(t, testDataDir, reelsDeletePassword = 'test-reels-delete-password', persistenceStore, fetchImpl = fetch) {
   const server = createAlToqueServer({
     ordersFile: join(testDataDir, 'orders.json'),
     reelsFile: join(testDataDir, 'reels.json'),
     reelsVideosDir: join(testDataDir, 'reels-videos'),
     reelsDeletePassword,
-    persistenceStore
+    persistenceStore,
+    fetchImpl
   });
   await new Promise((resolve, reject) => {
     server.once('error', reject);
@@ -115,6 +116,78 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="complaint-book-card/);
   assert.match(page, /aria-label="Abrir el Libro de Reclamaciones virtual/);
   assert.match(page, /fetch\('\/api\/complaints'/);
+  assert.match(page, /salesUpdatesConsentAt/);
+  assert.match(page, /salesUpdates: false/);
+  assert.match(page, /Correo para tu pedido o promociones \(opcional\)/);
+  assert.match(page, /fetch\('\/api\/marketing\/subscribe'/);
+});
+
+test('forwards an explicitly submitted marketing email to the reference subscription service', async (t) => {
+  const testDataDir = await createReelsTestDirectory();
+  let forwardedRequest;
+  const fetchImpl = async (url, options) => {
+    forwardedRequest = { url, options };
+    return new Response(JSON.stringify({ provider: 'hubspot' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  };
+  const server = await createReelsTestServer(t, testDataDir, undefined, undefined, fetchImpl);
+  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+  const response = await fetch(`${baseUrl}/api/marketing/subscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: baseUrl },
+    body: JSON.stringify({ email: '  student@example.com  ' })
+  });
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { provider: 'hubspot' });
+  assert.equal(forwardedRequest.url, 'https://al-toque-upch.onrender.com/api/marketing/subscribe');
+  assert.equal(forwardedRequest.options.method, 'POST');
+  assert.deepEqual(JSON.parse(forwardedRequest.options.body), { email: 'student@example.com' });
+});
+
+test('rejects invalid and cross-origin marketing subscription requests without forwarding email', async (t) => {
+  const testDataDir = await createReelsTestDirectory();
+  let forwarded = false;
+  const fetchImpl = async () => {
+    forwarded = true;
+    throw new Error('The upstream service must not be called for invalid requests.');
+  };
+  const server = await createReelsTestServer(t, testDataDir, undefined, undefined, fetchImpl);
+  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+  const invalidEmail = await fetch(`${baseUrl}/api/marketing/subscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: baseUrl },
+    body: JSON.stringify({ email: 'not-an-email' })
+  });
+  const crossOrigin = await fetch(`${baseUrl}/api/marketing/subscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: 'https://untrusted.example' },
+    body: JSON.stringify({ email: 'student@example.com' })
+  });
+
+  assert.equal(invalidEmail.status, 400);
+  assert.equal(crossOrigin.status, 403);
+  assert.equal(forwarded, false);
+});
+
+test('reports marketing subscription service failures instead of recording consent', async (t) => {
+  const testDataDir = await createReelsTestDirectory();
+  const fetchImpl = async () => new Response(JSON.stringify({ error: 'Servicio temporalmente no disponible.' }), {
+    status: 503,
+    headers: { 'Content-Type': 'application/json' }
+  });
+  const server = await createReelsTestServer(t, testDataDir, undefined, undefined, fetchImpl);
+  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+  const response = await fetch(`${baseUrl}/api/marketing/subscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: baseUrl },
+    body: JSON.stringify({ email: 'student@example.com' })
+  });
+
+  assert.equal(response.status, 502);
+  assert.deepEqual(await response.json(), { error: 'Servicio temporalmente no disponible.' });
 });
 
 test('stores complaint submissions in the configured private backend and returns a receipt', async (t) => {
