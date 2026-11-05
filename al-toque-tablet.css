@@ -52,7 +52,7 @@
     box-sizing: border-box;
     min-height: 100dvh;
     padding: 20px !important;
-    background: #f3f4f6;
+    background: #fff;
   }
 
   #root {
