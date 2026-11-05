@@ -3212,7 +3212,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=43" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=44" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -7702,15 +7702,15 @@
 
       return (
         <div className="space-y-5">
-          <div className="home-top-bar flex items-center justify-between pt-2">
-            <div className="flex items-center space-x-2">
+          <div className="home-top-bar navbar-container flex items-center justify-between pt-2">
+            <div className="navbar-content flex items-center gap-3">
               <img src="Captura de pantalla 2026-09-24 145818.png" alt="Logo Al Toque" className="w-10 h-10 rounded-full object-cover border border-brand/20" />
               <div>
                 <h1 className="font-title font-bold text-sm leading-none">al toque</h1>
                 <p className="text-[10px] text-gray-400 font-medium">UPCH campus</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="navbar-actions flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => onNavigate('reels')}

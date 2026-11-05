@@ -102,49 +102,58 @@
     display: none !important;
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > .home-top-bar {
+  #root .navbar-container {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
     flex-wrap: nowrap;
-    justify-content: space-between;
-    gap: clamp(8px, 2vw, 24px);
+    overflow: hidden;
+    padding: 10px 20px;
     position: sticky;
     top: 0;
     z-index: 40;
     background: #fff !important;
   }
 
-  #root .home-top-bar > .flex.items-center.space-x-2 {
-    flex: 1 1 auto;
+  #root .navbar-content,
+  #root .navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     min-width: 0;
+  }
+
+  #root .navbar-content {
+    flex: 1 1 auto;
     overflow: hidden;
   }
 
-  #root .home-top-bar > .flex.items-center.space-x-2 > div {
+  #root .navbar-content > div {
     min-width: 0;
   }
 
-  #root .home-top-bar > .flex.items-center.space-x-2 h1,
-  #root .home-top-bar > .flex.items-center.space-x-2 p {
+  #root .navbar-content h1,
+  #root .navbar-content p {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  #root .home-top-bar > .flex.items-center.gap-2 {
-    flex: 0 0 auto;
-    min-width: 0;
-    gap: clamp(4px, 1vw, 12px);
+  #root .navbar-actions {
+    flex: 0 1 auto;
+    justify-content: flex-end;
+    max-width: 100%;
   }
 
-  #root .home-top-bar > .flex.items-center.gap-2 > button {
+  #root .navbar-actions > button {
     flex: 0 0 auto;
   }
 
-  #root .home-top-bar > .flex.items-center.gap-2 > button[aria-label="Abrir Reels"] {
+  #root .navbar-actions > button[aria-label="Abrir Reels"] {
     padding-right: clamp(8px, 1.2vw, 12px);
     padding-left: clamp(8px, 1.2vw, 12px);
     white-space: nowrap;
@@ -179,10 +188,6 @@
   #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > * {
     min-width: 0;
     margin-top: 0 !important;
-  }
-
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :first-child > div:last-child {
-    gap: clamp(4px, 1vw, 12px);
   }
 
   #root .home-luxury-card {
