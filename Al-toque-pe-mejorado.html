@@ -3212,7 +3212,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=56" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=57" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -7978,6 +7978,14 @@
           delete event.currentTarget.dataset.touchActive;
         }
       };
+      const handleHomeProductSelection = (event, dish) => {
+        const card = event.currentTarget;
+        card.dataset.selected = 'true';
+        window.setTimeout(() => {
+          delete card.dataset.selected;
+        }, 700);
+        onOpenCustomize(dish);
+      };
 
       useEffect(() => {
         const updateTime = () => {
@@ -8249,7 +8257,12 @@
 
             <div className="flex space-x-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4">
               {popularDishes.map((dish) => (
-                <div key={dish.id} className="home-pop-card min-w-[220px] bg-white border border-gray-100 rounded-3xl p-2.5 shadow-sm flex flex-col justify-between" onPointerDown={handleHomeProductPointerState} onPointerUp={handleHomeProductPointerState} onPointerCancel={handleHomeProductPointerState} onPointerLeave={handleHomeProductPointerState}>
+                <div key={dish.id} role="button" tabIndex={0} aria-label={`Personalizar ${dish.name}`} onClick={(event) => handleHomeProductSelection(event, dish)} onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleHomeProductSelection(event, dish);
+                  }
+                }} className="home-pop-card min-w-[220px] bg-white border border-gray-100 rounded-3xl p-2.5 shadow-sm flex flex-col justify-between cursor-pointer text-left" onPointerDown={handleHomeProductPointerState} onPointerUp={handleHomeProductPointerState} onPointerCancel={handleHomeProductPointerState} onPointerLeave={handleHomeProductPointerState}>
                   <div className="home-pop-card-media relative h-28 rounded-2xl overflow-hidden mb-2">
                     <img src={dish.image} alt={dish.name} className="w-full h-full object-cover" />
                     <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-[10px] font-bold px-2 py-0.5 rounded-full text-dark">{dish.badge}</span>
@@ -8266,9 +8279,6 @@
                       <i data-lucide="clock" className="w-3 h-3 mr-1 text-green-600"></i>
                       {dish.time}
                     </span>
-                    <button onClick={() => onOpenCustomize(dish)} aria-label={`Añadir ${dish.name}`} className="w-7 h-7 bg-dark text-white rounded-lg flex items-center justify-center hover:bg-black transition active:scale-95">
-                      <i data-lucide="plus" className="w-4 h-4"></i>
-                    </button>
                   </div>
                 </div>
               ))}
@@ -8282,7 +8292,12 @@
             </div>
             <div className="flex space-x-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4">
               {INITIAL_MENU.filter((m) => m.category === 'combos').map((dish) => (
-                <div key={dish.id} className="home-pop-card combo-card min-w-[220px] bg-white border border-gray-100 rounded-3xl p-2.5 shadow-sm flex flex-col justify-between" onPointerDown={handleHomeProductPointerState} onPointerUp={handleHomeProductPointerState} onPointerCancel={handleHomeProductPointerState} onPointerLeave={handleHomeProductPointerState}>
+                <div key={dish.id} role="button" tabIndex={0} aria-label={`Personalizar ${dish.name}`} onClick={(event) => handleHomeProductSelection(event, dish)} onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleHomeProductSelection(event, dish);
+                  }
+                }} className="home-pop-card combo-card min-w-[220px] bg-white border border-gray-100 rounded-3xl p-2.5 shadow-sm flex flex-col justify-between cursor-pointer text-left" onPointerDown={handleHomeProductPointerState} onPointerUp={handleHomeProductPointerState} onPointerCancel={handleHomeProductPointerState} onPointerLeave={handleHomeProductPointerState}>
                   <div className="home-pop-card-media relative h-36 rounded-2xl overflow-hidden mb-2">
                     <img src={dish.image} alt={dish.name} className="combo-card-image w-full h-full object-cover" />
                     <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-[10px] font-bold px-2 py-0.5 rounded-full text-dark">{dish.badge}</span>
@@ -8299,9 +8314,6 @@
                       <i data-lucide="clock" className="w-3 h-3 mr-1 text-green-600"></i>
                       {dish.time}
                     </span>
-                    <button onClick={() => onOpenCustomize(dish)} aria-label={`Añadir ${dish.name}`} className="w-7 h-7 bg-dark text-white rounded-lg flex items-center justify-center hover:bg-black transition active:scale-95">
-                      <i data-lucide="plus" className="w-4 h-4"></i>
-                    </button>
                   </div>
                 </div>
               ))}

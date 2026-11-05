@@ -9,6 +9,7 @@ las rutas `/api`; no se puede alojar como una pagina estatica en GitHub Pages.
 - Ejecuta `npm start` y abre `http://localhost:4173`.
 - El diseño tablet se carga automáticamente desde 768 px; usa todo el viewport sin márgenes y se adapta a la orientación de la pantalla.
 - En tablets, el botón de pantalla completa del encabezado superior derecho activa o desactiva el modo inmersivo del navegador sin cubrir las tarjetas. También se puede salir con la tecla Esc.
+- En Inicio, selecciona cualquier parte de una tarjeta de plato o combo para abrir su personalización; el marco muestra un brillo dorado sutil.
 - Copia `.env.example` a `.env` para configurar integraciones opcionales.
 - Define `REELS_DELETE_PASSWORD` con una clave privada para habilitar la
   eliminacion de Reels. Sin ella, esa operacion falla de forma cerrada.

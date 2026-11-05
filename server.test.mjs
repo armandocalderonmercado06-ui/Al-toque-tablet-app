@@ -88,8 +88,11 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /timeZone: 'America\/Lima'/);
   assert.match(stylesheet, /#root \.home-feature-carousel/);
   assert.match(stylesheet, /#root \.home-pop-card\[data-touch-active="true"\]/);
+  assert.match(stylesheet, /#root \.home-pop-card\[data-selected="true"\]/);
+  assert.match(stylesheet, /@keyframes tabletHomeCardGoldGlow/);
   assert.match(stylesheet, /#root \.home-pop-card-media\s*\{[^}]*overflow:\s*visible\s*!important;/s);
   assert.match(page, /onPointerDown=\{handleHomeProductPointerState\}/);
+  assert.match(page, /role="button" tabIndex=\{0\} aria-label=\{`Personalizar \$\{dish\.name\}`\} onClick=\{\(event\) => handleHomeProductSelection\(event, dish\)\}/);
   assert.match(page, /<TabletFullscreenControl isTabletLayout=\{isTabletLayout\} \/>/);
   assert.match(page, /name: 'Vaso de emoliente y Pan con Queso'/);
   assert.match(page, /image: 'https:\/\/al-toque-upch\.onrender\.com\/desayuno-emoliente-pan-queso\.png'/);
