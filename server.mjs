@@ -1280,6 +1280,77 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
     });
   }
 
+  if (request.method === 'POST' && requestUrl.pathname === '/api/complaints') {
+    if (!sameOrigin(request)) return json(response, 403, { error: 'Origen de solicitud no permitido.' });
+    let body;
+    try {
+      body = await readJson(request);
+    } catch (error) {
+      return json(response, error.status || 400, { error: error.message });
+    }
+
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return json(response, 400, { error: 'La solicitud del Libro de Reclamaciones no tiene un formato válido.' });
+    }
+
+    const kind = typeof body.kind === 'string' ? body.kind : '';
+    const consumerName = typeof body.consumerName === 'string' ? body.consumerName.trim() : '';
+    const documentType = typeof body.documentType === 'string' ? body.documentType : '';
+    const documentNumber = typeof body.documentNumber === 'string' ? body.documentNumber.trim() : '';
+    const address = typeof body.address === 'string' ? body.address.trim() : '';
+    const email = typeof body.email === 'string' ? body.email.trim() : '';
+    const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
+    const product = typeof body.product === 'string' ? body.product.trim() : '';
+    const amountText = typeof body.amount === 'string' ? body.amount.trim() : '';
+    const description = typeof body.description === 'string' ? body.description.trim() : '';
+    const requestDetails = typeof body.request === 'string' ? body.request.trim() : '';
+    const amount = amountText === '' ? null : Number(amountText);
+    const validDocumentNumber = documentType === 'DNI'
+      ? /^\d{8}$/.test(documentNumber)
+      : documentType === 'CE' && /^[A-Za-z0-9]{6,12}$/.test(documentNumber);
+    const validAmount = amountText === ''
+      || (/^\d+(?:\.\d{1,2})?$/.test(amountText) && Number.isFinite(amount) && amount >= 0 && amount <= 1_000_000);
+
+    if (!['reclamo', 'queja'].includes(kind)
+      || !consumerName || consumerName.length > 120
+      || !validDocumentNumber
+      || !address || address.length > 200
+      || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254
+      || phone.length < 6 || phone.length > 24 || !/^\+?[0-9()\-\s]+$/.test(phone)
+      || !product || product.length > 160
+      || !validAmount
+      || description.length < 20 || description.length > 2000
+      || requestDetails.length < 5 || requestDetails.length > 1000
+      || body.privacyConsent !== true) {
+      return json(response, 400, { error: 'Completa los campos obligatorios y verifica que la información sea válida y que autorizaste su uso.' });
+    }
+    if (typeof videoStorage?.createComplaint !== 'function') {
+      return json(response, 503, { error: 'El Libro de Reclamaciones no está conectado a Supabase.' });
+    }
+
+    try {
+      const complaint = await videoStorage.createComplaint({
+        kind,
+        consumer_name: consumerName,
+        document_type: documentType,
+        document_number: documentNumber,
+        address,
+        email,
+        phone,
+        product,
+        amount: amount === null ? null : Number(amount.toFixed(2)),
+        description,
+        request: requestDetails,
+        privacy_consent: true,
+        privacy_consented_at: new Date().toISOString()
+      });
+      return json(response, 201, { complaint });
+    } catch (error) {
+      console.error('No se pudo guardar una solicitud del Libro de Reclamaciones en Supabase:', error.message);
+      return json(response, 503, { error: 'No se pudo registrar la solicitud en este momento. Inténtalo más tarde.' });
+    }
+  }
+
   if (request.method === 'POST' && requestUrl.pathname === '/api/orders') {
     if (!sameOrigin(request)) return json(response, 403, { error: 'Origen de solicitud no permitido.' });
     let body;

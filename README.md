@@ -17,7 +17,10 @@ las rutas `/api`; no se puede alojar como una pagina estatica en GitHub Pages.
 La app puede guardar los pedidos y el estado de Reels en Supabase, y los videos
 en Supabase Storage. Ejecuta `supabase/schema.sql` en el SQL Editor de tu
 proyecto Supabase. El bucket de videos es público para permitir reproducir los
-Reels; la clave de servicio solo se usa en el servidor.
+Reels; la clave de servicio solo se usa en el servidor. El mismo esquema crea
+`al_toque_complaints` con RLS habilitado y acceso restringido a `service_role`
+para guardar las solicitudes del Libro de Reclamaciones. Vuelve a ejecutar el
+esquema al actualizar la app para que esa tabla quede disponible.
 
 Configura estas variables en el servidor:
 

@@ -8,12 +8,13 @@ import { join } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { composePrompt, createAlToqueServer, detectMenuIntent, getAssistantPersona, getLocalMenuAnswer, makeRiderSupportInstructions, selectMenuItem, shouldUseWebSearch, styleLocalAnswer } from './server.mjs';
 
-async function createReelsTestServer(t, testDataDir, reelsDeletePassword = 'test-reels-delete-password') {
+async function createReelsTestServer(t, testDataDir, reelsDeletePassword = 'test-reels-delete-password', persistenceStore) {
   const server = createAlToqueServer({
     ordersFile: join(testDataDir, 'orders.json'),
     reelsFile: join(testDataDir, 'reels.json'),
     reelsVideosDir: join(testDataDir, 'reels-videos'),
-    reelsDeletePassword
+    reelsDeletePassword,
+    persistenceStore
   });
   await new Promise((resolve, reject) => {
     server.once('error', reject);
@@ -88,6 +89,92 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /const STARBUCKS_MERCH_PRODUCTS = STARBUCKS_MERCH_SOURCE\.map/);
   assert.match(page, /const STARBUCKS_PACK_PRODUCTS = STARBUCKS_PACK_SOURCE\.map/);
   assert.match(stylesheet, /#root \.starbucks-campaign-overlay/);
+  assert.match(page, /className="complaint-book-card/);
+  assert.match(page, /aria-label="Abrir el Libro de Reclamaciones virtual/);
+  assert.match(page, /fetch\('\/api\/complaints'/);
+});
+
+test('stores complaint submissions in the configured private backend and returns a receipt', async (t) => {
+  const testDataDir = await createReelsTestDirectory();
+  const submittedComplaints = [];
+  const persistenceStore = {
+    maxVideoBytes: 50 * 1024 * 1024,
+    async loadState() {
+      return null;
+    },
+    async saveState() {},
+    async createComplaint(complaint) {
+      submittedComplaints.push(complaint);
+      return { id: '123e4567-e89b-42d3-a456-426614174000', submittedAt: '2026-01-02T03:04:05.000Z' };
+    }
+  };
+  const server = await createReelsTestServer(t, testDataDir, undefined, persistenceStore);
+  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+  const response = await fetch(`${baseUrl}/api/complaints`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: baseUrl },
+    body: JSON.stringify({
+      kind: 'reclamo',
+      consumerName: 'Cliente de prueba',
+      documentType: 'DNI',
+      documentNumber: '12345678',
+      address: 'Av. de prueba 123',
+      email: 'cliente@example.com',
+      phone: '+51 999 123 456',
+      product: 'Pedido de prueba',
+      amount: '12.50',
+      description: 'El pedido de prueba llegó incompleto y deseo dejar constancia.',
+      request: 'Solicito una respuesta sobre el producto.',
+      privacyConsent: true
+    })
+  });
+  const payload = await response.json();
+
+  assert.equal(response.status, 201);
+  assert.deepEqual(payload.complaint, {
+    id: '123e4567-e89b-42d3-a456-426614174000',
+    submittedAt: '2026-01-02T03:04:05.000Z'
+  });
+  assert.equal(submittedComplaints.length, 1);
+  assert.equal(submittedComplaints[0].consumer_name, 'Cliente de prueba');
+  assert.equal(submittedComplaints[0].document_number, '12345678');
+  assert.equal(submittedComplaints[0].amount, 12.5);
+  assert.equal(submittedComplaints[0].privacy_consent, true);
+  assert.ok(Number.isFinite(Date.parse(submittedComplaints[0].privacy_consented_at)));
+});
+
+test('requires privacy consent and configured Supabase storage for complaint submissions', async (t) => {
+  const testDataDir = await createReelsTestDirectory();
+  const server = await createReelsTestServer(t, testDataDir);
+  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+  const complaint = {
+    kind: 'reclamo',
+    consumerName: 'Cliente de prueba',
+    documentType: 'DNI',
+    documentNumber: '12345678',
+    address: 'Av. de prueba 123',
+    email: 'cliente@example.com',
+    phone: '+51 999 123 456',
+    product: 'Pedido de prueba',
+    amount: '',
+    description: 'El pedido de prueba llegó incompleto y deseo dejar constancia.',
+    request: 'Solicito una respuesta sobre el producto.',
+    privacyConsent: false
+  };
+  const withoutConsent = await fetch(`${baseUrl}/api/complaints`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: baseUrl },
+    body: JSON.stringify(complaint)
+  });
+  assert.equal(withoutConsent.status, 400);
+
+  const notConfigured = await fetch(`${baseUrl}/api/complaints`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: baseUrl },
+    body: JSON.stringify({ ...complaint, privacyConsent: true })
+  });
+  assert.equal(notConfigured.status, 503);
+  assert.match((await notConfigured.json()).error, /no está conectado a Supabase/);
 });
 
 test('serves the offline JavaScript and font assets from local paths', async (t) => {

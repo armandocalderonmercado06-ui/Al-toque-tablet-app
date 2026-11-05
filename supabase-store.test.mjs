@@ -50,6 +50,44 @@ test('uses Supabase secret keys as API keys without treating them as JWTs', asyn
   assert.equal('Authorization' in calls[0].options.headers, false);
 });
 
+test('inserts a complaint through the server-only Supabase client and returns receipt metadata', async () => {
+  const calls = [];
+  const receipt = { id: '123e4567-e89b-42d3-a456-426614174000', submitted_at: '2026-01-02T03:04:05.000Z' };
+  const store = createSupabaseStore({
+    url: 'https://project.supabase.co',
+    serviceRoleKey: 'sb_secret_server-key',
+    fetchImpl: async (url, options) => {
+      calls.push({ url: String(url), options });
+      return new Response(JSON.stringify([receipt]), { status: 201 });
+    }
+  });
+  const complaint = {
+    kind: 'reclamo',
+    consumer_name: 'Cliente de prueba',
+    document_type: 'DNI',
+    document_number: '12345678',
+    address: 'Av. de prueba 123',
+    email: 'cliente@example.com',
+    phone: '+51 999 123 456',
+    product: 'Pedido de prueba',
+    amount: 12.5,
+    description: 'El pedido de prueba llegó incompleto y deseo dejar constancia.',
+    request: 'Solicito una respuesta sobre el producto.',
+    privacy_consent: true,
+    privacy_consented_at: '2026-01-02T03:00:00.000Z'
+  };
+
+  assert.deepEqual(await store.createComplaint(complaint), {
+    id: receipt.id,
+    submittedAt: receipt.submitted_at
+  });
+  assert.match(calls[0].url, /\/rest\/v1\/al_toque_complaints$/);
+  assert.equal(calls[0].options.method, 'POST');
+  assert.equal(calls[0].options.headers.apikey, 'sb_secret_server-key');
+  assert.equal(calls[0].options.headers.Prefer, 'return=representation');
+  assert.deepEqual(JSON.parse(calls[0].options.body), [complaint]);
+});
+
 test('uploads videos, exposes a public URL, and deletes the same object path', async (t) => {
   const directory = await mkdtemp(join(tmpdir(), 'al-toque-supabase-'));
   const filePath = join(directory, 'video.mp4');

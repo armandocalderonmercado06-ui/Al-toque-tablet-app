@@ -790,4 +790,82 @@
     width: 64%;
     height: 64%;
   }
+
+  #root .complaint-book-card {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    min-height: 126px;
+    align-items: center;
+    gap: 14px;
+    overflow: hidden;
+    border: 1px solid #e8cf84;
+    border-radius: 20px;
+    background: linear-gradient(110deg, #fff8e9 0%, #fffdf8 55%, #fff 100%);
+    padding: 10px;
+    color: #3d2522;
+    text-align: left;
+    box-shadow: 0 6px 16px rgb(80 46 25 / 10%);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  #root .complaint-book-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgb(80 46 25 / 14%);
+  }
+
+  #root .complaint-book-card:focus-visible {
+    outline: 3px solid #a90000;
+    outline-offset: 3px;
+  }
+
+  #root .complaint-book-art {
+    position: relative;
+    display: grid;
+    width: 98px;
+    height: 108px;
+    flex: 0 0 98px;
+    place-items: center;
+    border-radius: 3px;
+    background: #b20d3c;
+    box-shadow: 4px 4px 0 #f0d98f, 6px 8px 12px rgb(75 38 29 / 20%);
+    transform: rotate(-1.5deg);
+    transition: transform 300ms ease;
+  }
+
+  #root .complaint-book-card:hover .complaint-book-art {
+    transform: rotate(0) translateY(-2px);
+  }
+
+  #root .complaint-book-art > svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  #root .complaint-book-art text {
+    font-size: 7.5px !important;
+  }
+
+  #root .complaint-book-page {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    animation: complaint-book-page-lift 3.8s ease-in-out infinite;
+  }
+
+  #root .complaint-book-page--right {
+    animation-delay: 180ms;
+  }
+
+  @keyframes complaint-book-page-lift {
+    0%, 82%, 100% { transform: rotate(0); }
+    92% { transform: rotate(-8deg) translateY(-1px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #root .complaint-book-card,
+    #root .complaint-book-page {
+      animation: none;
+      transition: none;
+    }
+  }
 }

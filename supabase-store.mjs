@@ -54,6 +54,26 @@ export function createSupabaseStore({
     await consumeResponse(response);
   }
 
+  async function createComplaint(complaint) {
+    const response = await fetchImpl(`${baseUrl}/rest/v1/al_toque_complaints`, {
+      method: 'POST',
+      headers: {
+        ...authorizationHeaders,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation'
+      },
+      body: JSON.stringify([complaint])
+    });
+    assertSuccessful(response, 'complaint write');
+    const rows = await response.json();
+    if (!Array.isArray(rows) || rows.length !== 1
+      || typeof rows[0]?.id !== 'string'
+      || typeof rows[0]?.submitted_at !== 'string') {
+      throw new Error('Supabase returned an invalid complaint response.');
+    }
+    return { id: rows[0].id, submittedAt: rows[0].submitted_at };
+  }
+
   function videoObjectPath(video) {
     const extension = video.mimeType === 'video/mp4' ? 'mp4' : 'webm';
     return `${video.id}.${extension}`;
@@ -98,6 +118,7 @@ export function createSupabaseStore({
     maxVideoBytes: MAX_SUPABASE_VIDEO_BYTES,
     loadState,
     saveState,
+    createComplaint,
     uploadVideo,
     deleteVideo,
     publicVideoUrl
