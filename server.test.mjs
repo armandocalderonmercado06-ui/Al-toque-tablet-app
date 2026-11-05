@@ -78,6 +78,16 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /aria-label="Información del campus" aria-roledescription="carrusel"/);
   assert.match(page, /timeZone: 'America\/Lima'/);
   assert.match(stylesheet, /#root \.home-feature-carousel/);
+  assert.match(page, /name: 'Vaso de emoliente y Pan con Queso'/);
+  assert.match(page, /image: 'https:\/\/al-toque-upch\.onrender\.com\/desayuno-emoliente-pan-queso\.png'/);
+  assert.match(page, /id: 'desayunos', label: 'Desayunos'/);
+  assert.match(page, /\{ id: 'alimentos', label: 'Alimentos' \}/);
+  assert.match(page, /\{ id: 'merch', label: 'Merch & Café en Grano' \}/);
+  assert.match(page, /\{ id: 'packs', label: 'Packs & Boxes' \}/);
+  assert.match(page, /const STARBUCKS_FOOD_PRODUCTS = STARBUCKS_FOOD_SOURCE\.map/);
+  assert.match(page, /const STARBUCKS_MERCH_PRODUCTS = STARBUCKS_MERCH_SOURCE\.map/);
+  assert.match(page, /const STARBUCKS_PACK_PRODUCTS = STARBUCKS_PACK_SOURCE\.map/);
+  assert.match(stylesheet, /#root \.starbucks-campaign-overlay/);
 });
 
 test('serves the offline JavaScript and font assets from local paths', async (t) => {
