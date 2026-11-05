@@ -3212,7 +3212,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=46" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=48" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -5456,31 +5456,27 @@
         else localStorage.removeItem('altoque_current_order');
       }, [liveOrderId]);
 
+      const handleContentScroll = (event) => {
+        const content = event.currentTarget;
+        const currentScrollTop = content.scrollTop;
+        const previousScrollTop = lastContentScrollTopRef.current;
+
+        if (currentScrollTop > previousScrollTop) {
+          setIsPlayerVisible(false);
+          setIsPlayerHiddenOnScroll(true);
+        } else if (currentScrollTop < previousScrollTop || currentScrollTop <= 2) {
+          setIsPlayerVisible(true);
+          setIsPlayerHiddenOnScroll(false);
+        }
+
+        lastContentScrollTopRef.current = currentScrollTop;
+      };
+
       useEffect(() => {
         const content = contentRef.current;
         if (!content) return;
- 
-        const handleContentScroll = () => {
-          const currentScrollTop = content.scrollTop;
-          const previousScrollTop = lastContentScrollTopRef.current;
-          const scrollingDown = currentScrollTop > previousScrollTop + 2;
-          const scrollingUp = currentScrollTop < previousScrollTop - 2;
 
-          if (scrollingDown) {
-            setIsPlayerVisible(false);
-            setIsPlayerHiddenOnScroll(true);
-          } else if (scrollingUp || currentScrollTop <= 2) {
-            setIsPlayerVisible(true);
-            setIsPlayerHiddenOnScroll(false);
-          }
-
-          lastContentScrollTopRef.current = currentScrollTop;
-        };
-
-        content.addEventListener('scroll', handleContentScroll, { passive: true });
-        return () => {
-          content.removeEventListener('scroll', handleContentScroll);
-        };
+        lastContentScrollTopRef.current = content.scrollTop;
       }, [showSplash]);
 
       useEffect(() => {
@@ -5699,7 +5695,11 @@
             </div>
           )}
 
-          <div ref={contentRef} className={`min-h-0 flex-1 no-scrollbar ${activeTab === 'reels' ? 'overflow-hidden p-0' : 'overflow-y-auto px-4 pb-20 pt-2'}`}>
+          <div
+            ref={contentRef}
+            onScroll={handleContentScroll}
+            className={`min-h-0 flex-1 no-scrollbar ${activeTab === 'reels' ? 'overflow-hidden p-0' : 'overflow-y-auto px-4 pb-20 pt-2'}`}
+          >
             <MusicPlayer
               isVisible={isPlayerVisible && activeTab === 'home'}
               isOnHome={activeTab === 'home'}
@@ -5718,6 +5718,7 @@
                 onOpenCustomize={setCustomizingDish}
                 mood={homeMood}
                 setMood={setHomeMood}
+                isHeaderHidden={isTabletLayout && isPlayerHiddenOnScroll}
                 showMusicButton={isTabletLayout}
                 onOpenMusic={() => {
                   setPlayerSize('large');
@@ -7621,7 +7622,7 @@
       );
     }
 
-    function HomeScreen({ onNavigate, onOpenCustomize, mood, setMood, showMusicButton, onOpenMusic }) {
+    function HomeScreen({ onNavigate, onOpenCustomize, mood, setMood, isHeaderHidden, showMusicButton, onOpenMusic }) {
       const [timeString, setTimeString] = useState('');
       const [dayPart, setDayPart] = useState(() => getDayPart(new Date().getHours()));
       const [headline, setHeadline] = useState('');
@@ -7702,7 +7703,11 @@
 
       return (
         <div className="space-y-5">
-          <div className="home-top-bar navbar-container flex items-center justify-between pt-2">
+          <div
+            className={`home-top-bar navbar-container flex items-center justify-between pt-2${isHeaderHidden ? ' navbar-hidden-on-scroll' : ''}`}
+            aria-hidden={isHeaderHidden}
+            inert={isHeaderHidden ? '' : undefined}
+          >
             <div className="navbar-content flex items-center gap-3">
               <img src="Captura de pantalla 2026-09-24 145818.png" alt="Logo Al Toque" className="w-10 h-10 rounded-full object-cover border border-brand/20" />
               <div>
