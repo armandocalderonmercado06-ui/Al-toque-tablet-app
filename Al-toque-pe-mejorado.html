@@ -11332,9 +11332,9 @@
 
                     <div className="flex items-center space-x-2">
                       <div className="flex items-center space-x-1 bg-cream rounded-lg p-1">
-                        <button onClick={() => updateQuantity(item.cartId, -1)} className="w-5 h-5 bg-white rounded flex items-center justify-center font-bold text-xs">-</button>
+                        <button onClick={() => updateQuantity(item.cartId, -1)} aria-label={`Quitar una unidad de ${item.name}`} className="w-5 h-5 bg-white rounded flex items-center justify-center font-bold text-xs">-</button>
                         <span className="text-xs font-bold px-1">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.cartId, 1)} className="w-5 h-5 bg-white rounded flex items-center justify-center font-bold text-xs">+</button>
+                        <button onClick={() => updateQuantity(item.cartId, 1)} aria-label={`Agregar una unidad de ${item.name}`} className="w-5 h-5 bg-white rounded flex items-center justify-center font-bold text-xs">+</button>
                       </div>
                       <button onClick={() => removeFromCart(item.cartId)} aria-label="Eliminar producto" className="text-gray-400 hover:text-red-500 p-1">
                         <i data-lucide="trash-2" className="w-4 h-4"></i>
@@ -11353,7 +11353,7 @@
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2" role="group" aria-label="Método de pago">
                   {[
                     { id: 'yape', name: 'Yape', icon: 'smartphone' },
                     { id: 'plin', name: 'Plin', icon: 'zap' },
@@ -11363,6 +11363,7 @@
                     <button
                       key={method.id}
                       onClick={() => setPaymentMethod(method.id)}
+                      aria-pressed={paymentMethod === method.id}
                       className={`flex items-center justify-center space-x-2 p-2.5 rounded-2xl border transition ${
                         paymentMethod === method.id ? 'border-brand bg-brand/5 text-brand font-bold' : 'border-gray-200 bg-white text-gray-600'
                       }`}
