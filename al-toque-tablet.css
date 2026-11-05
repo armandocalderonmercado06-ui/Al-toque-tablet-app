@@ -737,7 +737,7 @@
     position: fixed;
     z-index: 55;
     right: max(16px, env(safe-area-inset-right, 0px));
-    bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    top: max(16px, env(safe-area-inset-top, 0px));
   }
 
   #root .tablet-fullscreen-control > button {
@@ -771,7 +771,7 @@
   #root .tablet-fullscreen-error {
     position: absolute;
     right: 0;
-    bottom: calc(100% + 8px);
+    top: calc(100% + 8px);
     max-width: min(320px, calc(100vw - 32px));
     border-radius: 12px;
     background: #2b1718;

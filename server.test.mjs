@@ -77,6 +77,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(stylesheet, /@media \(min-width: 768px\)/);
   assert.match(stylesheet, /#root\s*\{\s*width:\s*100vw\s*!important;\s*max-width:\s*none\s*!important;\s*height:\s*100dvh\s*!important;/);
   assert.match(stylesheet, /padding:\s*0\s*!important;/);
+  assert.match(stylesheet, /#root \.tablet-fullscreen-control\s*\{[^}]*top:\s*max\(16px,\s*env\(safe-area-inset-top,\s*0px\)\);/s);
   assert.match(page, /viewport-fit=cover/);
   assert.match(page, /aria-label=\{isFullscreen \? 'Salir de pantalla completa' : 'Ver en pantalla completa'\}/);
   assert.match(page, /requestFullscreen\(\{ navigationUI: 'hide' \}\)/);
