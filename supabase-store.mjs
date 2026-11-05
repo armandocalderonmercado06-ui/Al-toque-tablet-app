@@ -24,10 +24,10 @@ export function createSupabaseStore({
     throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required when DATA_BACKEND=supabase.');
   }
   const baseUrl = url.replace(/\/+$/, '');
-  const authorizationHeaders = {
-    apikey: serviceRoleKey,
-    Authorization: `Bearer ${serviceRoleKey}`
-  };
+  const authorizationHeaders = { apikey: serviceRoleKey };
+  if (!serviceRoleKey.startsWith('sb_secret_')) {
+    authorizationHeaders.Authorization = `Bearer ${serviceRoleKey}`;
+  }
 
   async function loadState(key) {
     const query = new URLSearchParams({ key: `eq.${key}`, select: 'state' });

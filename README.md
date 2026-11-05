@@ -23,8 +23,8 @@ Configura estas variables en el servidor:
 
 - `DATA_BACKEND=supabase`
 - `SUPABASE_URL`: URL del proyecto Supabase.
-- `SUPABASE_SERVICE_ROLE_KEY`: clave de servicio privada; no la incluyas en Git
-  ni en el navegador.
+- `SUPABASE_SERVICE_ROLE_KEY`: clave secreta privada del proyecto (`sb_secret_...`)
+  o la clave heredada `service_role`; no la incluyas en Git ni en el navegador.
 - `REELS_DELETE_PASSWORD`: contraseña privada para habilitar la eliminación
   de Reels.
 

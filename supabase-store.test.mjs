@@ -34,6 +34,22 @@ test('reads and upserts persisted JSON state using the server-only key', async (
   }]);
 });
 
+test('uses Supabase secret keys as API keys without treating them as JWTs', async () => {
+  const calls = [];
+  const store = createSupabaseStore({
+    url: 'https://project.supabase.co',
+    serviceRoleKey: 'sb_secret_server-key',
+    fetchImpl: async (url, options) => {
+      calls.push({ url: String(url), options });
+      return new Response(JSON.stringify([]), { status: 200 });
+    }
+  });
+
+  assert.equal(await store.loadState('orders'), null);
+  assert.equal(calls[0].options.headers.apikey, 'sb_secret_server-key');
+  assert.equal('Authorization' in calls[0].options.headers, false);
+});
+
 test('uploads videos, exposes a public URL, and deletes the same object path', async (t) => {
   const directory = await mkdtemp(join(tmpdir(), 'al-toque-supabase-'));
   const filePath = join(directory, 'video.mp4');
