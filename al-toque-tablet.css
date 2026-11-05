@@ -111,7 +111,7 @@
     max-width: 100%;
     box-sizing: border-box;
     flex-wrap: nowrap;
-    overflow: hidden;
+    overflow: visible;
     padding: 10px 20px;
     position: sticky;
     top: 0;
@@ -129,11 +129,16 @@
 
   #root .navbar-content {
     flex: 1 1 auto;
-    overflow: hidden;
+    overflow: visible;
+  }
+
+  #root .navbar-content > img {
+    flex: 0 0 40px;
   }
 
   #root .navbar-content > div {
     min-width: 0;
+    flex: 0 1 auto;
   }
 
   #root .navbar-content h1,
