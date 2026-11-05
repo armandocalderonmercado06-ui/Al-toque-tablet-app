@@ -3212,7 +3212,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=57" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=59" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -7972,11 +7972,28 @@
       const seenMessagesRef = useRef(HOME_SEEN_MESSAGES_BY_MOOD);
       const handleHomeProductPointerState = (event) => {
         if (event.pointerType !== 'touch') return;
+        const card = event.currentTarget;
+        const image = card.querySelector('.home-pop-card-media');
         if (event.type === 'pointerdown') {
-          event.currentTarget.dataset.touchActive = 'true';
-        } else {
-          delete event.currentTarget.dataset.touchActive;
+          card.dataset.touchStartX = String(event.clientX);
+          card.dataset.touchStartY = String(event.clientY);
+          if (image) delete image.dataset.touchActive;
+          return;
         }
+        if (event.type === 'pointermove') {
+          const startX = Number(card.dataset.touchStartX);
+          const startY = Number(card.dataset.touchStartY);
+          const movedOverImage = event.target.closest('.home-pop-card-media');
+          if (image && movedOverImage && Math.hypot(event.clientX - startX, event.clientY - startY) > 8) {
+            image.dataset.touchActive = 'true';
+          } else if (image) {
+            delete image.dataset.touchActive;
+          }
+          return;
+        }
+        delete card.dataset.touchStartX;
+        delete card.dataset.touchStartY;
+        if (image) delete image.dataset.touchActive;
       };
       const handleHomeProductSelection = (event, dish) => {
         const card = event.currentTarget;
@@ -8262,7 +8279,7 @@
                     event.preventDefault();
                     handleHomeProductSelection(event, dish);
                   }
-                }} className="home-pop-card min-w-[220px] bg-white border border-gray-100 rounded-3xl p-2.5 shadow-sm flex flex-col justify-between cursor-pointer text-left" onPointerDown={handleHomeProductPointerState} onPointerUp={handleHomeProductPointerState} onPointerCancel={handleHomeProductPointerState} onPointerLeave={handleHomeProductPointerState}>
+                }} className="home-pop-card min-w-[220px] bg-white border border-gray-100 rounded-3xl p-2.5 shadow-sm flex flex-col justify-between cursor-pointer text-left" onPointerDown={handleHomeProductPointerState} onPointerMove={handleHomeProductPointerState} onPointerUp={handleHomeProductPointerState} onPointerCancel={handleHomeProductPointerState} onPointerLeave={handleHomeProductPointerState}>
                   <div className="home-pop-card-media relative h-28 rounded-2xl overflow-hidden mb-2">
                     <img src={dish.image} alt={dish.name} className="w-full h-full object-cover" />
                     <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-[10px] font-bold px-2 py-0.5 rounded-full text-dark">{dish.badge}</span>
@@ -8297,7 +8314,7 @@
                     event.preventDefault();
                     handleHomeProductSelection(event, dish);
                   }
-                }} className="home-pop-card combo-card min-w-[220px] bg-white border border-gray-100 rounded-3xl p-2.5 shadow-sm flex flex-col justify-between cursor-pointer text-left" onPointerDown={handleHomeProductPointerState} onPointerUp={handleHomeProductPointerState} onPointerCancel={handleHomeProductPointerState} onPointerLeave={handleHomeProductPointerState}>
+                }} className="home-pop-card combo-card min-w-[220px] bg-white border border-gray-100 rounded-3xl p-2.5 shadow-sm flex flex-col justify-between cursor-pointer text-left" onPointerDown={handleHomeProductPointerState} onPointerMove={handleHomeProductPointerState} onPointerUp={handleHomeProductPointerState} onPointerCancel={handleHomeProductPointerState} onPointerLeave={handleHomeProductPointerState}>
                   <div className="home-pop-card-media relative h-36 rounded-2xl overflow-hidden mb-2">
                     <img src={dish.image} alt={dish.name} className="combo-card-image w-full h-full object-cover" />
                     <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-[10px] font-bold px-2 py-0.5 rounded-full text-dark">{dish.badge}</span>

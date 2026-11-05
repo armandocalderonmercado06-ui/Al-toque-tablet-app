@@ -618,33 +618,22 @@
   @media (hover: hover) and (pointer: fine) {
     #root .home-pop-card:hover {
       z-index: 2;
-      transform: translateY(-4px) rotateX(2deg) rotateY(-1deg);
       box-shadow: 0 16px 30px rgb(55 38 20 / 16%);
     }
 
-    #root .home-pop-card:hover .home-pop-card-media > img {
+    #root .home-pop-card-media:hover > img {
       transform: perspective(1000px) translateZ(24px) scale(1.06);
       filter: drop-shadow(0 10px 8px rgb(43 23 24 / 22%));
     }
   }
 
-  #root .home-pop-card:focus-within .home-pop-card-media > img,
-  #root .home-pop-card:has(:active) .home-pop-card-media > img {
-    transform: perspective(1000px) translateZ(24px) scale(1.05);
-    filter: drop-shadow(0 9px 7px rgb(43 23 24 / 20%));
+  #root .home-pop-card-media[data-touch-active="true"] {
+    z-index: 2;
   }
 
-  @media (hover: none) and (pointer: coarse) {
-    #root .home-pop-card[data-touch-active="true"] {
-      z-index: 2;
-      transform: translateY(-2px) rotateX(1deg) scale(1.01);
-      box-shadow: 0 12px 24px rgb(55 38 20 / 15%);
-    }
-
-    #root .home-pop-card[data-touch-active="true"] .home-pop-card-media > img {
-      transform: perspective(1000px) translateZ(24px) scale(1.05);
-      filter: drop-shadow(0 9px 7px rgb(43 23 24 / 20%));
-    }
+  #root .home-pop-card-media[data-touch-active="true"] > img {
+    transform: perspective(1000px) translateZ(24px) scale(1.05) !important;
+    filter: drop-shadow(0 9px 7px rgb(43 23 24 / 20%)) !important;
   }
 
   #root section[aria-labelledby="reels-title"] video {
