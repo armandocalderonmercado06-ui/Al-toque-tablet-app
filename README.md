@@ -7,7 +7,8 @@ las rutas `/api`; no se puede alojar como una pagina estatica en GitHub Pages.
 
 - Requiere Node.js 20.6 o posterior.
 - Ejecuta `npm start` y abre `http://localhost:4173`.
-- El diseño tablet se carga automáticamente desde 768 px; inicia la app con el servidor, no abriendo el CSS directamente.
+- El diseño tablet se carga automáticamente desde 768 px; usa todo el viewport sin márgenes y se adapta a la orientación de la pantalla.
+- En tablets, el botón de pantalla completa de la esquina inferior derecha activa o desactiva el modo inmersivo del navegador. También se puede salir con la tecla Esc.
 - Copia `.env.example` a `.env` para configurar integraciones opcionales.
 - Define `REELS_DELETE_PASSWORD` con una clave privada para habilitar la
   eliminacion de Reels. Sin ella, esa operacion falla de forma cerrada.
