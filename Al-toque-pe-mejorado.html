@@ -3212,7 +3212,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=36" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=37" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -5702,6 +5702,10 @@
               isVisible={isPlayerVisible && activeTab === 'home'}
               isOnHome={activeTab === 'home'}
               isHiddenOnScroll={isPlayerHiddenOnScroll}
+              onShow={() => {
+                setIsPlayerVisible(true);
+                setIsPlayerHiddenOnScroll(false);
+              }}
             />
             {activeTab === 'home' && <HomeScreen onNavigate={setActiveTab} onOpenCustomize={setCustomizingDish} mood={homeMood} setMood={setHomeMood} />}
             {activeTab === 'menu' && (
@@ -5854,9 +5858,10 @@
       }
     ];
 
-    function MusicPlayer({ isVisible, isOnHome, isHiddenOnScroll }) {
+    function MusicPlayer({ isVisible, isOnHome, isHiddenOnScroll, onShow }) {
+      const isTabletLayout = window.matchMedia('(min-width: 768px)').matches;
       const [playerSize, setPlayerSize] = useState(
-        () => window.matchMedia('(min-width: 768px)').matches ? 'compact' : 'large'
+        () => isTabletLayout ? 'compact' : 'large'
       );
       const [currentTrack, setCurrentTrack] = useState(PLAYER_TRACKS[0]);
       const [audioHelp, setAudioHelp] = useState(null);
@@ -5871,6 +5876,7 @@
       const [duration, setDuration] = useState(0);
       const audioRef = useRef(null);
       const isCompact = playerSize === 'compact';
+      const shouldHideOnScroll = isCompact && isHiddenOnScroll && !isTabletLayout;
       const isLocalTrack = Boolean(currentTrack.audio);
       const isYouTubeTrack = currentTrack.provider === 'youtube';
       const audioMackUrl = isLocalTrack
@@ -5888,6 +5894,12 @@
       if (playerUrl) {
         playerUrl.searchParams.set(isYouTubeTrack ? 'playsinline' : 'background', '1');
       }
+
+      useEffect(() => {
+        if (isTabletLayout && isHiddenOnScroll) {
+          setPlayerSize('compact');
+        }
+      }, [isHiddenOnScroll, isTabletLayout]);
 
       useEffect(() => {
         if (audioRef.current) {
@@ -5954,8 +5966,8 @@
           className={isCompact
             ? `relative z-10 mx-1 w-[calc(100%-0.5rem)] self-end shrink-0 overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-b from-[#49321f] via-[#35261b] to-[#201b17] shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-[max-height,margin,opacity,transform] duration-700 ease-in-out ${isHiddenOnScroll ? 'mb-0 max-h-0 -translate-y-full border-transparent opacity-0 pointer-events-none' : 'mb-1 max-h-[260px] translate-y-0 opacity-100'}`
             : 'relative z-10 mx-3 mb-3 shrink-0 overflow-hidden rounded-[26px] border border-[#eceef2] bg-white shadow-[0_10px_24px_rgba(15,23,42,0.06)]'}
-          aria-hidden={!isOnHome || (isCompact && isHiddenOnScroll)}
-          inert={!isOnHome || (isCompact && isHiddenOnScroll) ? '' : undefined}
+          aria-hidden={!isOnHome || shouldHideOnScroll}
+          inert={!isOnHome || shouldHideOnScroll ? '' : undefined}
           aria-label="Reproductor de música"
           aria-live="polite"
         >
@@ -6186,7 +6198,10 @@
           {isCompact && (
             <button
               type="button"
-              onClick={() => setPlayerSize('large')}
+              onClick={() => {
+                setPlayerSize('large');
+                onShow();
+              }}
               className="absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full border border-white/20 bg-black/25 text-white shadow-sm backdrop-blur-sm"
               aria-label="Ampliar reproductor"
               title="Ampliar reproductor"

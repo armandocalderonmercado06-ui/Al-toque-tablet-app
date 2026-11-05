@@ -79,10 +79,10 @@
   }
 
   #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) {
-    position: absolute;
-    z-index: 20;
-    top: 30px;
-    right: 101px;
+    position: fixed;
+    z-index: 60;
+    top: 50px;
+    right: max(120px, calc((100vw - 1200px) / 2 + 120px));
     width: 38px;
     height: 38px;
     max-height: 38px !important;
@@ -93,6 +93,8 @@
     border-radius: 12px;
     background: transparent;
     box-shadow: none;
+    opacity: 1 !important;
+    pointer-events: auto !important;
     transform: none;
   }
 
