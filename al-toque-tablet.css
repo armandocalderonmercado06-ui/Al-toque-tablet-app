@@ -462,12 +462,12 @@
 
   #root .splash-screen > .brand-splash-content,
   #root .splash-screen > .brand-splash-reference {
-    transform: scale(3);
+    transform: scale(1.5);
   }
 
   #root .splash-screen .splash-sticker {
-    width: 174px;
-    height: 174px;
+    width: 87px;
+    height: 87px;
   }
 
   #root .app-watermark {
