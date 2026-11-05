@@ -112,19 +112,9 @@
     box-sizing: border-box;
     flex-wrap: nowrap;
     overflow: visible;
-    padding: 34px 20px 10px;
-    position: sticky;
-    top: 0;
+    padding: 10px 20px;
     z-index: 40;
     background: #fff !important;
-    transition: opacity 100ms ease-out, transform 100ms ease-out;
-  }
-
-  #root .navbar-container.navbar-hidden-on-scroll {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-100%);
-    visibility: hidden;
   }
 
   #root .navbar-content,
