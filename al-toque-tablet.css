@@ -1,0 +1,475 @@
+@media (min-width: 768px) {
+  #root,
+  #root * {
+    font-size: 16px !important;
+  }
+
+  #root .bg-dark {
+    background-color: #2b1718 !important;
+    color: #fffaf1 !important;
+  }
+
+  #root .bg-brand {
+    background-color: #a50f2d !important;
+    color: #fff !important;
+  }
+
+  #root .bg-brand:disabled {
+    background-color: #6b6261 !important;
+    opacity: 1 !important;
+  }
+
+  #root .bg-yellow-accent {
+    background-color: #ffe7a0 !important;
+    color: #351c1c !important;
+  }
+
+  #root .text-yellow-accent {
+    color: #ffe7a0 !important;
+  }
+
+  #root .text-gray-400 {
+    color: #6b6261 !important;
+  }
+
+  #root input::placeholder,
+  #root textarea::placeholder {
+    color: #6b6261 !important;
+    opacity: 1;
+  }
+
+  #root nav[aria-label="Navegación principal"] button.text-gray-400 {
+    color: #6b6261 !important;
+  }
+
+  #root button[aria-label="Subir foto de perfil"] > span,
+  #root button[aria-label="Cambiar foto de perfil"] > span {
+    opacity: 1;
+    background-color: rgb(43 23 24 / 58%);
+  }
+
+  body {
+    box-sizing: border-box;
+    min-height: 100dvh;
+    padding: 20px !important;
+    background: #f3f4f6;
+  }
+
+  #root {
+    width: 100% !important;
+    max-width: 1200px !important;
+    height: calc(100dvh - 40px) !important;
+    max-height: 1100px;
+    border: 1px solid #e8e3d8 !important;
+    border-radius: 28px !important;
+    box-shadow: 0 18px 55px rgb(34 31 25 / 12%);
+  }
+
+  #root > .flex.flex-col.h-full {
+    min-height: 0;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="h-6"][class*="items-center"] {
+    display: none;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] {
+    position: relative;
+    padding: 24px clamp(24px, 5vw, 64px) 104px !important;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) {
+    position: absolute;
+    z-index: 20;
+    top: 30px;
+    right: 96px;
+    width: 38px;
+    height: 38px;
+    max-height: 38px !important;
+    min-height: 38px;
+    margin: 0;
+    overflow: visible !important;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :first-child {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    z-index: auto;
+    background: transparent !important;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) > div > div[class*="h-[250px]"] {
+    display: none;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) button[aria-label="Ampliar reproductor"] {
+    top: 2px;
+    right: 2px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 12px;
+    background: #a90000;
+    color: #fff;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) button[aria-label="Ampliar reproductor"] svg {
+    display: none;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > section[aria-label="Reproductor de música"]:has(button[aria-label="Ampliar reproductor"]) button[aria-label="Ampliar reproductor"]::before {
+    content: "♫";
+    font-size: 22px !important;
+    line-height: 1;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 24px;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > * {
+    min-width: 0;
+    margin-top: 0 !important;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :first-child > div:last-child {
+    gap: 50px;
+  }
+
+  #root .home-luxury-card {
+    min-height: 250px;
+    padding: clamp(24px, 4vw, 48px);
+  }
+
+  #root .home-luxury-card > div {
+    align-items: center;
+    gap: clamp(20px, 5vw, 64px);
+  }
+
+  #root .home-ai-sticker {
+    width: clamp(120px, 20vw, 210px);
+    height: clamp(120px, 20vw, 210px);
+    object-fit: contain;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"],
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    overflow: visible;
+    margin: 0;
+    padding: 14px 0 8px;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > *,
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border-color: #eee8dc;
+    border-radius: 22px;
+    box-shadow: 0 8px 22px rgb(55 38 20 / 7%);
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > * > :first-child,
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * > :first-child {
+    height: clamp(176px, 19vw, 208px) !important;
+    min-height: clamp(176px, 19vw, 208px);
+    flex: 0 0 clamp(176px, 19vw, 208px);
+    aspect-ratio: auto;
+    background: #fffaf0;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > * > :first-child > img,
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * > :first-child > img,
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 > .space-y-4 > div > [class*="h-36"] > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;
+    object-position: center;
+    background: #fffaf0;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 > .space-y-4:has(> div > [class*="h-36"]) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    align-items: start;
+    gap: 18px;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 > .space-y-4:has(> div > [class*="h-36"]) > div {
+    min-width: 0;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > [class*="space-y-4"] section[aria-labelledby="starbucks-menu-title"] article > div:first-child > img {
+    object-fit: contain !important;
+  }
+
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img),
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article {
+    position: relative;
+    z-index: 0;
+    overflow: visible;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    transition: transform 320ms cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 320ms ease;
+  }
+
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img) > div.relative.h-36,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article > div.relative.h-48,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article > div.relative.mb-2 {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img) > div.relative.h-36 > img,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article > div.relative.h-48 > img,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article > div.relative.mb-2 > img {
+    position: relative;
+    z-index: 2;
+    border-radius: 14px;
+    transform: translateZ(0);
+    transform-origin: center;
+    animation: tabletFoodImagePopIn 650ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+    transition: transform 360ms cubic-bezier(0.2, 0.75, 0.25, 1), filter 360ms ease;
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img):hover,
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article:hover,
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article:hover {
+      z-index: 3;
+      transform: translateY(-5px) rotateX(2deg) rotateY(-1deg);
+      box-shadow: 0 16px 30px rgb(55 38 20 / 16%);
+    }
+
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img):hover > div.relative.h-36 > img,
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article:hover > div.relative.h-48 > img,
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article:hover > div.relative.mb-2 > img {
+      transform: perspective(1000px) translateZ(24px) scale(1.06);
+      filter: drop-shadow(0 10px 8px rgb(43 23 24 / 22%));
+    }
+  }
+
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img):focus-within,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article:focus-within,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article:focus-within,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img):has(:active),
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article:has(:active),
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article:has(:active) {
+    z-index: 3;
+    transform: translateY(-2px) rotateX(1deg) scale(1.01);
+    box-shadow: 0 12px 24px rgb(55 38 20 / 15%);
+  }
+
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img):focus-within > div.relative.h-36 > img,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article:focus-within > div.relative.h-48 > img,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article:focus-within > div.relative.mb-2 > img,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img):has(:active) > div.relative.h-36 > img,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article:has(:active) > div.relative.h-48 > img,
+  #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article:has(:active) > div.relative.mb-2 > img {
+    transform: perspective(1000px) translateZ(20px) scale(1.05);
+    filter: drop-shadow(0 9px 7px rgb(43 23 24 / 20%));
+  }
+
+  #root .october-promo-product-image {
+    object-fit: contain;
+  }
+
+  #root button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #root button:active {
+    filter: brightness(0.94);
+  }
+
+  #root button:focus-visible {
+    outline: 2px solid #c5a45c;
+    outline-offset: 3px;
+  }
+
+  #root .home-mood-option:active,
+  #root button[aria-label="Abrir Reels"]:active,
+  #root button[aria-label="Ir a Perfil"]:active,
+  #root button[aria-label="Probar IA Al Toque"]:active {
+    transform: scale(0.96);
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > *,
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * {
+    position: relative;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    transition: transform 320ms cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 320ms ease;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > * > :first-child,
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * > :first-child {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > * > :first-child > img,
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * > :first-child > img {
+    border-radius: 16px;
+    transform: translateZ(0);
+    transform-origin: center;
+    animation: tabletFoodImagePopIn 650ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+    transition: transform 360ms cubic-bezier(0.2, 0.75, 0.25, 1), filter 360ms ease;
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+
+  @keyframes tabletFoodImagePopIn {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > :hover,
+    #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > :hover {
+      z-index: 2;
+      transform: translateY(-4px) rotateX(2deg) rotateY(-1deg);
+      box-shadow: 0 16px 30px rgb(55 38 20 / 16%);
+    }
+
+    #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > :hover > :first-child > img,
+    #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > :hover > :first-child > img {
+      transform: perspective(1000px) translateZ(24px) scale(1.06);
+      filter: drop-shadow(0 10px 8px rgb(43 23 24 / 22%));
+    }
+  }
+
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > :focus-within > :first-child > img,
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > :focus-within > :first-child > img,
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > :has(:active) > :first-child > img,
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > :has(:active) > :first-child > img {
+    transform: perspective(1000px) translateZ(24px) scale(1.05);
+    filter: drop-shadow(0 9px 7px rgb(43 23 24 / 20%));
+  }
+
+  #root section[aria-labelledby="reels-title"] video {
+    object-fit: contain;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > *,
+    #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > *,
+    #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > * > :first-child > img,
+    #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * > :first-child > img {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img),
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article,
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article,
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 div:has(> div.relative.h-36 > img) > div.relative.h-36 > img,
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="bembos-promotions-title"] article > div.relative.h-48 > img,
+    #root:has(> .flex.flex-col.h-full > nav[aria-label="Navegación principal"] button:nth-child(2)[aria-current="page"]) > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 section[aria-labelledby="starbucks-menu-title"] article > div.relative.mb-2 > img {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  #root nav[aria-label="Navegación principal"] {
+    left: 8px;
+    right: 8px;
+    height: 100px;
+    min-height: 100px;
+    padding: 18px 12px 24px;
+    overflow: visible;
+    border: 1px solid #e1e4f2;
+    border-radius: 14px 14px 22px 22px;
+    background: linear-gradient(180deg, #edf0fb 0, rgb(255 255 255 / 98%) 14px);
+    box-shadow: 0 -6px 18px rgb(52 61 98 / 10%);
+  }
+
+  #root nav[aria-label="Navegación principal"] > div {
+    width: 100%;
+    max-width: none;
+    height: 54px;
+    gap: 10px;
+  }
+
+  #root nav[aria-label="Navegación principal"] button {
+    flex: 1 1 0%;
+    min-height: 54px;
+    height: 54px;
+    padding: 3px 8px;
+    gap: 2px;
+    border: 1px solid #dedde8;
+    border-radius: 10px;
+    background: rgb(255 255 255 / 82%);
+    color: #201718;
+  }
+
+  #root nav[aria-label="Navegación principal"] button.bottom-nav-ai-option {
+    z-index: 2;
+    height: 70px;
+    min-height: 70px;
+    transform: translateY(-13px);
+    border-color: #dacbff;
+    border-radius: 17px;
+    background: linear-gradient(145deg, #fff5ff, #f3f0ff 58%, #e8fbf2);
+    box-shadow: 0 5px 13px rgb(133 93 194 / 14%);
+    color: #8051b0;
+  }
+
+  #root nav[aria-label="Navegación principal"] button[aria-current="page"]:not(.bottom-nav-ai-option) {
+    border-color: #e8c9d0;
+    background: #fffafa;
+    color: #a90000;
+  }
+
+  #root nav[aria-label="Navegación principal"] button:focus-visible {
+    outline: 3px solid rgb(169 0 0 / 28%);
+    outline-offset: 2px;
+  }
+
+  #root nav[aria-label="Navegación principal"] button > span:first-child {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+  }
+
+  #root nav[aria-label="Navegación principal"] button > span:first-child svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  #root .app-watermark {
+    left: 8px;
+    width: calc(100% - 16px);
+    bottom: 2px;
+    z-index: 45;
+    padding: 0 12px;
+    color: #6b6261;
+    font-size: 16px !important;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 0 0 22px 22px;
+  }
+}
