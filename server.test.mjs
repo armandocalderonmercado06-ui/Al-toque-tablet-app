@@ -120,6 +120,12 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /salesUpdates: false/);
   assert.match(page, /Correo para tu pedido o promociones \(opcional\)/);
   assert.match(page, /fetch\('\/api\/marketing\/subscribe'/);
+  assert.match(page, /function CartScreen\(\{[^}]*setPickupPoint/);
+  assert.match(page, /aria-label="Elige un punto de recojo"/);
+  assert.match(page, /name: 'En la puerta principal'/);
+  assert.match(page, /name: 'En el patio'/);
+  assert.match(page, /name: 'Área de tutoría'/);
+  assert.doesNotMatch(page, /<h5 className="font-bold text-xs">Punto de recojo<\/h5>/);
 });
 
 test('forwards an explicitly submitted marketing email to the reference subscription service', async (t) => {
@@ -1114,6 +1120,22 @@ test('shares customer orders with the rider queue and enforces delivery transiti
   assert.equal(invalidLocationResponse.status, 400);
   assert.match((await invalidLocationResponse.json()).error, /coordenadas/i);
 
+  const invalidPickupResponse = await fetch(`${baseUrl}/api/orders`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Origin: baseUrl
+    },
+    body: JSON.stringify({
+      idempotencyKey: 'invalid-pickup-123456',
+      items: [{ name: 'Iced Protein Matcha', quantity: 1, price: 22 }],
+      pickupPoint: 'Cafetería Central',
+      paymentMethod: 'yape'
+    })
+  });
+  assert.equal(invalidPickupResponse.status, 400);
+  assert.match((await invalidPickupResponse.json()).error, /punto de recojo/i);
+
   const orderResponse = await fetch(`${baseUrl}/api/orders`, {
     method: 'POST',
     headers: {
@@ -1130,7 +1152,7 @@ test('shares customer orders with the rider queue and enforces delivery transiti
         description: 'Bebida de matcha con proteína.',
         image: 'data:image/svg+xml;charset=UTF-8,%3Csvg%3E%3C%2Fsvg%3E'
       }],
-      pickupPoint: 'Cafetería Central',
+      pickupPoint: 'En la puerta principal',
       paymentMethod: 'yape'
     })
   });
@@ -1138,6 +1160,7 @@ test('shares customer orders with the rider queue and enforces delivery transiti
   const { order } = await orderResponse.json();
   assert.equal(order.customer, 'Armando');
   assert.equal(order.total, 23);
+  assert.equal(order.pickupPoint, 'En la puerta principal');
   assert.equal(order.status, 'available');
   assert.equal(order.items[0].description, 'Bebida de matcha con proteína.');
   assert.equal(order.items[0].image, 'data:image/svg+xml;charset=UTF-8,%3Csvg%3E%3C%2Fsvg%3E');
@@ -1158,7 +1181,7 @@ test('shares customer orders with the rider queue and enforces delivery transiti
         description: 'Bebida de matcha con proteína.',
         image: 'data:image/svg+xml;charset=UTF-8,%3Csvg%3E%3C%2Fsvg%3E'
       }],
-      pickupPoint: 'Cafetería Central',
+      pickupPoint: 'En la puerta principal',
       paymentMethod: 'yape'
     })
   });
@@ -1247,6 +1270,24 @@ test('shares customer orders with the rider queue and enforces delivery transiti
   assert.equal(orderDetails.order.review.rating, 5);
   assert.equal((await postAction('accept')).status, 409);
   assert.deepEqual((await (await fetch(`${baseUrl}/api/orders`)).json()).orders, []);
+
+  for (const [index, pickupPoint] of ['En el patio', 'Área de tutoría'].entries()) {
+    const pickupOrderResponse = await fetch(`${baseUrl}/api/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: baseUrl
+      },
+      body: JSON.stringify({
+        idempotencyKey: `customer-pickup-${index}-123456`,
+        items: [{ name: 'Iced Protein Matcha', quantity: 1, price: 22 }],
+        pickupPoint,
+        paymentMethod: 'yape'
+      })
+    });
+    assert.equal(pickupOrderResponse.status, 201);
+    assert.equal((await pickupOrderResponse.json()).order.pickupPoint, pickupPoint);
+  }
 
   for (const asset of ['splash-clean-reference.png', 'splash-warm-reference.png']) {
     assert.equal((await fetch(`${baseUrl}/${asset}`)).status, 200);
