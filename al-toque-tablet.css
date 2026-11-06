@@ -923,6 +923,24 @@
     box-shadow: 0 6px 16px rgb(55 38 20 / 7%);
   }
 
+  #root .menu-pop-card[role="button"] {
+    cursor: pointer;
+    transition: transform 320ms cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 320ms ease, border-color 320ms ease;
+  }
+
+  #root .menu-pop-card[role="button"]:focus-visible {
+    outline: 3px solid rgb(212 175 55 / 55%);
+    outline-offset: 3px;
+  }
+
+  #root .menu-pop-card[role="button"][data-selected="true"] {
+    position: relative;
+    z-index: 4;
+    border-color: #d7b85b;
+    box-shadow: 0 0 0 1px rgb(215 184 91 / 58%), 0 0 18px rgb(215 184 91 / 32%), 0 10px 24px rgb(55 38 20 / 10%);
+    animation: tabletHomeCardGoldGlow 700ms ease-out both;
+  }
+
   #root .menu-bembos-media {
     position: relative;
     overflow: hidden;
@@ -1095,6 +1113,16 @@
   @media (prefers-reduced-motion: reduce) {
     #root .menu-regular-grid .menu-pop-media > span {
       animation: none;
+    }
+
+    #root .menu-pop-card[role="button"] {
+      animation: none;
+      transition: none;
+    }
+
+    #root .menu-pop-card[role="button"][data-selected="true"] {
+      border-color: #d7b85b;
+      box-shadow: 0 0 0 1px rgb(215 184 91 / 58%), 0 0 18px rgb(215 184 91 / 32%), 0 10px 24px rgb(55 38 20 / 10%);
     }
 
     #root .complaint-book-card,
