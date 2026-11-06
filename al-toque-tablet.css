@@ -912,10 +912,23 @@
 
   #root .brand-theme-dialog {
     box-sizing: border-box;
-    width: min(760px, calc(100vw - 64px)) !important;
-    max-width: 760px !important;
+    width: min(1040px, calc(100vw - 64px)) !important;
+    max-width: 1040px !important;
     max-height: min(90dvh, 880px);
     padding: 24px !important;
+  }
+
+  #root .brand-theme-dialog > .grid.grid-cols-2 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  #root .brand-theme-dialog > .grid.grid-cols-2 > button {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    transform: none !important;
   }
 
   #root .brand-theme-dialog .brand-preview-strip .brand-preview {
