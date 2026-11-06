@@ -84,8 +84,14 @@
     font-size: 36px;
     font-weight: 900;
     line-height: 1;
-    -webkit-text-stroke: 0.7px #d1d5db;
-    text-shadow: 0 1px 1px rgb(75 85 99 / 24%);
+    text-shadow:
+      1px 0 #d1d5db,
+      -1px 0 #d1d5db,
+      0 1px #d1d5db,
+      0 -1px #d1d5db,
+      1px 1px #d1d5db,
+      -1px -1px #d1d5db,
+      0 1px 1px rgb(75 85 99 / 18%);
     transform: scale(0);
     transform-origin: bottom left;
   }
