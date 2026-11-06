@@ -118,7 +118,14 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=78"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=79"/);
+  assert.match(page, /className="complaints-book-overlay fixed inset-0 z-\[80\] flex items-end justify-center bg-black\/55 p-0 sm:items-center sm:p-4"/);
+  assert.match(page, /className="complaints-book-dialog max-h-\[92dvh\] w-full max-w-\[520px\] overflow-y-auto rounded-t-\[28px\] bg-\[#fffdf8\] p-5 shadow-2xl sm:rounded-\[28px\]"/);
+  assert.match(page, /className="complaints-book-form space-y-3"/);
+  assert.match(stylesheet, /#root \.complaints-book-overlay\s*\{\s*box-sizing:\s*border-box;\s*align-items:\s*flex-end;\s*padding:\s*24px 24px 0;/);
+  assert.match(stylesheet, /#root \.complaints-book-dialog\s*\{\s*box-sizing:\s*border-box;\s*width:\s*min\(1440px,\s*calc\(100vw - 48px\)\)\s*!important;\s*max-width:\s*1440px\s*!important;\s*max-height:\s*calc\(100dvh - 24px\)\s*!important;[^}]*border-radius:\s*28px 28px 0 0\s*!important;/s);
+  assert.match(stylesheet, /#root \.complaints-book-form\s*\{\s*display:\s*grid;\s*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);\s*align-items:\s*start;\s*gap:\s*12px;/);
+  assert.match(stylesheet, /#root \.complaints-book-form > \.complaint-kind-field,[\s\S]*grid-column:\s*1 \/ -1;/);
   assert.match(page, /className="help-support-overlay fixed inset-0 z-50 bg-black\/40 flex items-end justify-center"/);
   assert.match(page, /className="help-support-dialog w-full max-w-\[390px\] bg-white rounded-t-3xl p-5 space-y-4 shadow-2xl"/);
   assert.match(stylesheet, /#root \.help-support-overlay\s*\{\s*box-sizing:\s*border-box;\s*align-items:\s*flex-end;\s*padding:\s*24px 24px 0;/);

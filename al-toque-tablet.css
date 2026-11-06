@@ -923,6 +923,49 @@
     border-radius: 28px 28px 0 0 !important;
   }
 
+  #root .complaints-book-overlay {
+    box-sizing: border-box;
+    align-items: flex-end;
+    padding: 24px 24px 0;
+  }
+
+  #root .complaints-book-dialog {
+    box-sizing: border-box;
+    width: min(1440px, calc(100vw - 48px)) !important;
+    max-width: 1440px !important;
+    max-height: calc(100dvh - 24px) !important;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 28px 28px 0 0 !important;
+    padding: 24px !important;
+  }
+
+  #root .complaints-book-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 12px;
+  }
+
+  #root .complaints-book-form > .complaint-kind-field,
+  #root .complaints-book-form > .complaint-address-field,
+  #root .complaints-book-form > .complaint-consent-field,
+  #root .complaints-book-form > .complaint-error-field,
+  #root .complaints-book-form > .complaint-submit-button {
+    grid-column: 1 / -1;
+  }
+
+  #root .complaints-book-form > .complaint-description-field,
+  #root .complaints-book-form > .complaint-request-field {
+    min-width: 0;
+  }
+
+  #root .complaints-book-form > .complaint-description-field textarea,
+  #root .complaints-book-form > .complaint-request-field textarea {
+    min-height: 120px;
+  }
+
   #root .brand-theme-dialog {
     box-sizing: border-box;
     width: min(1280px, calc(100vw - 64px)) !important;

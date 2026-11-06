@@ -3219,7 +3219,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=78" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=79" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -13509,13 +13509,13 @@
 
           {showComplaintsBook && (
             <div
-              className="fixed inset-0 z-[80] flex items-end justify-center bg-black/55 p-0 sm:items-center sm:p-4"
+              className="complaints-book-overlay fixed inset-0 z-[80] flex items-end justify-center bg-black/55 p-0 sm:items-center sm:p-4"
               onClick={(event) => {
                 if (event.target === event.currentTarget && !isSubmittingComplaint) setShowComplaintsBook(false);
               }}
             >
               <section
-                className="max-h-[92dvh] w-full max-w-[520px] overflow-y-auto rounded-t-[28px] bg-[#fffdf8] p-5 shadow-2xl sm:rounded-[28px]"
+                className="complaints-book-dialog max-h-[92dvh] w-full max-w-[520px] overflow-y-auto rounded-t-[28px] bg-[#fffdf8] p-5 shadow-2xl sm:rounded-[28px]"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="complaints-book-title"
@@ -13555,15 +13555,15 @@
                     <button type="button" onClick={() => setShowComplaintsBook(false)} className="mt-4 w-full rounded-xl bg-[#a90000] py-3 text-xs font-bold text-white">Cerrar</button>
                   </div>
                 ) : (
-                  <form onSubmit={submitComplaint} className="space-y-3">
-                    <div>
+                  <form onSubmit={submitComplaint} className="complaints-book-form space-y-3">
+                    <div className="complaint-kind-field">
                       <label htmlFor="complaint-kind" className="mb-1 block text-[10px] font-bold text-gray-600">Tipo de solicitud</label>
                       <select id="complaint-kind" required value={complaintForm.kind} onChange={(event) => setComplaintForm((current) => ({ ...current, kind: event.target.value }))} className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-xs">
                         <option value="reclamo">Reclamo: disconformidad con un producto o servicio</option>
                         <option value="queja">Queja: disconformidad con la atención recibida</option>
                       </select>
                     </div>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="complaint-identity-row grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <div>
                         <label htmlFor="complaint-name" className="mb-1 block text-[10px] font-bold text-gray-600">Nombres y apellidos</label>
                         <input id="complaint-name" required maxLength={120} autoComplete="name" value={complaintForm.consumerName} onChange={(event) => setComplaintForm((current) => ({ ...current, consumerName: event.target.value }))} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-xs" />
@@ -13579,11 +13579,11 @@
                         </div>
                       </div>
                     </div>
-                    <div>
+                    <div className="complaint-address-field">
                       <label htmlFor="complaint-address" className="mb-1 block text-[10px] font-bold text-gray-600">Domicilio</label>
                       <input id="complaint-address" required maxLength={200} autoComplete="street-address" value={complaintForm.address} onChange={(event) => setComplaintForm((current) => ({ ...current, address: event.target.value }))} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-xs" />
                     </div>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="complaint-contact-row grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <div>
                         <label htmlFor="complaint-email" className="mb-1 block text-[10px] font-bold text-gray-600">Correo electrónico</label>
                         <input id="complaint-email" type="email" required maxLength={254} autoComplete="email" value={complaintForm.email} onChange={(event) => setComplaintForm((current) => ({ ...current, email: event.target.value }))} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-xs" />
@@ -13593,7 +13593,7 @@
                         <input id="complaint-phone" type="tel" required maxLength={24} autoComplete="tel" value={complaintForm.phone} onChange={(event) => setComplaintForm((current) => ({ ...current, phone: event.target.value }))} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-xs" />
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_150px]">
+                    <div className="complaint-product-row grid grid-cols-1 gap-3 sm:grid-cols-[1fr_150px]">
                       <div>
                         <label htmlFor="complaint-product" className="mb-1 block text-[10px] font-bold text-gray-600">Producto o servicio</label>
                         <input id="complaint-product" required maxLength={160} value={complaintForm.product} onChange={(event) => setComplaintForm((current) => ({ ...current, product: event.target.value }))} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-xs" />
@@ -13603,20 +13603,20 @@
                         <input id="complaint-amount" type="number" min="0" max="1000000" step="0.01" value={complaintForm.amount} onChange={(event) => setComplaintForm((current) => ({ ...current, amount: event.target.value }))} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-xs" />
                       </div>
                     </div>
-                    <div>
+                    <div className="complaint-description-field">
                       <label htmlFor="complaint-description" className="mb-1 block text-[10px] font-bold text-gray-600">Cuéntanos qué ocurrió</label>
                       <textarea id="complaint-description" required minLength={20} maxLength={2000} rows={4} value={complaintForm.description} onChange={(event) => setComplaintForm((current) => ({ ...current, description: event.target.value }))} className="w-full resize-y rounded-xl border border-gray-200 px-3 py-2.5 text-xs" />
                     </div>
-                    <div>
+                    <div className="complaint-request-field">
                       <label htmlFor="complaint-request" className="mb-1 block text-[10px] font-bold text-gray-600">¿Qué solución solicitas?</label>
                       <textarea id="complaint-request" required minLength={5} maxLength={1000} rows={3} value={complaintForm.request} onChange={(event) => setComplaintForm((current) => ({ ...current, request: event.target.value }))} className="w-full resize-y rounded-xl border border-gray-200 px-3 py-2.5 text-xs" />
                     </div>
-                    <label className="flex items-start gap-2 rounded-xl bg-[#fff6e8] p-3 text-[10px] leading-relaxed text-gray-600">
+                    <label className="complaint-consent-field flex items-start gap-2 rounded-xl bg-[#fff6e8] p-3 text-[10px] leading-relaxed text-gray-600">
                       <input type="checkbox" required checked={complaintForm.privacyConsent} onChange={(event) => setComplaintForm((current) => ({ ...current, privacyConsent: event.target.checked }))} className="mt-0.5 accent-[#a90000]" />
                       <span>Autorizo el uso de los datos personales proporcionados únicamente para registrar, gestionar y responder este reclamo o queja. Evita incluir datos de tarjetas o contraseñas.</span>
                     </label>
-                    {complaintError && <p className="rounded-xl bg-red-50 px-3 py-2 text-[10px] text-red-700" role="alert">{complaintError}</p>}
-                    <button type="submit" disabled={isSubmittingComplaint} className="w-full rounded-xl bg-[#a90000] py-3 text-xs font-bold text-white disabled:opacity-60">
+                    {complaintError && <p className="complaint-error-field rounded-xl bg-red-50 px-3 py-2 text-[10px] text-red-700" role="alert">{complaintError}</p>}
+                    <button type="submit" disabled={isSubmittingComplaint} className="complaint-submit-button w-full rounded-xl bg-[#a90000] py-3 text-xs font-bold text-white disabled:opacity-60">
                       {isSubmittingComplaint ? 'Enviando solicitud…' : 'Enviar al Libro de Reclamaciones'}
                     </button>
                   </form>
