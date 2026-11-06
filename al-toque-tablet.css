@@ -92,6 +92,12 @@
     opacity: 1 !important;
   }
 
+  #root .profile-affiliate-button:disabled {
+    background-color: #db9eac !important;
+    color: #fff !important;
+    opacity: 1 !important;
+  }
+
   #root .bg-yellow-accent {
     background-color: var(--tablet-yellow-accent) !important;
     color: var(--tablet-dark) !important;

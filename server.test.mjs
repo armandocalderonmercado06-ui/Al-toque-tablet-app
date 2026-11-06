@@ -118,7 +118,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=81"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=82"/);
   assert.match(page, /className="tablet-order-toast absolute top-10 left-1\/2 -translate-x-1\/2 bg-dark text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg z-50 animate-bounce cursor-pointer hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"/);
   assert.match(stylesheet, /#root \.tablet-order-toast\s*\{\s*box-sizing:\s*border-box;\s*width:\s*max-content;\s*min-width:\s*min\(560px,\s*calc\(100vw - 48px\)\);\s*max-width:\s*calc\(100vw - 48px\);\s*padding:\s*16px 28px\s*!important;\s*font-size:\s*clamp\(20px,\s*2\.2vw,\s*28px\)\s*!important;\s*line-height:\s*1\.25;/);
   assert.match(page, /className="profile-experience-card bg-cream\/60 border border-cream p-4 rounded-3xl flex justify-around items-center text-center"/);
@@ -150,6 +150,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="profile-questionnaire bg-white/);
   assert.match(stylesheet, /#root \.profile-questionnaire input::placeholder\s*\{\s*color:\s*#9aa2b2\s*!important;/);
   assert.match(stylesheet, /#root \.profile-affiliate-button:disabled\s*\{[^}]*background-color:\s*#db9eac\s*!important;[^}]*opacity:\s*1\s*!important;/s);
+  assert.match(stylesheet, /#root \.bg-brand:disabled\s*\{[^}]*background-color:\s*#6b6261\s*!important;[^}]*\}\s*#root \.profile-affiliate-button:disabled\s*\{[^}]*background-color:\s*#db9eac\s*!important;/s);
   assert.match(stylesheet, /#root \.brand-theme-dialog\s*\{[^}]*width:\s*min\(1280px,\s*calc\(100vw - 64px\)\)\s*!important;[^}]*max-width:\s*1280px\s*!important;[^}]*max-height:\s*min\(90dvh,\s*880px\);[^}]*padding:\s*24px\s*!important;/s);
   assert.match(stylesheet, /#root \.brand-theme-dialog > \.grid\.grid-cols-2\s*\{\s*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\);\s*align-items:\s*stretch;\s*gap:\s*12px;/);
   assert.match(stylesheet, /#root \.brand-theme-dialog > \.grid\.grid-cols-2 > button\s*\{\s*display:\s*flex;\s*min-width:\s*0;\s*flex-direction:\s*column;\s*transform:\s*none\s*!important;/);
