@@ -118,7 +118,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=73"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=74"/);
   assert.match(page, /className="brand-preview-random-image" src="\.\/splash-random-reference\.png"/);
   assert.match(page, /\.brand-preview-random-image\s*\{\s*display:\s*block;\s*width:\s*100%;\s*height:\s*auto;/);
   assert.match(stylesheet, /#root#root,\s*#root#root \*:not\(svg text\)\s*\{\s*font-size:\s*17px\s*!important;/);
@@ -132,7 +132,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="profile-questionnaire bg-white/);
   assert.match(stylesheet, /#root \.profile-questionnaire input::placeholder\s*\{\s*color:\s*#9aa2b2\s*!important;/);
   assert.match(stylesheet, /#root \.profile-affiliate-button:disabled\s*\{[^}]*background-color:\s*#d99aa8\s*!important;[^}]*opacity:\s*1\s*!important;/s);
-  assert.match(stylesheet, /#root \.brand-theme-dialog\s*\{[^}]*width:\s*min\(1040px,\s*calc\(100vw - 64px\)\)\s*!important;[^}]*max-width:\s*1040px\s*!important;[^}]*max-height:\s*min\(90dvh,\s*880px\);[^}]*padding:\s*24px\s*!important;/s);
+  assert.match(stylesheet, /#root \.brand-theme-dialog\s*\{[^}]*width:\s*min\(1280px,\s*calc\(100vw - 64px\)\)\s*!important;[^}]*max-width:\s*1280px\s*!important;[^}]*max-height:\s*min\(90dvh,\s*880px\);[^}]*padding:\s*24px\s*!important;/s);
   assert.match(stylesheet, /#root \.brand-theme-dialog > \.grid\.grid-cols-2\s*\{\s*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\);\s*align-items:\s*stretch;\s*gap:\s*12px;/);
   assert.match(stylesheet, /#root \.brand-theme-dialog > \.grid\.grid-cols-2 > button\s*\{\s*display:\s*flex;\s*min-width:\s*0;\s*flex-direction:\s*column;\s*transform:\s*none\s*!important;/);
   assert.match(stylesheet, /#root \.brand-theme-dialog \.brand-preview-strip \.brand-preview\s*\{\s*height:\s*100px;/);

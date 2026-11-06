@@ -912,8 +912,8 @@
 
   #root .brand-theme-dialog {
     box-sizing: border-box;
-    width: min(1040px, calc(100vw - 64px)) !important;
-    max-width: 1040px !important;
+    width: min(1280px, calc(100vw - 64px)) !important;
+    max-width: 1280px !important;
     max-height: min(90dvh, 880px);
     padding: 24px !important;
   }
