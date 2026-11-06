@@ -56,10 +56,25 @@
     color: #9aa2b2 !important;
   }
 
-  #root .profile-affiliate-button:disabled {
-    background-color: #d99aa8 !important;
+  #root .profile-affiliate-button {
+    background-color: #db9eac !important;
     color: #fff !important;
     opacity: 1 !important;
+  }
+
+  #root .profile-affiliate-button:disabled {
+    background-color: #db9eac !important;
+    color: #fff !important;
+    opacity: 1 !important;
+  }
+
+  #root .profile-experience-card {
+    background-color: #fff6df !important;
+    border-color: #fff0c8 !important;
+  }
+
+  #root .profile-preference-icon {
+    background-color: #fff1cf !important;
   }
 
   #root .bg-brand:disabled {

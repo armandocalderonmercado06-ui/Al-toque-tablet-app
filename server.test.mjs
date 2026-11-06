@@ -118,7 +118,12 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=79"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=80"/);
+  assert.match(page, /className="profile-experience-card bg-cream\/60 border border-cream p-4 rounded-3xl flex justify-around items-center text-center"/);
+  assert.match(page, /className="profile-preference-icon w-9 h-9 bg-cream rounded-xl flex items-center justify-center text-dark"/);
+  assert.match(stylesheet, /#root \.profile-affiliate-button\s*\{\s*background-color:\s*#db9eac\s*!important;\s*color:\s*#fff\s*!important;\s*opacity:\s*1\s*!important;/);
+  assert.match(stylesheet, /#root \.profile-experience-card\s*\{\s*background-color:\s*#fff6df\s*!important;\s*border-color:\s*#fff0c8\s*!important;/);
+  assert.match(stylesheet, /#root \.profile-preference-icon\s*\{\s*background-color:\s*#fff1cf\s*!important;/);
   assert.match(page, /className="complaints-book-overlay fixed inset-0 z-\[80\] flex items-end justify-center bg-black\/55 p-0 sm:items-center sm:p-4"/);
   assert.match(page, /className="complaints-book-dialog max-h-\[92dvh\] w-full max-w-\[520px\] overflow-y-auto rounded-t-\[28px\] bg-\[#fffdf8\] p-5 shadow-2xl sm:rounded-\[28px\]"/);
   assert.match(page, /className="complaints-book-form space-y-3"/);
@@ -142,7 +147,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(stylesheet, /#root \.profile-rider-access-card\s*\{\s*background:\s*#b90000\s*!important;/);
   assert.match(page, /className="profile-questionnaire bg-white/);
   assert.match(stylesheet, /#root \.profile-questionnaire input::placeholder\s*\{\s*color:\s*#9aa2b2\s*!important;/);
-  assert.match(stylesheet, /#root \.profile-affiliate-button:disabled\s*\{[^}]*background-color:\s*#d99aa8\s*!important;[^}]*opacity:\s*1\s*!important;/s);
+  assert.match(stylesheet, /#root \.profile-affiliate-button:disabled\s*\{[^}]*background-color:\s*#db9eac\s*!important;[^}]*opacity:\s*1\s*!important;/s);
   assert.match(stylesheet, /#root \.brand-theme-dialog\s*\{[^}]*width:\s*min\(1280px,\s*calc\(100vw - 64px\)\)\s*!important;[^}]*max-width:\s*1280px\s*!important;[^}]*max-height:\s*min\(90dvh,\s*880px\);[^}]*padding:\s*24px\s*!important;/s);
   assert.match(stylesheet, /#root \.brand-theme-dialog > \.grid\.grid-cols-2\s*\{\s*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\);\s*align-items:\s*stretch;\s*gap:\s*12px;/);
   assert.match(stylesheet, /#root \.brand-theme-dialog > \.grid\.grid-cols-2 > button\s*\{\s*display:\s*flex;\s*min-width:\s*0;\s*flex-direction:\s*column;\s*transform:\s*none\s*!important;/);
