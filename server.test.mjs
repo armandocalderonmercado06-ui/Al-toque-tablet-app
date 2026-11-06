@@ -58,15 +58,17 @@ test('serves the campus location logo used by the home carousel', async (t) => {
   assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
 });
 
-test('serves the new maracuya drink photo as a public PNG asset', async (t) => {
+test('serves the new maracuya and water photos as public PNG assets', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
-  const response = await fetch(`http://127.0.0.1:${server.address().port}/jugo-maracuya-helada.png`);
-  const image = Buffer.from(await response.arrayBuffer());
+  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png']) {
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/${asset}`);
+    const image = Buffer.from(await response.arrayBuffer());
 
-  assert.equal(response.status, 200);
-  assert.equal(response.headers.get('content-type'), 'image/png');
-  assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('content-type'), 'image/png');
+    assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+  }
 });
 
 test('serves the tablet stylesheet and includes it in the application page', async (t) => {
@@ -129,7 +131,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=88"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=89"/);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button\s*\{[^}]*transition:\s*transform 140ms ease,\s*box-shadow 140ms ease,\s*background-color 140ms ease;/s);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button:active\s*\{\s*transform:\s*scale\(0\.96\);\s*box-shadow:\s*0 2px 6px rgb\(43 23 24 \/ 16%\);/);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button\.bottom-nav-ai-option:active\s*\{\s*transform:\s*translateY\(-13px\) scale\(0\.96\);\s*box-shadow:\s*0 2px 7px rgb\(133 93 194 \/ 20%\);/);
@@ -140,6 +142,9 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /image: '\.\/jugo-maracuya-helada\.png'/);
   assert.match(page, /dish\.id === '7' \? 'menu-maracuya-image'/);
   assert.match(stylesheet, /#root \.menu-regular-grid \.menu-maracuya-image\s*\{\s*object-fit:\s*cover\s*!important;/);
+  assert.match(page, /image: '\.\/agua-san-luis-helada\.png'/);
+  assert.match(page, /dish\.id === '10' \? 'menu-agua-image'/);
+  assert.match(stylesheet, /#root \.menu-regular-grid \.menu-agua-image\s*\{\s*object-fit:\s*cover\s*!important;/);
   assert.match(page, /className="tablet-order-toast absolute top-10 left-1\/2 -translate-x-1\/2 bg-dark text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg z-50 animate-bounce cursor-pointer hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"/);
   assert.match(stylesheet, /#root \.tablet-order-toast\s*\{\s*box-sizing:\s*border-box;\s*top:\s*120px\s*!important;\s*width:\s*max-content;\s*min-width:\s*min\(560px,\s*calc\(100vw - 48px\)\);\s*max-width:\s*calc\(100vw - 48px\);\s*padding:\s*16px 28px\s*!important;\s*font-size:\s*clamp\(20px,\s*2\.2vw,\s*28px\)\s*!important;\s*line-height:\s*1\.25;/);
   assert.match(page, /className="profile-experience-card bg-cream\/60 border border-cream p-4 rounded-3xl flex justify-around items-center text-center"/);
