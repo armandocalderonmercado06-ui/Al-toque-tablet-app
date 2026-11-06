@@ -118,8 +118,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=75"/);
-  assert.match(page, /option\.id === 'random' \? 'brand-theme-random-option'/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=76"/);
   assert.match(page, /className="brand-preview-random-image" src="\.\/splash-random-reference\.png"/);
   assert.match(page, /\.brand-preview-random-image\s*\{\s*display:\s*block;\s*width:\s*100%;\s*height:\s*auto;/);
   assert.match(stylesheet, /#root#root,\s*#root#root \*:not\(svg text\)\s*\{\s*font-size:\s*17px\s*!important;/);
@@ -136,7 +135,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(stylesheet, /#root \.brand-theme-dialog\s*\{[^}]*width:\s*min\(1280px,\s*calc\(100vw - 64px\)\)\s*!important;[^}]*max-width:\s*1280px\s*!important;[^}]*max-height:\s*min\(90dvh,\s*880px\);[^}]*padding:\s*24px\s*!important;/s);
   assert.match(stylesheet, /#root \.brand-theme-dialog > \.grid\.grid-cols-2\s*\{\s*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\);\s*align-items:\s*stretch;\s*gap:\s*12px;/);
   assert.match(stylesheet, /#root \.brand-theme-dialog > \.grid\.grid-cols-2 > button\s*\{\s*display:\s*flex;\s*min-width:\s*0;\s*flex-direction:\s*column;\s*transform:\s*none\s*!important;/);
-  assert.match(stylesheet, /#root \.brand-theme-dialog \.brand-theme-random-option\s*\{\s*align-self:\s*start;\s*height:\s*fit-content;/);
+  assert.match(stylesheet, /#root \.brand-theme-dialog > \.grid\.grid-cols-2 > button > \.brand-preview\s*\{\s*width:\s*100%;\s*height:\s*auto;\s*aspect-ratio:\s*1024 \/ 572;/);
   assert.match(stylesheet, /#root \.brand-theme-dialog \.brand-preview-strip \.brand-preview\s*\{\s*height:\s*100px;/);
   assert.match(stylesheet, /#root \.home-pop-card-media\[data-touch-active="true"\] > img/);
   assert.match(stylesheet, /#root \.home-pop-card-media:hover > img/);

@@ -3219,7 +3219,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=75" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=76" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -13480,7 +13480,7 @@
                         onClick={() => updateProfile('splashPreference', option.id)}
                         aria-pressed={selected}
                         aria-label={`${option.label}: ${option.description}`}
-                        className={`${option.id === 'random' ? 'brand-theme-random-option' : ''} rounded-2xl border p-2 text-left transition ${selected ? 'border-[#a90000] bg-red-50 ring-1 ring-[#a90000]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                        className={`rounded-2xl border p-2 text-left transition ${selected ? 'border-[#a90000] bg-red-50 ring-1 ring-[#a90000]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
                       >
                         {option.id === 'random' ? (
                           <img className="brand-preview-random-image" src="./splash-random-reference.png" alt="" />
