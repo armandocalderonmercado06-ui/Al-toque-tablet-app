@@ -77,6 +77,16 @@
     background-color: #fff1cf !important;
   }
 
+  #root .tablet-order-toast {
+    box-sizing: border-box;
+    width: max-content;
+    min-width: min(560px, calc(100vw - 48px));
+    max-width: calc(100vw - 48px);
+    padding: 16px 28px !important;
+    font-size: clamp(20px, 2.2vw, 28px) !important;
+    line-height: 1.25;
+  }
+
   #root .bg-brand:disabled {
     background-color: #6b6261 !important;
     opacity: 1 !important;
