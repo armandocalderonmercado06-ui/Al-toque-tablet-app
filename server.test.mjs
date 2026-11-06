@@ -118,7 +118,9 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=72"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=73"/);
+  assert.match(page, /className="brand-preview-random-image" src="\.\/splash-random-reference\.png"/);
+  assert.match(page, /\.brand-preview-random-image\s*\{\s*display:\s*block;\s*width:\s*100%;\s*height:\s*auto;/);
   assert.match(stylesheet, /#root#root,\s*#root#root \*:not\(svg text\)\s*\{\s*font-size:\s*17px\s*!important;/);
   assert.match(stylesheet, /#root \.text-brand\s*\{\s*color:\s*var\(--tablet-brand\)\s*!important;/);
   assert.match(stylesheet, /#root \.border-brand\s*\{\s*border-color:\s*var\(--tablet-brand\)\s*!important;/);
@@ -1352,8 +1354,10 @@ test('shares customer orders with the rider queue and enforces delivery transiti
     assert.equal((await pickupOrderResponse.json()).order.pickupPoint, pickupPoint);
   }
 
-  for (const asset of ['splash-clean-reference.png', 'splash-warm-reference.png']) {
-    assert.equal((await fetch(`${baseUrl}/${asset}`)).status, 200);
+  for (const asset of ['splash-clean-reference.png', 'splash-warm-reference.png', 'splash-random-reference.png']) {
+    const response = await fetch(`${baseUrl}/${asset}`);
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('content-type'), 'image/png');
   }
 
   const audioTermsResponse = await fetch(`${baseUrl}/audiomack-player-terms.html`);

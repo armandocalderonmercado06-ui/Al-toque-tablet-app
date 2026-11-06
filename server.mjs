@@ -89,6 +89,7 @@ const PUBLIC_ASSETS = new Set([
   'miraflores-logo-transparent.png',
   'splash-clean-reference.png',
   'splash-warm-reference.png',
+  'splash-random-reference.png',
   'Combo costa.png',
   'combo fitness.jpg',
   'combo herediano.jpg',
