@@ -58,10 +58,10 @@ test('serves the campus location logo used by the home carousel', async (t) => {
   assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
 });
 
-test('serves new product photos as public PNG assets', async (t) => {
+test('serves new public product and game images as PNG assets', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
-  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png', 'agua-san-luis-natural.png', 'chicha-morada-helada.png', 'combo-marino-imagen.png']) {
+  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png', 'agua-san-luis-natural.png', 'chicha-morada-helada.png', 'combo-marino-imagen.png', 'partykub-logo.png']) {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/${asset}`);
     const image = Buffer.from(await response.arrayBuffer());
 
@@ -131,14 +131,23 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className=\{`w-full h-full object-cover \$\{dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=97"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=99"/);
+  assert.match(page, /aria-label="PartyKub, juego próximamente"/);
+  assert.match(page, /setPartyKubNotice\('PartyKub estará disponible próximamente\.'\)/);
+  assert.match(page, /src="\/partykub-logo\.png" alt="" aria-hidden="true"/);
+  assert.match(page, /aria-label="Abrir Reels"/);
+  assert.match(stylesheet, /#root \.partykub-launcher::before\s*\{[^}]*animation:\s*partykub-ring-spin 5s linear infinite;/);
+  assert.match(stylesheet, /#root \.partykub-launcher img\s*\{[^}]*mix-blend-mode:\s*multiply;[^}]*animation:\s*partykub-logo-float 2\.8s ease-in-out infinite;/);
+  assert.match(stylesheet, /#root \.partykub-launcher::before\s*\{[^}]*mask:\s*radial-gradient\(farthest-side, transparent calc\(100% - 3px\), #000 calc\(100% - 2px\)\);/);
+  assert.match(stylesheet, /@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*#root \.partykub-launcher::before,\s*#root \.partykub-launcher img\s*\{\s*animation:\s*none;/s);
+  assert.ok(page.indexOf('aria-label="PartyKub, juego próximamente"') < page.indexOf('aria-label="Abrir Reels"'));
   assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]\s*\{[^}]*width:\s*30px\s*!important;[^}]*position:\s*relative;[^}]*overflow:\s*visible;[^}]*appearance:\s*none\s*!important;[^}]*border:\s*2px solid #16a34a;[^}]*background-color:\s*#fff;/s);
   assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]:checked\s*\{[^}]*background-color:\s*#16a34a;[^}]*animation:\s*tabletProfileCheckboxPulse 520ms ease-out;/s);
   assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]::before\s*\{[^}]*content:\s*"✓";[^}]*font-size:\s*36px;[^}]*text-shadow:\s*1px 0 #d1d5db,\s*-1px 0 #d1d5db,\s*0 1px #d1d5db,\s*0 -1px #d1d5db,/s);
   assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]:checked::before\s*\{[^}]*animation:\s*tabletProfileCheckboxCheckPulse 520ms cubic-bezier\(0\.2,\s*0\.8,\s*0\.2,\s*1\);/s);
   assert.match(stylesheet, /@keyframes tabletProfileCheckboxCheckPulse[\s\S]*?48%\s*\{\s*opacity:\s*1;\s*transform:\s*scale\(1\.3\);/);
   assert.match(stylesheet, /@keyframes tabletProfileCheckboxPulse\s*\{\s*0%\s*\{\s*box-shadow:\s*0 0 0 0 rgb\(22 163 74 \/ 42%\);/);
-  assert.match(stylesheet, /@media \(prefers-reduced-motion: reduce\)\s*\{\s*#root \.profile-questionnaire input\[type="checkbox"\],[\s\S]*?animation:\s*none !important;/);
+  assert.match(stylesheet, /@media \(prefers-reduced-motion: reduce\)\s*\{[\s\S]*?#root \.profile-questionnaire input\[type="checkbox"\],[\s\S]*?animation:\s*none !important;/);
   assert.match(page, /image: '\.\/combo-marino-imagen\.png'/);
   assert.match(page, /dish\.id === '9' \? 'menu-marino-image'/);
   assert.match(page, /className=\{`combo-card-image w-full h-full object-cover \$\{dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
