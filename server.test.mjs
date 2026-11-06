@@ -131,7 +131,8 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className=\{`w-full h-full object-cover \$\{dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=91"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=92"/);
+  assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]\s*\{\s*box-sizing:\s*border-box;\s*width:\s*30px\s*!important;\s*height:\s*30px\s*!important;\s*flex:\s*0 0 30px;/);
   assert.match(page, /image: '\.\/combo-marino-imagen\.png'/);
   assert.match(page, /dish\.id === '9' \? 'menu-marino-image'/);
   assert.match(page, /className=\{`combo-card-image w-full h-full object-cover \$\{dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);

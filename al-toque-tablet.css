@@ -56,6 +56,15 @@
     color: #9aa2b2 !important;
   }
 
+  #root .profile-questionnaire input[type="checkbox"] {
+    box-sizing: border-box;
+    width: 30px !important;
+    height: 30px !important;
+    flex: 0 0 30px;
+    accent-color: var(--tablet-brand);
+    cursor: pointer;
+  }
+
   #root .profile-affiliate-button {
     background-color: #db9eac !important;
     color: #fff !important;
