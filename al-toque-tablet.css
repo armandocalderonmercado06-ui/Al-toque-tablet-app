@@ -28,6 +28,40 @@
     color: var(--tablet-brand) !important;
   }
 
+  #root .profile-identity-card {
+    background: linear-gradient(110deg, #b80c0c 0%, #771522 100%) !important;
+    color: #fff !important;
+  }
+
+  #root .profile-identity-card p.text-gray-400 {
+    color: rgb(255 255 255 / 84%) !important;
+  }
+
+  #root .profile-edit-button {
+    border-color: #fff0c8 !important;
+    border-radius: 9px;
+    background: #fff0c8;
+    color: #74131d !important;
+  }
+
+  #root .profile-rider-access-card {
+    background: #b90000 !important;
+  }
+
+  #root .profile-rider-access-card:hover {
+    background: #990000 !important;
+  }
+
+  #root .profile-questionnaire input::placeholder {
+    color: #9aa2b2 !important;
+  }
+
+  #root .profile-affiliate-button:disabled {
+    background-color: #d99aa8 !important;
+    color: #fff !important;
+    opacity: 1 !important;
+  }
+
   #root .bg-brand:disabled {
     background-color: #6b6261 !important;
     opacity: 1 !important;

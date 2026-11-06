@@ -13049,7 +13049,7 @@
             </button>
           </div>
 
-          <div className="bg-dark text-white p-4 rounded-3xl flex items-center justify-between">
+          <div className="profile-identity-card bg-dark text-white p-4 rounded-3xl flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <input
                 ref={photoInputRef}
@@ -13077,7 +13077,7 @@
                 <p className="text-xs text-gray-400">{profile.career || 'Completa tu perfil · Campus Central'}</p>
               </div>
             </div>
-            <button type="button" onClick={() => setShowQuestionnaire(true)} className="text-[10px] font-bold text-yellow-accent border border-yellow-accent/60 rounded-lg px-2 py-1">
+            <button type="button" onClick={() => setShowQuestionnaire(true)} className="profile-edit-button text-[10px] font-bold text-yellow-accent border border-yellow-accent/60 rounded-lg px-2 py-1">
               Editar
             </button>
           </div>
@@ -13174,7 +13174,7 @@
             </div>
           )}
 
-          <button type="button" onClick={() => { setRiderPin(''); setRiderPinError(''); setShowRiderAccess(true); }} className="group w-full rounded-3xl bg-[#a90000] p-4 text-left text-white shadow-lg transition hover:bg-[#8d0000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a90000]">
+          <button type="button" onClick={() => { setRiderPin(''); setRiderPinError(''); setShowRiderAccess(true); }} className="profile-rider-access-card group w-full rounded-3xl bg-[#a90000] p-4 text-left text-white shadow-lg transition hover:bg-[#8d0000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a90000]">
             <span className="flex items-center justify-between gap-3">
               <span className="flex items-center gap-3">
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15"><i data-lucide="bike" className="h-6 w-6"></i></span>
@@ -13243,7 +13243,7 @@
 
           {showQuestionnaire && <div>
             <h4 className="font-title font-bold text-sm mb-2">Conoce tu perfil</h4>
-            <div className="bg-white border border-gray-100 rounded-3xl p-4 space-y-3 shadow-sm">
+            <div className="profile-questionnaire bg-white border border-gray-100 rounded-3xl p-4 space-y-3 shadow-sm">
               <div>
                 <label htmlFor="profile-name" className="block text-[10px] font-bold text-gray-500 mb-1">¿Cómo te llamas?</label>
                 <input id="profile-name" value={profile.fullName} onChange={(e) => updateProfile('fullName', e.target.value)} placeholder="Nombre y apellido" className="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-brand" />
@@ -13311,7 +13311,7 @@
               {marketingEmailError && <p id="marketing-email-error" className="text-[10px] text-red-600" role="alert">{marketingEmailError}</p>}
               {marketingEmailStatus && <p id="marketing-email-status" className="text-[10px] text-green-700" role="status">{marketingEmailStatus}</p>}
               {isSendingMarketingConfirmation && <p className="text-[10px] text-gray-500" role="status">Enviando correo de confirmación…</p>}
-              <button type="button" onClick={affiliateProfile} disabled={!profile.privacyAccepted} className="w-full rounded-xl bg-brand text-white py-2.5 text-xs font-bold disabled:opacity-40">Afiliar mi perfil</button>
+              <button type="button" onClick={affiliateProfile} disabled={!profile.privacyAccepted} className="profile-affiliate-button w-full rounded-xl bg-brand text-white py-2.5 text-xs font-bold disabled:opacity-40">Afiliar mi perfil</button>
               <p className="text-[9px] text-gray-400">Puedes cambiar o borrar estos datos desde tu perfil cuando quieras.</p>
             </div>
           </div>}

@@ -121,6 +121,13 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(stylesheet, /#root \.text-brand\s*\{\s*color:\s*var\(--tablet-brand\)\s*!important;/);
   assert.match(stylesheet, /#root \.border-brand\s*\{\s*border-color:\s*var\(--tablet-brand\)\s*!important;/);
   assert.match(stylesheet, /#root \.bg-yellow-accent\s*\{\s*background-color:\s*var\(--tablet-yellow-accent\)\s*!important;/);
+  assert.match(page, /className="profile-identity-card bg-dark text-white/);
+  assert.match(stylesheet, /#root \.profile-identity-card\s*\{\s*background:\s*linear-gradient\(110deg,\s*#b80c0c 0%,\s*#771522 100%\)\s*!important;/);
+  assert.match(stylesheet, /#root \.profile-edit-button\s*\{[^}]*background:\s*#fff0c8;[^}]*color:\s*#74131d\s*!important;/s);
+  assert.match(stylesheet, /#root \.profile-rider-access-card\s*\{\s*background:\s*#b90000\s*!important;/);
+  assert.match(page, /className="profile-questionnaire bg-white/);
+  assert.match(stylesheet, /#root \.profile-questionnaire input::placeholder\s*\{\s*color:\s*#9aa2b2\s*!important;/);
+  assert.match(stylesheet, /#root \.profile-affiliate-button:disabled\s*\{[^}]*background-color:\s*#d99aa8\s*!important;[^}]*opacity:\s*1\s*!important;/s);
   assert.match(stylesheet, /#root \.home-pop-card-media\[data-touch-active="true"\] > img/);
   assert.match(stylesheet, /#root \.home-pop-card-media:hover > img/);
   assert.doesNotMatch(stylesheet, /\.home-pop-card:hover \.home-pop-card-media > img/);
