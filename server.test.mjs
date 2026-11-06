@@ -92,7 +92,9 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.equal((page.match(/className="menu-product-grid grid grid-cols-2 gap-/g) || []).length, 5);
   assert.match(page, /className="menu-regular-grid"/);
   assert.match(stylesheet, /#root \.menu-bembos-grid,\s*#root \.menu-product-grid,\s*#root \.menu-regular-grid\s*\{\s*display:\s*grid;\s*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\);/);
-  assert.match(stylesheet, /#root \.menu-regular-grid \.menu-pop-media > span\s*\{[^}]*position:\s*absolute;[^}]*top:\s*8px;[^}]*left:\s*8px;[^}]*font-size:\s*12px\s*!important;/s);
+  assert.match(stylesheet, /#root \.menu-regular-grid \.menu-pop-media > span\s*\{[^}]*position:\s*absolute;[^}]*top:\s*8px;[^}]*left:\s*8px;[^}]*border:\s*1px solid #d7b85b;[^}]*font-size:\s*12px\s*!important;[^}]*animation:\s*tabletMenuBadgeGoldGlow 2\.6s ease-in-out infinite;/s);
+  assert.match(stylesheet, /@keyframes tabletMenuBadgeGoldGlow\s*\{[^}]*50%\s*\{[^}]*box-shadow:\s*0 0 0 2px rgb\(215 184 91 \/ 34%\), 0 0 10px rgb\(215 184 91 \/ 24%\);/s);
+  assert.match(stylesheet, /@media \(prefers-reduced-motion: reduce\)\s*\{\s*#root \.menu-regular-grid \.menu-pop-media > span\s*\{\s*animation:\s*none;/);
   assert.match(stylesheet, /#root \.menu-bembos-media\s*\{[^}]*height:\s*clamp\(120px,\s*14vw,\s*164px\);/s);
   assert.match(stylesheet, /#root \.bembos-promo-hover-label\s*\{\s*position:\s*absolute;\s*z-index:\s*3;\s*bottom:\s*8px;\s*left:\s*8px;/);
   assert.match(stylesheet, /#root \.bembos-promo-hover-label\s*\{[^}]*font-size:\s*11px\s*!important;[^}]*line-height:\s*1\.2;/s);

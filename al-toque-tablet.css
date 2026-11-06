@@ -974,6 +974,7 @@
     display: inline-flex;
     max-width: calc(100% - 16px);
     align-items: center;
+    border: 1px solid #d7b85b;
     border-radius: 9999px;
     background: rgb(255 255 255 / 90%);
     padding: 2px 10px;
@@ -983,6 +984,20 @@
     line-height: 1.35;
     white-space: nowrap;
     backdrop-filter: blur(8px);
+    animation: tabletMenuBadgeGoldGlow 2.6s ease-in-out infinite;
+  }
+
+  @keyframes tabletMenuBadgeGoldGlow {
+    0%,
+    100% {
+      border-color: #d7b85b;
+      box-shadow: 0 0 0 1px rgb(215 184 91 / 22%), 0 0 5px rgb(215 184 91 / 14%);
+    }
+
+    50% {
+      border-color: #e8cc77;
+      box-shadow: 0 0 0 2px rgb(215 184 91 / 34%), 0 0 10px rgb(215 184 91 / 24%);
+    }
   }
 
   #root .menu-bembos-grid p,
@@ -1076,6 +1091,10 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    #root .menu-regular-grid .menu-pop-media > span {
+      animation: none;
+    }
+
     #root .complaint-book-card,
     #root .complaint-book-page {
       animation: none;
