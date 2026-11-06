@@ -1158,6 +1158,11 @@
     92% { transform: rotate(-8deg) translateY(-1px); }
   }
 
+  #root#root,
+  #root#root *:not(svg text) {
+    font-size: 17px !important;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     #root .menu-regular-grid .menu-pop-media > span {
       animation: none;

@@ -118,6 +118,8 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=70"/);
+  assert.match(stylesheet, /#root#root,\s*#root#root \*:not\(svg text\)\s*\{\s*font-size:\s*17px\s*!important;/);
   assert.match(stylesheet, /#root \.text-brand\s*\{\s*color:\s*var\(--tablet-brand\)\s*!important;/);
   assert.match(stylesheet, /#root \.border-brand\s*\{\s*border-color:\s*var\(--tablet-brand\)\s*!important;/);
   assert.match(stylesheet, /#root \.bg-yellow-accent\s*\{\s*background-color:\s*var\(--tablet-yellow-accent\)\s*!important;/);
