@@ -118,7 +118,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=70"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=71"/);
   assert.match(stylesheet, /#root#root,\s*#root#root \*:not\(svg text\)\s*\{\s*font-size:\s*17px\s*!important;/);
   assert.match(stylesheet, /#root \.text-brand\s*\{\s*color:\s*var\(--tablet-brand\)\s*!important;/);
   assert.match(stylesheet, /#root \.border-brand\s*\{\s*border-color:\s*var\(--tablet-brand\)\s*!important;/);
@@ -130,6 +130,8 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="profile-questionnaire bg-white/);
   assert.match(stylesheet, /#root \.profile-questionnaire input::placeholder\s*\{\s*color:\s*#9aa2b2\s*!important;/);
   assert.match(stylesheet, /#root \.profile-affiliate-button:disabled\s*\{[^}]*background-color:\s*#d99aa8\s*!important;[^}]*opacity:\s*1\s*!important;/s);
+  assert.match(stylesheet, /#root \.brand-theme-dialog\s*\{[^}]*width:\s*min\(760px,\s*calc\(100vw - 64px\)\)\s*!important;[^}]*max-width:\s*760px\s*!important;[^}]*max-height:\s*min\(90dvh,\s*880px\);[^}]*padding:\s*24px\s*!important;/s);
+  assert.match(stylesheet, /#root \.brand-theme-dialog \.brand-preview-strip \.brand-preview\s*\{\s*height:\s*100px;/);
   assert.match(stylesheet, /#root \.home-pop-card-media\[data-touch-active="true"\] > img/);
   assert.match(stylesheet, /#root \.home-pop-card-media:hover > img/);
   assert.doesNotMatch(stylesheet, /\.home-pop-card:hover \.home-pop-card-media > img/);

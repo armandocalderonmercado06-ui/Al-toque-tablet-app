@@ -910,6 +910,18 @@
     margin: auto;
   }
 
+  #root .brand-theme-dialog {
+    box-sizing: border-box;
+    width: min(760px, calc(100vw - 64px)) !important;
+    max-width: 760px !important;
+    max-height: min(90dvh, 880px);
+    padding: 24px !important;
+  }
+
+  #root .brand-theme-dialog .brand-preview-strip .brand-preview {
+    height: 100px;
+  }
+
   #root .starbucks-upcoming-card {
     transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
   }
