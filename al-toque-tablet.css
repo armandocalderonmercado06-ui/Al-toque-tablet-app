@@ -88,6 +88,33 @@
     line-height: 1.25;
   }
 
+  #root .cart-quantity-control-button {
+    box-sizing: border-box;
+    width: 50px !important;
+    height: 50px !important;
+    flex: 0 0 50px;
+    border: 1px solid #e0ad00;
+    border-radius: 12px !important;
+    background-color: var(--tablet-yellow-accent) !important;
+    color: var(--tablet-dark) !important;
+    font-size: 24px !important;
+    line-height: 1;
+    transition: background-color 140ms ease, transform 140ms ease;
+  }
+
+  #root .cart-quantity-control-button:hover {
+    background-color: #f2b900 !important;
+  }
+
+  #root .cart-quantity-control-button:active {
+    transform: scale(0.94);
+  }
+
+  #root .cart-quantity-control-button:focus-visible {
+    outline: 3px solid var(--tablet-dark);
+    outline-offset: 2px;
+  }
+
   #root .bg-brand:disabled {
     background-color: #6b6261 !important;
     opacity: 1 !important;
