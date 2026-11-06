@@ -417,37 +417,35 @@
     margin-bottom: -12px;
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"],
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] {
+  #root .home-popular-grid,
+  #root .home-combo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 18px;
-    overflow: visible;
-    margin: 0;
-    padding: 14px 0 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(10px, 1.5vw, 18px);
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: 8px 0 10px;
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > *,
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * {
+  #root .home-popular-grid > *,
+  #root .home-combo-grid > * {
     width: 100%;
-    min-width: 0;
-    padding: 12px;
+    min-width: 0 !important;
+    padding: 10px;
     border-color: #eee8dc;
-    border-radius: 22px;
-    box-shadow: 0 8px 22px rgb(55 38 20 / 7%);
+    border-radius: 18px;
+    box-shadow: 0 6px 16px rgb(55 38 20 / 7%);
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > * > :first-child,
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * > :first-child {
-    height: clamp(176px, 19vw, 208px) !important;
-    min-height: clamp(176px, 19vw, 208px);
-    flex: 0 0 clamp(176px, 19vw, 208px);
-    aspect-ratio: auto;
+  #root .home-pop-card-media {
+    height: clamp(112px, 14vw, 160px) !important;
+    min-height: 0 !important;
+    flex: 0 0 auto;
+    aspect-ratio: 2 / 1;
     background: #fffaf0;
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > * > :first-child > img,
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * > :first-child > img,
+  #root .home-pop-card-media > img,
   #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 > .space-y-4 > div > [class*="h-36"] > img {
     width: 100%;
     height: 100%;

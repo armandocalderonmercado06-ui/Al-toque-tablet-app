@@ -88,6 +88,12 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /aria-label="Información del campus" aria-roledescription="carrusel"/);
   assert.match(page, /timeZone: 'America\/Lima'/);
   assert.match(stylesheet, /#root \.home-feature-carousel/);
+  assert.match(page, /className="home-popular-grid"/);
+  assert.match(page, /className="home-combo-grid"/);
+  assert.match(stylesheet, /#root \.home-popular-grid,\s*#root \.home-combo-grid\s*\{\s*display:\s*grid;\s*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\);\s*gap:[^;]+;\s*max-width:\s*1000px;/);
+  assert.match(stylesheet, /#root \.home-pop-card-media\s*\{\s*height:\s*clamp\(112px,\s*14vw,\s*160px\)\s*!important;/);
+  assert.match(page, /className="w-full h-full object-contain"/);
+  assert.match(page, /className="combo-card-image w-full h-full object-contain"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
   assert.match(stylesheet, /#root \.text-brand\s*\{\s*color:\s*var\(--tablet-brand\)\s*!important;/);
