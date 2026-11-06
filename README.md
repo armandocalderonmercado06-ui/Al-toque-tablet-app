@@ -8,6 +8,7 @@ las rutas `/api`; no se puede alojar como una pagina estatica en GitHub Pages.
 - Requiere Node.js 20.6 o posterior.
 - Ejecuta `npm start` y abre `http://localhost:4173`.
 - El diseño tablet se carga automáticamente desde 768 px; usa todo el viewport sin márgenes y se adapta a la orientación de la pantalla.
+- La interfaz tablet conserva la paleta base de la app de referencia: granate `#A50F2D`, oscuro `#2B1718` y amarillo `#FFC61A`; las campañas mantienen sus colores propios.
 - En tablets, el botón de pantalla completa del encabezado superior derecho activa o desactiva el modo inmersivo del navegador sin cubrir las tarjetas. También se puede salir con la tecla Esc.
 - En Inicio, selecciona cualquier parte de una tarjeta de plato o combo para abrir su personalización; el marco muestra un brillo dorado sutil. Las tarjetas se elevan al pasar el puntero o al presionarlas. La imagen solo hace pop-out 3D al pasar el puntero sobre ella o deslizar el dedo por la imagen.
 - En Perfil, la suscripción a promociones está desmarcada hasta que el usuario la autoriza. Al activarla, la app valida y envía el correo de confirmación al servicio oficial de Al Toque; cambiar la dirección revoca el consentimiento anterior.

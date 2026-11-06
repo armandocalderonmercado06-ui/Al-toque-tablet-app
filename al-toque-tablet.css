@@ -1,17 +1,31 @@
 @media (min-width: 768px) {
+  #root {
+    --tablet-brand: #a50f2d;
+    --tablet-dark: #2b1718;
+    --tablet-yellow-accent: #ffc61a;
+  }
+
   #root,
   #root * {
     font-size: 16px !important;
   }
 
   #root .bg-dark {
-    background-color: #2b1718 !important;
+    background-color: var(--tablet-dark) !important;
     color: #fffaf1 !important;
   }
 
+  #root .border-brand {
+    border-color: var(--tablet-brand) !important;
+  }
+
   #root .bg-brand {
-    background-color: #a50f2d !important;
+    background-color: var(--tablet-brand) !important;
     color: #fff !important;
+  }
+
+  #root .text-brand {
+    color: var(--tablet-brand) !important;
   }
 
   #root .bg-brand:disabled {
@@ -20,12 +34,12 @@
   }
 
   #root .bg-yellow-accent {
-    background-color: #ffe7a0 !important;
-    color: #351c1c !important;
+    background-color: var(--tablet-yellow-accent) !important;
+    color: var(--tablet-dark) !important;
   }
 
   #root .text-yellow-accent {
-    color: #ffe7a0 !important;
+    color: var(--tablet-yellow-accent) !important;
   }
 
   #root .text-gray-400 {
@@ -173,7 +187,7 @@
     justify-content: center;
     border: 0;
     border-radius: 12px;
-    background: #a90000;
+    background: var(--tablet-brand);
     color: #fff;
   }
 
@@ -802,19 +816,19 @@
     place-items: center;
     border: 1px solid rgb(255 255 255 / 28%);
     border-radius: 16px;
-    background: #a90000;
+    background: var(--tablet-brand);
     color: #fff;
     box-shadow: 0 6px 18px rgb(42 18 18 / 24%);
     transition: background-color 160ms ease, transform 160ms ease;
   }
 
   #root .tablet-fullscreen-control > button:hover {
-    background: #850000;
+    background: #8f0e2a;
     transform: translateY(-2px);
   }
 
   #root .tablet-fullscreen-control > button:focus-visible {
-    outline: 3px solid #f4cf58;
+    outline: 3px solid var(--tablet-yellow-accent);
     outline-offset: 3px;
   }
 
@@ -920,7 +934,7 @@
   }
 
   #root .complaint-book-card:focus-visible {
-    outline: 3px solid #a90000;
+    outline: 3px solid var(--tablet-brand);
     outline-offset: 3px;
   }
 
@@ -932,7 +946,7 @@
     flex: 0 0 98px;
     place-items: center;
     border-radius: 3px;
-    background: #b20d3c;
+    background: var(--tablet-brand);
     box-shadow: 4px 4px 0 #f0d98f, 6px 8px 12px rgb(75 38 29 / 20%);
     transform: rotate(-1.5deg);
     transition: transform 300ms ease;
