@@ -910,6 +910,19 @@
     margin: auto;
   }
 
+  #root .help-support-overlay {
+    box-sizing: border-box;
+    align-items: center;
+    padding: 24px;
+  }
+
+  #root .help-support-dialog {
+    box-sizing: border-box;
+    width: min(1280px, calc(100vw - 48px)) !important;
+    max-width: 1280px !important;
+    border-radius: 28px !important;
+  }
+
   #root .brand-theme-dialog {
     box-sizing: border-box;
     width: min(1280px, calc(100vw - 64px)) !important;

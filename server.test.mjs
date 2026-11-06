@@ -118,7 +118,11 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=76"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=77"/);
+  assert.match(page, /className="help-support-overlay fixed inset-0 z-50 bg-black\/40 flex items-end justify-center"/);
+  assert.match(page, /className="help-support-dialog w-full max-w-\[390px\] bg-white rounded-t-3xl p-5 space-y-4 shadow-2xl"/);
+  assert.match(stylesheet, /#root \.help-support-overlay\s*\{\s*box-sizing:\s*border-box;\s*align-items:\s*center;\s*padding:\s*24px;/);
+  assert.match(stylesheet, /#root \.help-support-dialog\s*\{\s*box-sizing:\s*border-box;\s*width:\s*min\(1280px,\s*calc\(100vw - 48px\)\)\s*!important;\s*max-width:\s*1280px\s*!important;\s*border-radius:\s*28px\s*!important;/);
   assert.match(page, /className="brand-preview-random-image" src="\.\/splash-random-reference\.png"/);
   assert.match(page, /\.brand-preview-random-image\s*\{\s*display:\s*block;\s*width:\s*100%;\s*height:\s*auto;/);
   assert.match(stylesheet, /#root#root,\s*#root#root \*:not\(svg text\)\s*\{\s*font-size:\s*17px\s*!important;/);
