@@ -3212,7 +3212,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=63" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=64" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -8283,7 +8283,7 @@
               <button onClick={() => onNavigate('menu')} className="text-xs font-bold text-brand hover:underline">Ver todo</button>
             </div>
 
-            <div className="home-popular-grid">
+            <div className="flex space-x-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4">
               {popularDishes.map((dish) => (
                 <div key={dish.id} role="button" tabIndex={0} aria-label={`Personalizar ${dish.name}`} onClick={(event) => handleHomeProductSelection(event, dish)} onKeyDown={(event) => {
                   if (event.key === 'Enter' || event.key === ' ') {
@@ -8292,7 +8292,7 @@
                   }
                 }} className="home-pop-card min-w-[220px] bg-white border border-gray-100 rounded-3xl p-2.5 shadow-sm flex flex-col justify-between cursor-pointer text-left" onPointerDown={handleHomeProductPointerState} onPointerMove={handleHomeProductPointerState} onPointerUp={handleHomeProductPointerState} onPointerCancel={handleHomeProductPointerState} onPointerLeave={handleHomeProductPointerState}>
                   <div className="home-pop-card-media relative h-28 rounded-2xl overflow-hidden mb-2">
-                    <img src={dish.image} alt={dish.name} className="w-full h-full object-contain" />
+                    <img src={dish.image} alt={dish.name} className="w-full h-full object-cover" />
                     <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-[10px] font-bold px-2 py-0.5 rounded-full text-dark">{dish.badge}</span>
                   </div>
                   <div>
@@ -8318,7 +8318,7 @@
               <h3 className="font-title font-bold text-base">Combos que rinden</h3>
               <p className="text-[11px] text-gray-400">Para tu día a día en campus</p>
             </div>
-            <div className="home-combo-grid">
+            <div className="flex space-x-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4">
               {INITIAL_MENU.filter((m) => m.category === 'combos').map((dish) => (
                 <div key={dish.id} role="button" tabIndex={0} aria-label={`Personalizar ${dish.name}`} onClick={(event) => handleHomeProductSelection(event, dish)} onKeyDown={(event) => {
                   if (event.key === 'Enter' || event.key === ' ') {
@@ -8327,7 +8327,7 @@
                   }
                 }} className="home-pop-card combo-card min-w-[220px] bg-white border border-gray-100 rounded-3xl p-2.5 shadow-sm flex flex-col justify-between cursor-pointer text-left" onPointerDown={handleHomeProductPointerState} onPointerMove={handleHomeProductPointerState} onPointerUp={handleHomeProductPointerState} onPointerCancel={handleHomeProductPointerState} onPointerLeave={handleHomeProductPointerState}>
                   <div className="home-pop-card-media relative h-36 rounded-2xl overflow-hidden mb-2">
-                    <img src={dish.image} alt={dish.name} className="combo-card-image w-full h-full object-contain" />
+                    <img src={dish.image} alt={dish.name} className="combo-card-image w-full h-full object-cover" />
                     <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-[10px] font-bold px-2 py-0.5 rounded-full text-dark">{dish.badge}</span>
                   </div>
                   <div>
@@ -8511,16 +8511,16 @@
                 return (
                   <div key={group.id} className="space-y-5">
                     <h3 id={group.id === 'pareja' ? 'bembos-promotions-title' : undefined} className="font-title text-lg font-bold">{group.title}</h3>
-                    <div className="space-y-7">
+                    <div className="menu-bembos-grid">
                       {promotions.map((promo) => (
                         <article key={promo.id} className="menu-pop-card bembos-promo-card rounded-3xl border border-gray-100 bg-white p-3 shadow-sm">
-                          <div className="menu-pop-media bembos-promo-media relative rounded-2xl bg-white">
+                          <div className="menu-pop-media menu-bembos-media bembos-promo-media relative rounded-2xl bg-white">
                             <img
                               src={promo.image}
                               alt={promo.name}
                               loading="lazy"
                               referrerPolicy="no-referrer"
-                              className="menu-pop-image bembos-promo-image h-full w-full rounded-2xl"
+                              className="menu-pop-image menu-bembos-image bembos-promo-image h-full w-full rounded-2xl object-contain"
                             />
                             {group.id === 'cupones' ? (
                               <img
@@ -8602,7 +8602,7 @@
                     </div>
                     <span className="shrink-0 rounded-full bg-[#dcefe8] px-2.5 py-1 text-[10px] font-bold text-[#1e3932]">Próximamente</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="menu-product-grid grid grid-cols-2 gap-4">
                     {matchingUpcomingPromotions.map((product) => (
                       <article key={product.name} className="menu-pop-card menu-pop-card--compact starbucks-upcoming-card flex min-w-0 flex-col overflow-visible rounded-2xl border border-[#ead4d9] bg-white shadow-sm">
                         <div
@@ -8639,7 +8639,7 @@
                       <h3 className="font-title text-lg font-bold">{category}</h3>
                       <span className="text-[10px] font-semibold text-gray-500">{products.length}</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="menu-product-grid grid grid-cols-2 gap-6">
                       {products.map((product) => (
                         <article key={product.id} className="menu-pop-card menu-pop-card--compact flex min-w-0 flex-col rounded-2xl border border-gray-200 bg-white p-2.5 shadow-sm">
                           <div className="menu-pop-media starbucks-product-media relative mx-auto mb-2 flex aspect-square w-[88%] items-center justify-center rounded-full border-2 border-[#d6bb79] bg-[#075344] p-2.5 shadow-md">
@@ -8702,7 +8702,7 @@
                             <h3 id={`starbucks-food-${category}`} className="font-title text-lg font-bold">{category}</h3>
                             <span className="text-[10px] font-semibold text-gray-500">{products.length}</span>
                           </div>
-                          <div className="grid grid-cols-2 gap-6">
+                          <div className="menu-product-grid grid grid-cols-2 gap-6">
                             {products.map((product) => (
                               <article key={product.id} className="menu-pop-card menu-pop-card--compact flex min-w-0 flex-col rounded-2xl border border-gray-200 bg-white p-2.5 shadow-sm">
                                 <div className="menu-pop-media starbucks-product-media relative mx-auto mb-2 flex aspect-square w-[88%] items-center justify-center rounded-full border-2 border-[#d6bb79] bg-[#075344] p-2.5 shadow-md">
@@ -8754,7 +8754,7 @@
                             <h3 id={`starbucks-merch-${category}`} className="font-title text-lg font-bold">{category}</h3>
                             <span className="text-[10px] font-semibold text-gray-500">{products.length}</span>
                           </div>
-                          <div className="grid grid-cols-2 gap-6">
+                          <div className="menu-product-grid grid grid-cols-2 gap-6">
                             {products.map((product) => (
                               <article key={product.id} className="menu-pop-card menu-pop-card--compact flex min-w-0 flex-col rounded-2xl border border-gray-200 bg-white p-2.5 shadow-sm">
                                 <div className="menu-pop-media starbucks-product-media relative mx-auto mb-2 flex aspect-square w-[88%] items-center justify-center rounded-full border-2 border-[#d6bb79] bg-[#075344] p-2.5 shadow-md">
@@ -8807,7 +8807,7 @@
                             <h3 id={`starbucks-packs-${category}`} className="font-title text-lg font-bold">{category}</h3>
                             <span className="text-[10px] font-semibold text-gray-500">{products.length}</span>
                           </div>
-                          <div className="grid grid-cols-2 gap-6">
+                          <div className="menu-product-grid grid grid-cols-2 gap-6">
                             {products.map((product) => (
                               <article key={product.id} className="menu-pop-card menu-pop-card--compact flex min-w-0 flex-col rounded-2xl border border-gray-200 bg-white p-2.5 shadow-sm">
                                 <div className="menu-pop-media starbucks-product-media relative mx-auto mb-2 flex aspect-square w-[88%] items-center justify-center rounded-full border-2 border-[#d6bb79] bg-[#075344] p-2.5 shadow-md">
@@ -8852,7 +8852,7 @@
               </div>
             </section>
           ) : (
-          <div className="space-y-6">
+          <div className="menu-regular-grid">
             {filter === 'desayunos' && filteredItems.length === 0 && !searchQuery.trim() && (
               <p className="rounded-2xl bg-gray-50 p-4 text-center text-xs text-gray-500" role="status">
                 Próximamente encontrarás aquí los desayunos.
