@@ -61,8 +61,59 @@
     width: 30px !important;
     height: 30px !important;
     flex: 0 0 30px;
-    accent-color: var(--tablet-brand);
+    display: grid;
+    place-content: center;
+    appearance: none !important;
+    -webkit-appearance: none;
+    border: 2px solid var(--tablet-brand);
+    border-radius: 6px;
+    background-color: #fff;
     cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+  }
+
+  #root .profile-questionnaire input[type="checkbox"]::before {
+    width: 17px;
+    height: 17px;
+    background-color: #fff;
+    clip-path: polygon(14% 44%, 0 65%, 40% 100%, 100% 20%, 80% 0, 40% 64%);
+    content: "";
+    transform: scale(0);
+    transition: transform 140ms ease;
+  }
+
+  #root .profile-questionnaire input[type="checkbox"]:checked {
+    border-color: var(--tablet-brand);
+    background-color: var(--tablet-brand);
+    animation: tabletProfileCheckboxPulse 520ms ease-out;
+  }
+
+  #root .profile-questionnaire input[type="checkbox"]:checked::before {
+    transform: scale(1);
+  }
+
+  #root .profile-questionnaire input[type="checkbox"]:active {
+    transform: scale(0.94);
+  }
+
+  #root .profile-questionnaire input[type="checkbox"]:focus-visible {
+    outline: 3px solid rgb(165 15 45 / 28%);
+    outline-offset: 3px;
+  }
+
+  @keyframes tabletProfileCheckboxPulse {
+    0% {
+      box-shadow: 0 0 0 0 rgb(165 15 45 / 42%);
+      transform: scale(0.88);
+    }
+    55% {
+      box-shadow: 0 0 0 8px rgb(165 15 45 / 0%);
+      transform: scale(1.1);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgb(165 15 45 / 0%);
+      transform: scale(1);
+    }
   }
 
   #root .profile-affiliate-button {
@@ -764,6 +815,12 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    #root .profile-questionnaire input[type="checkbox"],
+    #root .profile-questionnaire input[type="checkbox"]::before {
+      animation: none !important;
+      transition: none !important;
+    }
+
     #root .home-pop-card,
     #root .home-pop-card-media > img {
       animation: none !important;
