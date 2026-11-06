@@ -37,7 +37,7 @@
     color: rgb(255 255 255 / 84%) !important;
   }
 
-  #root .profile-edit-button {
+  #root .profile-identity-card .profile-edit-button {
     border-color: #fff0c8 !important;
     border-radius: 9px;
     background: #fff0c8;
