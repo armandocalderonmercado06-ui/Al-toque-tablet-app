@@ -131,11 +131,11 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className=\{`w-full h-full object-cover \$\{dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=93"/);
-  assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]\s*\{[^}]*width:\s*30px\s*!important;[^}]*appearance:\s*none\s*!important;[^}]*background-color:\s*#fff;/s);
-  assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]:checked\s*\{[^}]*background-color:\s*var\(--tablet-brand\);[^}]*animation:\s*tabletProfileCheckboxPulse 520ms ease-out;/s);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=94"/);
+  assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]\s*\{[^}]*width:\s*30px\s*!important;[^}]*appearance:\s*none\s*!important;[^}]*border:\s*2px solid #16a34a;[^}]*background-color:\s*#fff;/s);
+  assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]:checked\s*\{[^}]*background-color:\s*#16a34a;[^}]*animation:\s*tabletProfileCheckboxPulse 520ms ease-out;/s);
   assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]:checked::before\s*\{[^}]*transform:\s*scale\(1\);/s);
-  assert.match(stylesheet, /@keyframes tabletProfileCheckboxPulse/);
+  assert.match(stylesheet, /@keyframes tabletProfileCheckboxPulse\s*\{\s*0%\s*\{\s*box-shadow:\s*0 0 0 0 rgb\(22 163 74 \/ 42%\);/);
   assert.match(stylesheet, /@media \(prefers-reduced-motion: reduce\)\s*\{\s*#root \.profile-questionnaire input\[type="checkbox"\],[\s\S]*?animation:\s*none !important;/);
   assert.match(page, /image: '\.\/combo-marino-imagen\.png'/);
   assert.match(page, /dish\.id === '9' \? 'menu-marino-image'/);

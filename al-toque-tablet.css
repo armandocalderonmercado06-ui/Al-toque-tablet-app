@@ -65,7 +65,7 @@
     place-content: center;
     appearance: none !important;
     -webkit-appearance: none;
-    border: 2px solid var(--tablet-brand);
+    border: 2px solid #16a34a;
     border-radius: 6px;
     background-color: #fff;
     cursor: pointer;
@@ -83,8 +83,8 @@
   }
 
   #root .profile-questionnaire input[type="checkbox"]:checked {
-    border-color: var(--tablet-brand);
-    background-color: var(--tablet-brand);
+    border-color: #16a34a;
+    background-color: #16a34a;
     animation: tabletProfileCheckboxPulse 520ms ease-out;
   }
 
@@ -97,21 +97,21 @@
   }
 
   #root .profile-questionnaire input[type="checkbox"]:focus-visible {
-    outline: 3px solid rgb(165 15 45 / 28%);
+    outline: 3px solid rgb(22 163 74 / 28%);
     outline-offset: 3px;
   }
 
   @keyframes tabletProfileCheckboxPulse {
     0% {
-      box-shadow: 0 0 0 0 rgb(165 15 45 / 42%);
+      box-shadow: 0 0 0 0 rgb(22 163 74 / 42%);
       transform: scale(0.88);
     }
     55% {
-      box-shadow: 0 0 0 8px rgb(165 15 45 / 0%);
+      box-shadow: 0 0 0 8px rgb(22 163 74 / 0%);
       transform: scale(1.1);
     }
     100% {
-      box-shadow: 0 0 0 0 rgb(165 15 45 / 0%);
+      box-shadow: 0 0 0 0 rgb(22 163 74 / 0%);
       transform: scale(1);
     }
   }
