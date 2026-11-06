@@ -58,10 +58,10 @@ test('serves the campus location logo used by the home carousel', async (t) => {
   assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
 });
 
-test('serves the new drink photos as public PNG assets', async (t) => {
+test('serves new product photos as public PNG assets', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
-  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png', 'chicha-morada-helada.png']) {
+  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png', 'chicha-morada-helada.png', 'combo-marino-imagen.png']) {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/${asset}`);
     const image = Buffer.from(await response.arrayBuffer());
 
@@ -128,10 +128,14 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(stylesheet, /#root \.bembos-promo-hover-label\s*\{[^}]*transform:\s*translateZ\(32px\);/s);
   assert.match(page, /className="menu-pop-image menu-bembos-image bembos-promo-image h-full w-full rounded-2xl object-contain"/);
   assert.match(page, /className="flex space-x-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4"/);
-  assert.match(page, /className="w-full h-full object-cover"/);
+  assert.match(page, /className=\{`w-full h-full object-cover \$\{dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=90"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=91"/);
+  assert.match(page, /image: '\.\/combo-marino-imagen\.png'/);
+  assert.match(page, /dish\.id === '9' \? 'menu-marino-image'/);
+  assert.match(page, /className=\{`combo-card-image w-full h-full object-cover \$\{dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
+  assert.match(stylesheet, /#root \.menu-regular-grid \.menu-marino-image,\s*#root \.home-pop-card \.menu-marino-image\s*\{\s*object-fit:\s*cover\s*!important;/);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button\s*\{[^}]*transition:\s*transform 140ms ease,\s*box-shadow 140ms ease,\s*background-color 140ms ease;/s);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button:active\s*\{\s*transform:\s*scale\(0\.96\);\s*box-shadow:\s*0 2px 6px rgb\(43 23 24 \/ 16%\);/);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button\.bottom-nav-ai-option:active\s*\{\s*transform:\s*translateY\(-13px\) scale\(0\.96\);\s*box-shadow:\s*0 2px 7px rgb\(133 93 194 \/ 20%\);/);

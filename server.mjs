@@ -93,6 +93,7 @@ const PUBLIC_ASSETS = new Set([
   'jugo-maracuya-helada.png',
   'agua-san-luis-helada.png',
   'chicha-morada-helada.png',
+  'combo-marino-imagen.png',
   'Combo costa.png',
   'combo fitness.jpg',
   'combo herediano.jpg',
