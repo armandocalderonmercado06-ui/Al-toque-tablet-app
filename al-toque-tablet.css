@@ -76,15 +76,18 @@
 
   #root .profile-questionnaire input[type="checkbox"]::before {
     position: absolute;
-    top: -5px;
-    left: 9px;
-    width: 22px;
-    height: 24px;
-    background-color: #fff;
-    clip-path: polygon(14% 44%, 0 65%, 40% 100%, 100% 20%, 80% 0, 40% 64%);
-    content: "";
+    top: -11px;
+    left: 1px;
+    color: #fff;
+    content: "✓";
+    font-family: system-ui, sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    -webkit-text-stroke: 0.7px #d1d5db;
+    text-shadow: 0 1px 1px rgb(75 85 99 / 24%);
     transform: scale(0);
-    transform-origin: center;
+    transform-origin: bottom left;
   }
 
   #root .profile-questionnaire input[type="checkbox"]:checked {
