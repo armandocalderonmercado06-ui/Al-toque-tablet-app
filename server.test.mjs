@@ -132,6 +132,12 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /name: 'Área de tutoría'/);
   assert.match(page, /role="group" aria-label="Método de pago"/);
   assert.match(page, /aria-pressed=\{paymentMethod === method\.id\}/);
+  assert.match(page, /aria-expanded=\{showSearch\}/);
+  assert.match(page, /aria-controls="menu-search"/);
+  assert.match(page, /aria-label="Buscar platos, combos o bebidas"/);
+  assert.match(page, /aria-label="Limpiar búsqueda"/);
+  assert.match(page, /aria-pressed=\{filter === chip\.id\}/);
+  assert.match(page, /No encontramos resultados/);
   assert.match(page, /aria-label=\{`Quitar una unidad de \$\{item\.name\}`\}/);
   assert.match(page, /aria-label=\{`Agregar una unidad de \$\{item\.name\}`\}/);
   assert.doesNotMatch(page, /<h5 className="font-bold text-xs">Punto de recojo<\/h5>/);

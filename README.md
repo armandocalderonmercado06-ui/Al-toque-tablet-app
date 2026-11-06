@@ -13,6 +13,7 @@ las rutas `/api`; no se puede alojar como una pagina estatica en GitHub Pages.
 - En Inicio, selecciona cualquier parte de una tarjeta de plato o combo para abrir su personalización; el marco muestra un brillo dorado sutil. Las tarjetas se elevan al pasar el puntero o al presionarlas. La imagen solo hace pop-out 3D al pasar el puntero sobre ella o deslizar el dedo por la imagen.
 - En Perfil, la suscripción a promociones está desmarcada hasta que el usuario la autoriza. Al activarla, la app valida y envía el correo de confirmación al servicio oficial de Al Toque; cambiar la dirección revoca el consentimiento anterior.
 - En Pedido, elige el punto de recojo entre la puerta principal, el patio y el área de tutoría; la selección se comparte con el repartidor y aparece en el seguimiento.
+- En Menú, busca platos, combos o bebidas; si no hay coincidencias, la app lo indica y permite limpiar la búsqueda. Los filtros anuncian la categoría seleccionada.
 - Copia `.env.example` a `.env` para configurar integraciones opcionales.
 - Define `REELS_DELETE_PASSWORD` con una clave privada para habilitar la
   eliminacion de Reels. Sin ella, esa operacion falla de forma cerrada.
