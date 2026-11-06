@@ -12812,8 +12812,35 @@
       );
     }
 
+    const PROFILE_CAREER_GROUPS = [
+      {
+        name: 'Administración y Gestión',
+        careers: ['Administración', 'Administración en Salud', 'Administración en Salud PGE', 'Gestión de Desarrollo Global']
+      },
+      {
+        name: 'Ciencias',
+        careers: ['Biología', 'Química', 'Farmacia y Bioquímica', 'Nutrición']
+      },
+      {
+        name: 'Educación',
+        careers: ['Educación', 'Educación Inicial', 'Educación Primaria', 'Educación PGE']
+      },
+      {
+        name: 'Ingeniería',
+        careers: ['Ingeniería Ambiental', 'Ingeniería Biomédica', 'Ingeniería Industrial', 'Ingeniería Informática']
+      },
+      {
+        name: 'Salud y Medicina',
+        careers: ['Medicina', 'Estomatología', 'Enfermería', 'Enfermería PGE', 'Medicina Veterinaria y Zootecnia', 'Laboratorio Clínico y Anatomía Patológica', 'Psicología', 'Psicología PGE']
+      }
+    ];
+
     function ProfileScreen({ onNavigate, onBecomeRider, onRestoreClassicHome, notifications, setNotifications, profile, setProfile, orderHistory, orderHistoryStorageError, onClearOrderHistory }) {
       const [showQuestionnaire, setShowQuestionnaire] = useState(!profile.privacyAccepted);
+      const [profileCareerGroup, setProfileCareerGroup] = useState(() => {
+        const matchingGroup = PROFILE_CAREER_GROUPS.find((group) => group.careers.includes(profile.career));
+        return matchingGroup?.name || (profile.career ? 'Otra carrera' : '');
+      });
       const [showThankYou, setShowThankYou] = useState(false);
       const [showHelp, setShowHelp] = useState(false);
       const [showOrderHistory, setShowOrderHistory] = useState(false);
@@ -13256,16 +13283,46 @@
                 <input id="profile-name" value={profile.fullName} onChange={(e) => updateProfile('fullName', e.target.value)} placeholder="Nombre y apellido" className="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-brand" />
               </div>
               <div>
-                <label htmlFor="profile-career" className="block text-[10px] font-bold text-gray-500 mb-1">¿Qué carrera estudias?</label>
-                <select id="profile-career" value={profile.career} onChange={(e) => updateProfile('career', e.target.value)} className="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs bg-white focus:outline-none focus:border-brand">
-                  <option value="">Selecciona tu carrera</option>
-                  <option>Administración</option>
-                  <option>Medicina</option>
-                  <option>Enfermería</option>
-                  <option>Psicología</option>
-                  <option>Nutrición</option>
-                  <option>Otra carrera</option>
+                <label htmlFor="profile-career-group" className="block text-[10px] font-bold text-gray-500 mb-1">¿Qué área estudias?</label>
+                <select
+                  id="profile-career-group"
+                  value={profileCareerGroup}
+                  onChange={(event) => {
+                    setProfileCareerGroup(event.target.value);
+                    updateProfile('career', '');
+                  }}
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs bg-white focus:outline-none focus:border-brand"
+                >
+                  <option value="">Selecciona un área académica</option>
+                  {PROFILE_CAREER_GROUPS.map((group) => <option key={group.name} value={group.name}>{group.name}</option>)}
+                  <option value="Otra carrera">Otra carrera</option>
                 </select>
+                {profileCareerGroup && profileCareerGroup !== 'Otra carrera' && (
+                  <div className="mt-2">
+                    <label htmlFor="profile-career" className="block text-[10px] font-bold text-gray-500 mb-1">¿Qué carrera estudias?</label>
+                    <select
+                      id="profile-career"
+                      value={profile.career}
+                      onChange={(event) => updateProfile('career', event.target.value)}
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs bg-white focus:outline-none focus:border-brand"
+                    >
+                      <option value="">Selecciona tu carrera</option>
+                      {PROFILE_CAREER_GROUPS.find((group) => group.name === profileCareerGroup)?.careers.map((career) => <option key={career}>{career}</option>)}
+                    </select>
+                  </div>
+                )}
+                {profileCareerGroup === 'Otra carrera' && (
+                  <div className="mt-2">
+                    <label htmlFor="profile-career-other" className="block text-[10px] font-bold text-gray-500 mb-1">Escribe tu carrera</label>
+                    <input
+                      id="profile-career-other"
+                      value={profile.career === 'Otra carrera' ? '' : profile.career}
+                      onChange={(event) => updateProfile('career', event.target.value)}
+                      placeholder="Nombre de tu carrera"
+                      className="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-brand"
+                    />
+                  </div>
+                )}
               </div>
               <div>
                 <label htmlFor="profile-nickname" className="block text-[10px] font-bold text-gray-500 mb-1">¿Cuál es tu apodo?</label>

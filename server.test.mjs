@@ -153,6 +153,13 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /image: '\.\/chicha-morada-helada\.png'/);
   assert.match(page, /dish\.id === '6' \? 'menu-chicha-image'/);
   assert.match(stylesheet, /#root \.menu-regular-grid \.menu-chicha-image\s*\{\s*object-fit:\s*cover\s*!important;/);
+  assert.match(page, /name: 'Administración y Gestión',\s*careers: \['Administración', 'Administración en Salud', 'Administración en Salud PGE', 'Gestión de Desarrollo Global'\]/);
+  assert.match(page, /name: 'Ciencias',\s*careers: \['Biología', 'Química', 'Farmacia y Bioquímica', 'Nutrición'\]/);
+  assert.match(page, /name: 'Educación',\s*careers: \['Educación', 'Educación Inicial', 'Educación Primaria', 'Educación PGE'\]/);
+  assert.match(page, /name: 'Ingeniería',\s*careers: \['Ingeniería Ambiental', 'Ingeniería Biomédica', 'Ingeniería Industrial', 'Ingeniería Informática'\]/);
+  assert.match(page, /name: 'Salud y Medicina',\s*careers: \['Medicina', 'Estomatología', 'Enfermería', 'Enfermería PGE', 'Medicina Veterinaria y Zootecnia', 'Laboratorio Clínico y Anatomía Patológica', 'Psicología', 'Psicología PGE'\]/);
+  assert.match(page, /setProfileCareerGroup\(event\.target\.value\);\s*updateProfile\('career', ''\);/);
+  assert.match(page, /id="profile-career-other"/);
   assert.match(page, /className="tablet-order-toast absolute top-10 left-1\/2 -translate-x-1\/2 bg-dark text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg z-50 animate-bounce cursor-pointer hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"/);
   assert.match(stylesheet, /#root \.tablet-order-toast\s*\{\s*box-sizing:\s*border-box;\s*top:\s*120px\s*!important;\s*width:\s*max-content;\s*min-width:\s*min\(560px,\s*calc\(100vw - 48px\)\);\s*max-width:\s*calc\(100vw - 48px\);\s*padding:\s*16px 28px\s*!important;\s*font-size:\s*clamp\(20px,\s*2\.2vw,\s*28px\)\s*!important;\s*line-height:\s*1\.25;/);
   assert.match(page, /className="profile-experience-card bg-cream\/60 border border-cream p-4 rounded-3xl flex justify-around items-center text-center"/);
