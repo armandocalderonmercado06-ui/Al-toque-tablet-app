@@ -100,6 +100,10 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.doesNotMatch(page, /onClick=\{\(\) => onAddBembos\(promo\)\}/);
   assert.doesNotMatch(page, /className="menu-add-button w-8 h-8/);
   assert.match(stylesheet, /#root \.menu-bembos-grid,\s*#root \.menu-product-grid,\s*#root \.menu-regular-grid\s*\{\s*display:\s*grid;\s*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\);/);
+  assert.match(stylesheet, /#root \.menu-bembos-grid > \.menu-pop-card,\s*#root \.menu-product-grid > \.menu-pop-card,\s*#root \.menu-regular-grid > \.menu-pop-card\s*\{[^}]*animation:\s*tabletMenuCardGoldShimmer 3\.2s ease-in-out infinite;/s);
+  assert.match(stylesheet, /@keyframes tabletMenuCardGoldShimmer/);
+  assert.match(stylesheet, /50%\s*\{\s*border-color:\s*#d7b85b;\s*box-shadow:\s*0 6px 16px rgb\(55 38 20 \/ 7%\), 0 0 10px 1px rgb\(215 184 91 \/ 22%\);/);
+  assert.match(stylesheet, /#root \.menu-product-grid > \.menu-pop-card,\s*#root \.menu-regular-grid > \.menu-pop-card\s*\{\s*border-color:\s*#e7d9b8;\s*box-shadow:\s*0 6px 16px rgb\(55 38 20 \/ 7%\);\s*animation:\s*none;/);
   assert.match(stylesheet, /#root \.menu-pop-card\[role="button"\]\[data-selected="true"\]\s*\{[^}]*animation:\s*tabletHomeCardGoldGlow 700ms ease-out both;/s);
   assert.match(stylesheet, /#root \.menu-regular-grid \.menu-pop-media > span\s*\{[^}]*position:\s*absolute;[^}]*z-index:\s*4;[^}]*top:\s*8px;[^}]*left:\s*8px;[^}]*border:\s*1px solid #d7b85b;[^}]*font-size:\s*12px\s*!important;[^}]*transform:\s*translateZ\(32px\);[^}]*animation:\s*tabletMenuBadgeGoldGlow 2\.6s ease-in-out infinite;/s);
   assert.match(stylesheet, /@keyframes tabletMenuBadgeGoldGlow/);

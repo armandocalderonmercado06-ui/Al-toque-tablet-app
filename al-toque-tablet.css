@@ -921,6 +921,20 @@
     padding: 10px;
     border-radius: 18px;
     box-shadow: 0 6px 16px rgb(55 38 20 / 7%);
+    animation: tabletMenuCardGoldShimmer 3.2s ease-in-out infinite;
+  }
+
+  @keyframes tabletMenuCardGoldShimmer {
+    0%,
+    100% {
+      border-color: #eee8dc;
+      box-shadow: 0 6px 16px rgb(55 38 20 / 7%), 0 0 0 0 rgb(215 184 91 / 0%);
+    }
+
+    50% {
+      border-color: #d7b85b;
+      box-shadow: 0 6px 16px rgb(55 38 20 / 7%), 0 0 10px 1px rgb(215 184 91 / 22%);
+    }
   }
 
   #root .menu-pop-card[role="button"] {
@@ -1112,6 +1126,14 @@
 
   @media (prefers-reduced-motion: reduce) {
     #root .menu-regular-grid .menu-pop-media > span {
+      animation: none;
+    }
+
+    #root .menu-bembos-grid > .menu-pop-card,
+    #root .menu-product-grid > .menu-pop-card,
+    #root .menu-regular-grid > .menu-pop-card {
+      border-color: #e7d9b8;
+      box-shadow: 0 6px 16px rgb(55 38 20 / 7%);
       animation: none;
     }
 
