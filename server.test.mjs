@@ -139,6 +139,13 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /name: 'Vaso de emoliente y Pan con Queso'/);
   assert.match(page, /image: 'https:\/\/al-toque-upch\.onrender\.com\/desayuno-emoliente-pan-queso\.png'/);
   assert.match(page, /id: 'desayunos', label: 'Desayunos'/);
+  assert.match(page, /\{ id: 'panettone', label: 'Navidad 🎄' \}/);
+  assert.match(page, /border-\[#e30613\] text-\[#e30613\]/);
+  assert.match(page, /<h3 id="starbucks-panettone-title"[^>]*>Navidad 🎄<\/h3>/);
+  assert.match(page, /const STARBUCKS_PANETTONE_PRODUCTS = \[/);
+  assert.match(page, /starbucksSection === 'panettone'/);
+  assert.match(page, /No encontramos productos de Navidad que coincidan con la búsqueda/);
+  assert.doesNotMatch(page, /STARBUCKS_UPCOMING_PROMOTIONS|matchingUpcomingPromotions/);
   assert.match(page, /\{ id: 'alimentos', label: 'Alimentos' \}/);
   assert.match(page, /\{ id: 'merch', label: 'Merch & Café en Grano' \}/);
   assert.match(page, /\{ id: 'packs', label: 'Packs & Boxes' \}/);
