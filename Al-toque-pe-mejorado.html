@@ -8407,7 +8407,7 @@
               onClick={() => setShowSearch(!showSearch)}
               aria-label={showSearch ? 'Cerrar búsqueda' : 'Buscar en el menú'}
               aria-expanded={showSearch}
-              aria-controls="menu-search"
+              aria-controls={showSearch ? 'menu-search' : undefined}
               className="w-10 h-10 bg-cream rounded-2xl flex items-center justify-center text-dark hover:opacity-80 transition"
             >
               <i data-lucide={showSearch ? 'x' : 'search'} className="w-5 h-5"></i>

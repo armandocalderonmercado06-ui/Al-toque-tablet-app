@@ -133,7 +133,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /role="group" aria-label="Método de pago"/);
   assert.match(page, /aria-pressed=\{paymentMethod === method\.id\}/);
   assert.match(page, /aria-expanded=\{showSearch\}/);
-  assert.match(page, /aria-controls="menu-search"/);
+  assert.match(page, /aria-controls=\{showSearch \? 'menu-search' : undefined\}/);
   assert.match(page, /aria-label="Buscar platos, combos o bebidas"/);
   assert.match(page, /aria-label="Limpiar búsqueda"/);
   assert.match(page, /aria-pressed=\{filter === chip\.id\}/);
