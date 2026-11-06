@@ -966,6 +966,25 @@
     line-height: 1.25;
   }
 
+  #root .menu-regular-grid .menu-pop-media > span {
+    position: absolute;
+    z-index: 3;
+    top: 8px;
+    left: 8px;
+    display: inline-flex;
+    max-width: calc(100% - 16px);
+    align-items: center;
+    border-radius: 9999px;
+    background: rgb(255 255 255 / 90%);
+    padding: 2px 10px;
+    color: #2b1718;
+    font-size: 12px !important;
+    font-weight: 700;
+    line-height: 1.35;
+    white-space: nowrap;
+    backdrop-filter: blur(8px);
+  }
+
   #root .menu-bembos-grid p,
   #root .menu-product-grid p,
   #root .menu-regular-grid p {
