@@ -3219,7 +3219,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=83" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=84" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -4248,7 +4248,7 @@
         time: '2 min',
         badge: 'Helada',
         isPopular: false,
-        image: window.MENU_IMAGES.maracuya,
+        image: './jugo-maracuya-helada.png',
         components: ['Jugo de maracuyá 500ml']
       }
     ];
@@ -8886,7 +8886,7 @@
                   className="menu-pop-card cursor-pointer bg-white border border-gray-100 rounded-3xl p-3 shadow-sm space-y-2 text-left"
                 >
                   <div className="menu-pop-media relative h-36 rounded-2xl">
-                    <img src={dish.image} alt={dish.name} className="menu-pop-image w-full h-full rounded-2xl object-cover" />
+                    <img src={dish.image} alt={dish.name} className={`menu-pop-image w-full h-full rounded-2xl object-cover ${dish.id === '7' ? 'menu-maracuya-image' : ''}`} />
                     <span className={`absolute top-2 left-2 bg-white/90 backdrop-blur-md text-[10px] font-bold px-2.5 py-0.5 rounded-full text-dark ${dish.isPopular ? 'menu-popular-badge' : ''}`}>{dish.badge}</span>
                   </div>
                   <div>

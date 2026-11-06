@@ -90,6 +90,7 @@ const PUBLIC_ASSETS = new Set([
   'splash-clean-reference.png',
   'splash-warm-reference.png',
   'splash-random-reference.png',
+  'jugo-maracuya-helada.png',
   'Combo costa.png',
   'combo fitness.jpg',
   'combo herediano.jpg',

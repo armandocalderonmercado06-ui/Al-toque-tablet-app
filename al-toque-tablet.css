@@ -1145,6 +1145,10 @@
     object-position: center;
   }
 
+  #root .menu-regular-grid .menu-maracuya-image {
+    object-fit: cover !important;
+  }
+
   #root .menu-bembos-grid h4,
   #root .menu-product-grid h4,
   #root .menu-regular-grid h3 {
