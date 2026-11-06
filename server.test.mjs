@@ -129,7 +129,11 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=86"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=87"/);
+  assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button\s*\{[^}]*transition:\s*transform 140ms ease,\s*box-shadow 140ms ease,\s*background-color 140ms ease;/s);
+  assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button:active\s*\{\s*transform:\s*scale\(0\.96\);\s*box-shadow:\s*0 2px 6px rgb\(43 23 24 \/ 16%\);/);
+  assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button\.bottom-nav-ai-option:active\s*\{\s*transform:\s*translateY\(-13px\) scale\(0\.96\);\s*box-shadow:\s*0 2px 7px rgb\(133 93 194 \/ 20%\);/);
+  assert.match(stylesheet, /@media \(prefers-reduced-motion: reduce\)\s*\{\s*#root nav\[aria-label="Navegación principal"\] button\s*\{\s*transition:\s*none;/);
   assert.equal((page.match(/className="cart-quantity-control-button w-5 h-5 bg-white rounded flex items-center justify-center font-bold text-xs"/g) || []).length, 2);
   assert.match(stylesheet, /#root \.cart-quantity-control-button\s*\{\s*box-sizing:\s*border-box;\s*width:\s*50px\s*!important;\s*height:\s*50px\s*!important;\s*flex:\s*0 0 50px;\s*border:\s*1px solid #e0ad00;\s*border-radius:\s*12px\s*!important;\s*background-color:\s*var\(--tablet-yellow-accent\)\s*!important;\s*color:\s*var\(--tablet-dark\)\s*!important;\s*font-size:\s*24px\s*!important;\s*line-height:\s*1;/);
   assert.match(page, /image: '\.\/jugo-maracuya-helada\.png'/);

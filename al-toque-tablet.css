@@ -812,6 +812,12 @@
     border-radius: 10px;
     background: rgb(255 255 255 / 82%);
     color: #201718;
+    transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+  }
+
+  #root nav[aria-label="Navegación principal"] button:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 6px rgb(43 23 24 / 16%);
   }
 
   #root nav[aria-label="Navegación principal"] button.bottom-nav-ai-option {
@@ -824,6 +830,11 @@
     background: linear-gradient(145deg, #fff5ff, #f3f0ff 58%, #e8fbf2);
     box-shadow: 0 5px 13px rgb(133 93 194 / 14%);
     color: #8051b0;
+  }
+
+  #root nav[aria-label="Navegación principal"] button.bottom-nav-ai-option:active {
+    transform: translateY(-13px) scale(0.96);
+    box-shadow: 0 2px 7px rgb(133 93 194 / 20%);
   }
 
   #root nav[aria-label="Navegación principal"] button[aria-current="page"]:not(.bottom-nav-ai-option) {
@@ -859,6 +870,10 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    #root nav[aria-label="Navegación principal"] button {
+      transition: none;
+    }
+
     #root .home-feature-slide--active,
     #root .home-feature-slide--exit-left,
     #root .campus-service-card-toggle,
