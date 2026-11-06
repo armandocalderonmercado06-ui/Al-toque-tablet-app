@@ -924,9 +924,31 @@
   }
 
   #root .menu-bembos-media {
+    position: relative;
+    overflow: hidden;
     height: clamp(120px, 14vw, 164px);
     aspect-ratio: 4 / 3;
     background: #fffaf0;
+  }
+
+  #root .bembos-promo-hover-label {
+    position: absolute;
+    z-index: 3;
+    bottom: 8px;
+    left: 8px;
+    display: inline-flex;
+    max-width: calc(100% - 16px);
+    align-items: center;
+    border: 1px solid rgb(255 255 255 / 70%);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 94%);
+    padding: 4px 8px;
+    color: #2b1718;
+    font-size: 11px !important;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgb(43 23 24 / 14%);
   }
 
   #root .menu-bembos-image,
