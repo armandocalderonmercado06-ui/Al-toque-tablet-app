@@ -79,7 +79,7 @@
 
   #root .tablet-order-toast {
     box-sizing: border-box;
-    top: 104px !important;
+    top: 120px !important;
     width: max-content;
     min-width: min(560px, calc(100vw - 48px));
     max-width: calc(100vw - 48px);

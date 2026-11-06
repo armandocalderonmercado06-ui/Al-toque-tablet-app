@@ -129,12 +129,12 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className="w-full h-full object-cover"/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=84"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=85"/);
   assert.match(page, /image: '\.\/jugo-maracuya-helada\.png'/);
   assert.match(page, /dish\.id === '7' \? 'menu-maracuya-image'/);
   assert.match(stylesheet, /#root \.menu-regular-grid \.menu-maracuya-image\s*\{\s*object-fit:\s*cover\s*!important;/);
   assert.match(page, /className="tablet-order-toast absolute top-10 left-1\/2 -translate-x-1\/2 bg-dark text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg z-50 animate-bounce cursor-pointer hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"/);
-  assert.match(stylesheet, /#root \.tablet-order-toast\s*\{\s*box-sizing:\s*border-box;\s*top:\s*104px\s*!important;\s*width:\s*max-content;\s*min-width:\s*min\(560px,\s*calc\(100vw - 48px\)\);\s*max-width:\s*calc\(100vw - 48px\);\s*padding:\s*16px 28px\s*!important;\s*font-size:\s*clamp\(20px,\s*2\.2vw,\s*28px\)\s*!important;\s*line-height:\s*1\.25;/);
+  assert.match(stylesheet, /#root \.tablet-order-toast\s*\{\s*box-sizing:\s*border-box;\s*top:\s*120px\s*!important;\s*width:\s*max-content;\s*min-width:\s*min\(560px,\s*calc\(100vw - 48px\)\);\s*max-width:\s*calc\(100vw - 48px\);\s*padding:\s*16px 28px\s*!important;\s*font-size:\s*clamp\(20px,\s*2\.2vw,\s*28px\)\s*!important;\s*line-height:\s*1\.25;/);
   assert.match(page, /className="profile-experience-card bg-cream\/60 border border-cream p-4 rounded-3xl flex justify-around items-center text-center"/);
   assert.match(page, /className="profile-preference-icon w-9 h-9 bg-cream rounded-xl flex items-center justify-center text-dark"/);
   assert.match(stylesheet, /#root \.profile-affiliate-button\s*\{\s*background-color:\s*#db9eac\s*!important;\s*color:\s*#fff\s*!important;\s*opacity:\s*1\s*!important;/);
