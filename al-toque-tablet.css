@@ -933,7 +933,7 @@
 
   #root .bembos-promo-hover-label {
     position: absolute;
-    z-index: 3;
+    z-index: 4;
     bottom: 8px;
     left: 8px;
     display: inline-flex;
@@ -948,6 +948,7 @@
     font-weight: 700;
     line-height: 1.2;
     white-space: nowrap;
+    transform: translateZ(32px);
     box-shadow: 0 2px 8px rgb(43 23 24 / 14%);
   }
 
@@ -968,7 +969,7 @@
 
   #root .menu-regular-grid .menu-pop-media > span {
     position: absolute;
-    z-index: 3;
+    z-index: 4;
     top: 8px;
     left: 8px;
     display: inline-flex;
@@ -984,6 +985,7 @@
     line-height: 1.35;
     white-space: nowrap;
     backdrop-filter: blur(8px);
+    transform: translateZ(32px);
     animation: tabletMenuBadgeGoldGlow 2.6s ease-in-out infinite;
   }
 
