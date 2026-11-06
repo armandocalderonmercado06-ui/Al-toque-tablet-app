@@ -93,9 +93,9 @@
     width: 50px !important;
     height: 50px !important;
     flex: 0 0 50px;
-    border: 1px solid #e0ad00;
+    border: 1px solid #f1e4c4;
     border-radius: 12px !important;
-    background-color: var(--tablet-yellow-accent) !important;
+    background-color: #fff6df !important;
     color: var(--tablet-dark) !important;
     font-size: 24px !important;
     line-height: 1;
@@ -103,7 +103,7 @@
   }
 
   #root .cart-quantity-control-button:hover {
-    background-color: #f2b900 !important;
+    background-color: #fff1cf !important;
   }
 
   #root .cart-quantity-control-button:active {
