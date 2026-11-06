@@ -931,6 +931,11 @@
     transform: none !important;
   }
 
+  #root .brand-theme-dialog .brand-theme-random-option {
+    align-self: start;
+    height: fit-content;
+  }
+
   #root .brand-theme-dialog .brand-preview-strip .brand-preview {
     height: 100px;
   }
