@@ -61,7 +61,7 @@ test('serves the campus location logo used by the home carousel', async (t) => {
 test('serves new product photos as public PNG assets', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
-  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png', 'chicha-morada-helada.png', 'combo-marino-imagen.png']) {
+  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png', 'agua-san-luis-natural.png', 'chicha-morada-helada.png', 'combo-marino-imagen.png']) {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/${asset}`);
     const image = Buffer.from(await response.arrayBuffer());
 
@@ -146,7 +146,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /image: '\.\/jugo-maracuya-helada\.png'/);
   assert.match(page, /dish\.id === '7' \? 'menu-maracuya-image'/);
   assert.match(stylesheet, /#root \.menu-regular-grid \.menu-maracuya-image\s*\{\s*object-fit:\s*cover\s*!important;/);
-  assert.match(page, /image: '\.\/agua-san-luis-helada\.png'/);
+  assert.match(page, /image: '\.\/agua-san-luis-natural\.png'/);
   assert.match(page, /dish\.id === '10' \? 'menu-agua-image'/);
   assert.match(stylesheet, /#root \.menu-regular-grid \.menu-agua-image\s*\{\s*object-fit:\s*cover\s*!important;/);
   assert.match(page, /image: '\.\/chicha-morada-helada\.png'/);
