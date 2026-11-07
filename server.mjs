@@ -13,6 +13,7 @@ const APP_DIR = fileURLToPath(new URL('.', import.meta.url));
 const HTML_FILE = 'Al-toque-pe-mejorado.html';
 const AUDIOMACK_TERMS_FILE = 'audiomack-player-terms.html';
 const COIN_FILE = 'Moneda Al Toque.html';
+const LOCAL_PARTYKUB_FILE = 'Rummikub-PartyKub-Local.html';
 const PORT = Number(process.env.PORT || 4173);
 const HOST = process.env.HOST || '0.0.0.0';
 const APP_SERVER_URL = (process.env.APP_SERVER_URL || '').replace(/\/+$/, '');
@@ -78,6 +79,7 @@ const PUBLIC_ASSETS = new Set([
   HTML_FILE,
   AUDIOMACK_TERMS_FILE,
   COIN_FILE,
+  LOCAL_PARTYKUB_FILE,
   'coin-front-red.png',
   'al-toque-pe-logo.png',
   'al-toque-pe-emblema.png',
@@ -114,6 +116,9 @@ const PUBLIC_ASSETS = new Set([
   'rummikub-tile-pool.png',
   'rummikub-player-rack.png',
   'partykub-logo.png',
+  'PartyKub-inicio-horizontal.png',
+  'PartyKub-inicio-vertical.png',
+  'PartyKub-fondo-mesa.png',
   'Combo costa.png',
   'combo fitness.jpg',
   'combo herediano.jpg',
@@ -1999,7 +2004,7 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
       const fileInfo = await stat(filePath);
       if (!fileInfo.isFile()) return json(response, 404, { error: 'No se encontró el recurso solicitado.' });
       const content = await readFile(filePath);
-      if (assetName === HTML_FILE || assetName === AUDIOMACK_TERMS_FILE || assetName === COIN_FILE) {
+      if (assetName === HTML_FILE || assetName === AUDIOMACK_TERMS_FILE || assetName === COIN_FILE || assetName === LOCAL_PARTYKUB_FILE) {
         return sendHtml(request, response, content, {
           allowSameOriginFrame: assetName === COIN_FILE,
           cacheKey: `html:${assetName}`
