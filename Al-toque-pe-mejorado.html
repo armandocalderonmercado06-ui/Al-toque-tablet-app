@@ -3219,7 +3219,8 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=111" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=112" rel="stylesheet" />
+  <link href="/partykub-game.css?v=1" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -7975,9 +7976,340 @@
       );
     }
 
+    function RummikubGame({ onClose }) {
+      const [playerName, setPlayerName] = useState('');
+      const [roomCodeInput, setRoomCodeInput] = useState(() => new URLSearchParams(window.location.search).get('rummikub') || '');
+      const [session, setSession] = useState(null);
+      const [gameState, setGameState] = useState(null);
+      const [selectedSeat, setSelectedSeat] = useState(null);
+      const [selectedTileIds, setSelectedTileIds] = useState([]);
+      const [pendingMelds, setPendingMelds] = useState([]);
+      const [busy, setBusy] = useState(false);
+      const [error, setError] = useState('');
+      const [notice, setNotice] = useState('');
+      const closeHandlerRef = useRef(onClose);
+      closeHandlerRef.current = onClose;
+
+      const requestGameApi = async (path, options = {}) => {
+        const response = await fetch(path, {
+          ...options,
+          headers: { 'Content-Type': 'application/json', ...options.headers },
+          cache: 'no-store'
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || 'No se pudo completar la acción.');
+        return payload;
+      };
+
+      const connectToRoom = (room) => {
+        const nextSession = { code: room.roomCode, token: room.playerToken };
+        window.localStorage.setItem('partykub-rummikub-session', JSON.stringify(nextSession));
+        setSession(nextSession);
+        setGameState(room.state);
+        setError('');
+        setNotice('');
+      };
+
+      useEffect(() => {
+        try {
+          const savedSession = JSON.parse(window.localStorage.getItem('partykub-rummikub-session') || 'null');
+          const invitedCode = new URLSearchParams(window.location.search).get('rummikub')?.toUpperCase();
+          if (invitedCode && invitedCode !== savedSession?.code) return;
+          if (!savedSession?.code || !savedSession?.token) return;
+          setSession(savedSession);
+          requestGameApi(`/api/rummikub/rooms/${encodeURIComponent(savedSession.code)}?token=${encodeURIComponent(savedSession.token)}`)
+            .then((payload) => setGameState(payload.state))
+            .catch((requestError) => {
+              window.localStorage.removeItem('partykub-rummikub-session');
+              setSession(null);
+              setError(requestError.message);
+            });
+        } catch {
+          window.localStorage.removeItem('partykub-rummikub-session');
+          setError('No se pudo recuperar tu sala guardada.');
+        }
+      }, []);
+
+      useEffect(() => {
+        if (!session) return undefined;
+        let cancelled = false;
+        const refreshRoom = async () => {
+          try {
+            const payload = await requestGameApi(`/api/rummikub/rooms/${encodeURIComponent(session.code)}?token=${encodeURIComponent(session.token)}`);
+            if (!cancelled) {
+              setGameState(payload.state);
+              setError('');
+            }
+          } catch (requestError) {
+            if (!cancelled) setError(requestError.message);
+          }
+        };
+        refreshRoom();
+        const timer = window.setInterval(refreshRoom, 1800);
+        return () => {
+          cancelled = true;
+          window.clearInterval(timer);
+        };
+      }, [session]);
+
+      useEffect(() => {
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        const handleKeyDown = (event) => {
+          if (event.key === 'Escape') closeHandlerRef.current();
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+          document.body.style.overflow = previousOverflow;
+          window.removeEventListener('keydown', handleKeyDown);
+        };
+      }, []);
+
+      const submit = async (path, payload) => {
+        setBusy(true);
+        setError('');
+        setNotice('');
+        try {
+          const result = await requestGameApi(path, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          });
+          if (result.roomCode && result.playerToken) connectToRoom(result);
+          else if (result.state) setGameState(result.state);
+          return result;
+        } catch (requestError) {
+          setError(requestError.message);
+          return null;
+        } finally {
+          setBusy(false);
+        }
+      };
+
+      const createRoom = () => {
+        submit('/api/rummikub/rooms', { name: playerName, mode: 'online' });
+      };
+
+      const createSoloGame = () => {
+        submit('/api/rummikub/rooms', { name: playerName, mode: 'solo' });
+      };
+
+      const joinRoom = () => {
+        submit(`/api/rummikub/rooms/${encodeURIComponent(roomCodeInput.trim().toUpperCase())}/join`, { name: playerName });
+      };
+
+      const sendAction = async (action) => {
+        if (!session) return null;
+        const result = await submit(`/api/rummikub/rooms/${encodeURIComponent(session.code)}/actions`, {
+          token: session.token,
+          action
+        });
+        if (result) {
+          setSelectedTileIds([]);
+          if (action.type === 'play' || action.type === 'pass') setPendingMelds([]);
+        }
+        return result;
+      };
+
+      const leaveRoom = () => {
+        window.localStorage.removeItem('partykub-rummikub-session');
+        setSession(null);
+        setGameState(null);
+        setSelectedTileIds([]);
+        setPendingMelds([]);
+        setError('');
+        setNotice('Saliste de esta sala en este dispositivo.');
+      };
+
+      const copyInvite = async () => {
+        const invite = new URL(window.location.href);
+        invite.searchParams.set('rummikub', gameState.roomCode);
+        try {
+          await navigator.clipboard.writeText(`Sala ${gameState.roomCode}: ${invite.toString()}`);
+          setNotice('Enlace y código de sala copiados.');
+        } catch {
+          setNotice(`Comparte el código ${gameState.roomCode} para que se unan a la sala.`);
+        }
+      };
+
+      const allBoardTiles = gameState?.board?.flatMap((meld) => meld.tiles) || [];
+      const tileById = new Map([...(gameState?.hand || []), ...allBoardTiles].map((tile) => [tile.id, tile]));
+      const stagedIds = new Set(pendingMelds.flat());
+      const currentTurn = gameState?.players?.[gameState.currentSeat];
+      const viewer = gameState?.players?.[gameState.viewerSeat];
+      const isMyTurn = gameState?.status === 'playing' && gameState.currentSeat === gameState.viewerSeat;
+      const isQuestionTarget = gameState?.turnPhase === 'answer' && gameState.questionTarget === gameState.viewerSeat;
+      const toggleTile = (tileId) => {
+        if (stagedIds.has(tileId)) return;
+        setSelectedTileIds((selected) => selected.includes(tileId)
+          ? selected.filter((id) => id !== tileId)
+          : [...selected, tileId]);
+      };
+      const stageMeld = () => {
+        if (selectedTileIds.length < 3) {
+          setError('Selecciona al menos 3 fichas para formar una combinación.');
+          return;
+        }
+        setPendingMelds((groups) => [...groups, selectedTileIds]);
+        setSelectedTileIds([]);
+        setError('');
+      };
+      const playSelectedMelds = () => {
+        if (selectedTileIds.length > 0) {
+          setError('Agrupa o quita las fichas que dejaste seleccionadas antes de confirmar.');
+          return;
+        }
+        const movedBoardIds = new Set(pendingMelds.flat().filter((id) => gameState.board.some((meld) => meld.tiles.some((tile) => tile.id === id))));
+        const remainingBoardMelds = gameState.board
+          .map((meld) => meld.tiles.filter((tile) => !movedBoardIds.has(tile.id)).map((tile) => tile.id))
+          .filter((meld) => meld.length > 0);
+        sendAction({ type: 'play', melds: [...remainingBoardMelds, ...pendingMelds] });
+      };
+      const tileName = (tile) => tile.joker ? '★' : tile.value;
+      const tileColorClass = (tile) => tile.joker ? 'rummikub-tile--joker' : `rummikub-tile--${tile.color}`;
+
+      if (!session || !gameState) {
+        return ReactDOM.createPortal(
+          <div className="rummikub-overlay">
+            <section className="rummikub-shell rummikub-home" role="dialog" aria-modal="true" aria-labelledby="rummikub-title">
+              <header className="rummikub-header">
+                <div className="rummikub-brand">
+                  <img src="/partykub-game-logo.png" alt="PartyKub" />
+                  <div><p>Al Toque · Cayetano</p><h1 id="rummikub-title">Rummikub de integración</h1></div>
+                </div>
+                <button type="button" className="rummikub-icon-button" onClick={onClose} aria-label="Cerrar juego">×</button>
+              </header>
+              <div className="rummikub-content">
+                <div className="rummikub-welcome-grid">
+                  <div className="rummikub-welcome-copy">
+                    <span className="rummikub-kicker">4 jugadores · en línea</span>
+                    <h2>Arma tu mesa y conoce a tus compañeros.</h2>
+                    <p>Juega en línea con tus compañeros o inicia una partida individual contra tres bots.</p>
+                    <img className="rummikub-welcome-photo" src="/rummikub-campus-pair.png" alt="Estudiantes conversando mientras juegan Rummikub en el campus" />
+                  </div>
+                  <div className="rummikub-room-form">
+                    <label htmlFor="rummikub-player-name">Tu nombre o apodo</label>
+                    <input id="rummikub-player-name" maxLength="24" value={playerName} onChange={(event) => setPlayerName(event.target.value)} placeholder="Ej.: Alex" autoComplete="nickname" />
+                    <button type="button" className="rummikub-primary-button" disabled={busy} onClick={createSoloGame}>Jugar solo con bots</button>
+                    <button type="button" className="rummikub-secondary-button" disabled={busy} onClick={createRoom}>Crear sala en línea</button>
+                    <div className="rummikub-form-divider"><span>o únete con un código</span></div>
+                    <label htmlFor="rummikub-room-code">Código de sala</label>
+                    <input id="rummikub-room-code" maxLength="6" value={roomCodeInput} onChange={(event) => setRoomCodeInput(event.target.value.toUpperCase())} placeholder="ABC123" autoComplete="off" />
+                    <button type="button" className="rummikub-secondary-button" disabled={busy} onClick={joinRoom}>Unirme a una sala</button>
+                  </div>
+                </div>
+                <div className="rummikub-info-section">
+                  <div><span className="rummikub-kicker">Las cartas de la mesa</span><h2>Preguntas para conocerse</h2><p>La respuesta es oral, no se guarda. Si alguien prefiere no responder, puede pasar con la penalización de fichas acordada.</p></div>
+                  <img className="rummikub-deck-preview" src="/partykub-question-cards.png" alt="Mazo de preguntas PartyKub con reversos de marca" />
+                  <img className="rummikub-deck-preview rummikub-deck-preview--alternate" src="/partykub-questions-preview.png" alt="Vista adicional de las cartas de preguntas PartyKub" />
+                </div>
+                <div className="rummikub-photo-row">
+                  <figure><img src="/rummikub-campus-table.png" alt="Cuatro estudiantes jugando en una mesa del campus" /><figcaption>Una mesa para cuatro</figcaption></figure>
+                  <figure><img src="/rummikub-tile-pool.png" alt="Fichas Rummikub en la reserva" /><figcaption>Reserva compartida</figcaption></figure>
+                  <figure><img src="/rummikub-player-rack.png" alt="Fichas ocultas en el soporte de un jugador" /><figcaption>Tu soporte es privado</figcaption></figure>
+                </div>
+              </div>
+              {(error || notice) && <p className={`rummikub-feedback ${error ? 'is-error' : ''}`} role="status">{error || notice}</p>}
+            </section>
+          </div>,
+          document.body
+        );
+      }
+
+      if (!gameState) return null;
+      if (gameState.status === 'lobby') {
+        const occupiedSeats = gameState.players.filter((player) => player.joined).length;
+        return ReactDOM.createPortal(
+          <div className="rummikub-overlay">
+            <section className="rummikub-shell" role="dialog" aria-modal="true" aria-labelledby="rummikub-lobby-title">
+              <header className="rummikub-header">
+                <div className="rummikub-brand"><img src="/partykub-game-logo.png" alt="PartyKub" /><div><p>Sala de juego</p><h1 id="rummikub-lobby-title">Código: {gameState.roomCode}</h1></div></div>
+                <button type="button" className="rummikub-icon-button" onClick={onClose} aria-label="Minimizar juego">×</button>
+              </header>
+              <div className="rummikub-content">
+                <div className="rummikub-lobby-banner"><img src="/rummikub-campus-table.png" alt="" /><div><span className="rummikub-kicker">Invita a tus compañeros</span><h2>Faltan {4 - occupiedSeats} para iniciar.</h2><p>Comparte el código. La partida empieza cuando se sienten los cuatro jugadores.</p><button className="rummikub-secondary-button" type="button" onClick={copyInvite}>Copiar enlace y código</button></div></div>
+                <div className="rummikub-seat-grid">
+                  {gameState.players.map((player) => <div key={player.seat} className={`rummikub-seat ${player.joined ? 'is-occupied' : ''}`}><span>Asiento {player.seat + 1}</span><strong>{player.joined ? player.name : 'Esperando jugador…'}</strong>{player.joined && <small>{player.seat === 0 ? 'Anfitrión' : 'Listo'}</small>}</div>)}
+                </div>
+                <div className="rummikub-rule-strip"><img src="/rummikub-tile-pool.png" alt="" /><p>Recibirán 14 fichas cada uno. La reserva y las manos permanecerán ocultas para los demás.</p><img src="/rummikub-player-rack.png" alt="" /></div>
+                {gameState.isHost && <button className="rummikub-primary-button" type="button" disabled={busy || occupiedSeats !== 4} onClick={() => sendAction({ type: 'start' })}>Iniciar partida</button>}
+                {!gameState.isHost && <p className="rummikub-waiting-copy">El anfitrión iniciará la partida cuando estén los cuatro.</p>}
+              </div>
+              {(error || notice) && <p className={`rummikub-feedback ${error ? 'is-error' : ''}`} role="status">{error || notice}</p>}
+            </section>
+          </div>,
+          document.body
+        );
+      }
+
+      return ReactDOM.createPortal(
+        <div className="rummikub-overlay">
+          <section className="rummikub-shell rummikub-table-shell" role="dialog" aria-modal="true" aria-labelledby="rummikub-table-title">
+            <header className="rummikub-header">
+              <div className="rummikub-brand"><img src="/partykub-game-logo.png" alt="PartyKub" /><div><p>{gameState.gameMode === 'solo' ? 'Partida contra bots' : `Sala ${gameState.roomCode}`}</p><h1 id="rummikub-table-title">{gameState.status === 'complete' ? '¡Rummikub!' : 'Mesa de juego'}</h1></div></div>
+              <div className="rummikub-header-actions"><span className="rummikub-reserve-count">Reserva: {gameState.reserveCount}</span><button type="button" className="rummikub-icon-button" onClick={onClose} aria-label="Minimizar juego">×</button></div>
+            </header>
+            <div className="rummikub-content rummikub-play-content">
+              <div className="rummikub-player-strip">
+                {gameState.players.map((player) => <div key={player.seat} className={`rummikub-player-chip ${player.seat === gameState.currentSeat ? 'is-current' : ''} ${player.seat === gameState.viewerSeat ? 'is-you' : ''}`}><span>{player.name}</span><strong>{player.tileCount} fichas</strong>{player.isBot && <small>Bot</small>}{player.opened && <small>Apertura lista</small>}</div>)}
+              </div>
+              {gameState.status === 'complete' ? (
+                <div className="rummikub-winner-panel"><img src="/rummikub-campus-pair.png" alt="" /><div><span className="rummikub-kicker">Fin de la ronda</span><h2>{gameState.message}</h2><p>Gracias por jugar y compartir la mesa.</p><button type="button" className="rummikub-primary-button" onClick={leaveRoom}>Volver al juego</button></div></div>
+              ) : (
+                <>
+                  <div className="rummikub-turn-heading"><span className="rummikub-kicker">{isMyTurn ? 'Tu turno' : `Turno de ${currentTurn?.name || 'jugador'}`}</span><span>{gameState.message}</span></div>
+                  <div className="rummikub-question-card">
+                    <img src="/partykub-game-logo.png" alt="PartyKub" />
+                    <span className="rummikub-kicker">Carta de integración</span>
+                    <p>{gameState.currentQuestion}</p>
+                    {gameState.questionTarget !== null && <small>Pregunta dirigida a {gameState.players[gameState.questionTarget]?.name}</small>}
+                  </div>
+                  {isMyTurn && gameState.turnPhase === 'question' && (
+                    <div className="rummikub-turn-action">
+                      <label htmlFor="rummikub-question-target">Elige a quién hacerle la pregunta</label>
+                      <select id="rummikub-question-target" value={selectedSeat ?? ''} onChange={(event) => setSelectedSeat(Number(event.target.value))}>
+                        <option value="" disabled>Selecciona un compañero</option>
+                        {gameState.players.filter((player) => player.joined && player.seat !== gameState.viewerSeat).map((player) => <option key={player.seat} value={player.seat}>{player.name}</option>)}
+                      </select>
+                      <button type="button" className="rummikub-primary-button" disabled={busy || selectedSeat === null} onClick={() => sendAction({ type: 'ask', targetSeat: selectedSeat })}>Hacer pregunta</button>
+                    </div>
+                  )}
+                  {isQuestionTarget && (
+                    <div className="rummikub-turn-action">
+                      <p>Responde en voz alta o elige pasar. No guardamos tu respuesta.</p>
+                      <div className="rummikub-action-row"><button type="button" className="rummikub-primary-button" disabled={busy} onClick={() => sendAction({ type: 'answer', response: 'answered' })}>Ya respondí</button><button type="button" className="rummikub-secondary-button" disabled={busy} onClick={() => sendAction({ type: 'answer', response: 'declined' })}>Prefiero no responder</button></div>
+                    </div>
+                  )}
+                  {gameState.turnPhase === 'answer' && !isQuestionTarget && <p className="rummikub-waiting-copy">Esperando la respuesta de {gameState.players[gameState.questionTarget]?.name}…</p>}
+                  {isMyTurn && gameState.turnPhase === 'play' && (
+                    <div className="rummikub-turn-action">
+                      <p>{viewer?.opened ? 'Forma combinaciones nuevas o reorganiza las fichas de la mesa. Usa al menos una ficha de tu soporte.' : 'Para abrir, baja combinaciones válidas que sumen 30 puntos o más. Los comodines no suman.'}</p>
+                      <div className="rummikub-section-heading"><h2>Mesa</h2><button type="button" className="rummikub-text-button" disabled={!pendingMelds.length} onClick={() => setPendingMelds((groups) => groups.slice(0, -1))}>Deshacer grupo</button></div>
+                      <div className="rummikub-board">
+                        {gameState.board.map((meld) => <div className="rummikub-meld" key={meld.id}>{meld.tiles.map((tile) => <button key={tile.id} type="button" disabled={stagedIds.has(tile.id)} className={`rummikub-tile ${tileColorClass(tile)} ${selectedTileIds.includes(tile.id) ? 'is-selected' : ''}`} onClick={() => toggleTile(tile.id)} aria-label={tile.joker ? 'Comodín de la mesa' : `${tile.value} ${tile.color} de la mesa`}>{tileName(tile)}</button>)}</div>)}
+                        {pendingMelds.map((meld, index) => <div className="rummikub-meld is-pending" key={`pending-${index}`}>{meld.map((id) => { const tile = tileById.get(id); return tile ? <span key={id} className={`rummikub-tile ${tileColorClass(tile)}`}>{tileName(tile)}</span> : null; })}</div>)}
+                        {!gameState.board.length && !pendingMelds.length && <p className="rummikub-empty-board">Las combinaciones aparecerán aquí.</p>}
+                      </div>
+                      <button type="button" className="rummikub-secondary-button" disabled={busy || selectedTileIds.length < 3} onClick={stageMeld}>Formar grupo con selección ({selectedTileIds.length})</button>
+                      <div className="rummikub-section-heading"><h2>Tu soporte <span>({gameState.hand.length})</span></h2><img src="/rummikub-player-rack.png" alt="" /></div>
+                      <div className="rummikub-hand">{gameState.hand.map((tile) => <button key={tile.id} type="button" className={`rummikub-tile ${tileColorClass(tile)} ${selectedTileIds.includes(tile.id) ? 'is-selected' : ''} ${stagedIds.has(tile.id) ? 'is-staged' : ''}`} disabled={stagedIds.has(tile.id)} onClick={() => toggleTile(tile.id)} aria-label={tile.joker ? 'Comodín propio' : `${tile.value} ${tile.color}`}>{tileName(tile)}</button>)}</div>
+                      <div className="rummikub-action-row"><button type="button" className="rummikub-primary-button" disabled={busy || pendingMelds.length === 0} onClick={playSelectedMelds}>Confirmar jugada</button><button type="button" className="rummikub-secondary-button" disabled={busy} onClick={() => sendAction({ type: 'pass' })}>Pasar y robar 1</button></div>
+                    </div>
+                  )}
+                  {!isMyTurn && gameState.turnPhase !== 'answer' && <p className="rummikub-waiting-copy">Tu soporte está oculto. Espera tu turno y conversa con la mesa.</p>}
+                  <p className="rummikub-refusal-note">Preguntas no respondidas: {gameState.refusals[gameState.viewerSeat]}. La penalización aumenta hasta 3 fichas.</p>
+                </>
+              )}
+            </div>
+            {(error || notice) && <p className={`rummikub-feedback ${error ? 'is-error' : ''}`} role="status">{error || notice}</p>}
+          </section>
+        </div>,
+        document.body
+      );
+    }
+
     function HomeScreen({ onNavigate, onOpenCustomize, mood, setMood, showMusicButton, onOpenMusic }) {
       const [timeString, setTimeString] = useState('');
-      const [partyKubNotice, setPartyKubNotice] = useState('');
+      const [isPartyKubOpen, setIsPartyKubOpen] = useState(false);
       const [dayPart, setDayPart] = useState(() => getDayPart(new Date().getHours()));
       const [serviceStatus, setServiceStatus] = useState(() => getCampusServiceStatus());
       const [isServiceCardExpanded, setIsServiceCardExpanded] = useState(false);
@@ -8127,9 +8459,9 @@
             <div className="navbar-actions flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => setPartyKubNotice('PartyKub estará disponible próximamente.')}
-                aria-label="PartyKub, juego próximamente"
-                title="PartyKub: próximamente"
+                onClick={() => setIsPartyKubOpen(true)}
+                aria-label="Abrir juego PartyKub"
+                title="Jugar Rummikub de integración"
                 className="partykub-launcher"
               >
                 <img src="/partykub-logo.png" alt="" aria-hidden="true" />
@@ -8143,7 +8475,6 @@
                 <i data-lucide="clapperboard" className="h-4 w-4"></i>
                 <span className="text-[10px] font-bold">Reels</span>
               </button>
-              <span className="sr-only" role="status" aria-live="polite">{partyKubNotice}</span>
               {showMusicButton && (
                 <button
                   type="button"
@@ -8366,6 +8697,7 @@
               ))}
             </div>
           </div>
+          {isPartyKubOpen && <RummikubGame onClose={() => setIsPartyKubOpen(false)} />}
         </div>
       );
     }

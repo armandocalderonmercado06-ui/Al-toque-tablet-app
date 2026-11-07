@@ -7,6 +7,7 @@ import { extname, join, basename, dirname, isAbsolute, resolve } from 'node:path
 import { fileURLToPath } from 'node:url';
 import { gzipSync, constants as zlibConstants } from 'node:zlib';
 import { createSupabaseStore } from './supabase-store.mjs';
+import { handleRummikubRequest, RummikubRooms } from './rummikub-game.mjs';
 
 const APP_DIR = fileURLToPath(new URL('.', import.meta.url));
 const HTML_FILE = 'Al-toque-pe-mejorado.html';
@@ -104,6 +105,14 @@ const PUBLIC_ASSETS = new Set([
   'bowl-quinua-imagen.png',
   'lomo-saltado-imagen.png',
   'desayuno-emoliente-pan-queso-nueva.png',
+  'partykub-game-logo.png',
+  'partykub-game.css',
+  'partykub-questions-preview.png',
+  'partykub-question-cards.png',
+  'rummikub-campus-pair.png',
+  'rummikub-campus-table.png',
+  'rummikub-tile-pool.png',
+  'rummikub-player-rack.png',
   'partykub-logo.png',
   'Combo costa.png',
   'combo fitness.jpg',
@@ -1088,8 +1097,10 @@ async function handleReelsRequest(request, response, requestUrl, reels, persistR
   }
 }
 
-async function handleRequest(request, response, orders, idempotencyKeys, callSessions, orderChats, persistOrders, notifyOrderChange, youtubeApiKey, openAIApiKey, fetchImpl, reels, persistReels, reelsVideosDir, reelsDeletePassword, videoStorage, maxVideoBytes) {
+async function handleRequest(request, response, orders, idempotencyKeys, callSessions, orderChats, persistOrders, notifyOrderChange, youtubeApiKey, openAIApiKey, fetchImpl, reels, persistReels, reelsVideosDir, reelsDeletePassword, videoStorage, maxVideoBytes, rummikubRooms) {
   const requestUrl = new URL(request.url || '/', `http://${request.headers.host}`);
+
+  if (await handleRummikubRequest(request, response, requestUrl, rummikubRooms, { json, readJson, sameOrigin })) return;
 
   if (requestUrl.pathname === '/api/reels' || requestUrl.pathname.startsWith('/api/reels/')) {
     await handleReelsRequest(request, response, requestUrl, reels, persistReels, reelsVideosDir, reelsDeletePassword, videoStorage, maxVideoBytes);
@@ -2042,6 +2053,7 @@ export function createAlToqueServer({
   const callSessions = new Map();
   const orderChats = new Map();
   const clients = new Set();
+  const rummikubRooms = new RummikubRooms();
   const reels = { profiles: new Map(), videos: new Map(), posts: new Map() };
   let persistence = Promise.resolve();
   const loadFileState = async (filePath) => {
@@ -2172,7 +2184,8 @@ export function createAlToqueServer({
       reelsVideosDir,
       reelsDeletePassword,
       supabaseStore,
-      supabaseStore?.maxVideoBytes || MAX_REELS_VIDEO_BYTES
+      supabaseStore?.maxVideoBytes || MAX_REELS_VIDEO_BYTES,
+      rummikubRooms
     )).catch((error) => {
       console.error('Error inesperado en el servidor Al Toque:', error.message);
       if (!response.headersSent) json(response, error.status || 500, { error: error.status ? error.message : 'Ocurrió un error inesperado al procesar la solicitud.' });

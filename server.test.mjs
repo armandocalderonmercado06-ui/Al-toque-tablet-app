@@ -69,6 +69,14 @@ test('serves new public product and game images as PNG assets', async (t) => {
     assert.equal(response.headers.get('content-type'), 'image/png');
     assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
   }
+  for (const asset of ['partykub-game-logo.png', 'partykub-questions-preview.png', 'partykub-question-cards.png', 'rummikub-campus-pair.png', 'rummikub-campus-table.png', 'rummikub-tile-pool.png', 'rummikub-player-rack.png']) {
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/${asset}`);
+    const image = Buffer.from(await response.arrayBuffer());
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('content-type'), 'image/png');
+    assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+  }
 });
 
 test('serves the tablet stylesheet and includes it in the application page', async (t) => {
@@ -132,15 +140,19 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className=\{`w-full h-full object-cover \$\{dish\.id === '1' \? 'menu-lomo-image' : dish\.id === '2' \? 'menu-quinua-image' : dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=111"/);
-  assert.match(page, /aria-label="PartyKub, juego próximamente"/);
-  assert.match(page, /setPartyKubNotice\('PartyKub estará disponible próximamente\.'\)/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=112"/);
+  assert.match(page, /href="\/partykub-game\.css\?v=1"/);
+  const gameStylesResponse = await fetch(`${baseUrl}/partykub-game.css`);
+  assert.equal(gameStylesResponse.status, 200);
+  assert.equal(gameStylesResponse.headers.get('content-type'), 'text/css; charset=utf-8');
+  assert.match(page, /aria-label="Abrir juego PartyKub"/);
+  assert.match(page, /onClick=\{\(\) => setIsPartyKubOpen\(true\)\}/);
   assert.match(page, /src="\/partykub-logo\.png" alt="" aria-hidden="true"/);
   assert.match(page, /aria-label="Abrir Reels"/);
   assert.doesNotMatch(stylesheet, /partykub-ring-spin|partykub-launcher::before/);
   assert.match(stylesheet, /#root \.partykub-launcher img\s*\{[^}]*animation:\s*partykub-logo-float 2\.8s ease-in-out infinite;/);
   assert.match(stylesheet, /@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*#root \.partykub-launcher img\s*\{\s*animation:\s*none;/s);
-  assert.ok(page.indexOf('aria-label="PartyKub, juego próximamente"') < page.indexOf('aria-label="Abrir Reels"'));
+  assert.ok(page.indexOf('aria-label="Abrir juego PartyKub"') < page.indexOf('aria-label="Abrir Reels"'));
   assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]\s*\{[^}]*width:\s*30px\s*!important;[^}]*position:\s*relative;[^}]*overflow:\s*visible;[^}]*appearance:\s*none\s*!important;[^}]*border:\s*2px solid #16a34a;[^}]*background-color:\s*#fff;/s);
   assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]:checked\s*\{[^}]*background-color:\s*#16a34a;[^}]*animation:\s*tabletProfileCheckboxPulse 520ms ease-out;/s);
   assert.match(stylesheet, /#root \.profile-questionnaire input\[type="checkbox"\]::before\s*\{[^}]*content:\s*"✓";[^}]*font-size:\s*36px;[^}]*text-shadow:\s*1px 0 #d1d5db,\s*-1px 0 #d1d5db,\s*0 1px #d1d5db,\s*0 -1px #d1d5db,/s);
