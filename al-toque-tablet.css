@@ -669,9 +669,9 @@
     background: #fffaf0;
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > * > :first-child > img:not(.menu-marino-image):not(.menu-costeno-image),
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * > :first-child > img:not(.menu-marino-image):not(.menu-costeno-image),
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 > .space-y-4 > div > [class*="h-36"] > img:not(.menu-marino-image):not(.menu-costeno-image) {
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(4) > [class*="overflow-x-auto"] > * > :first-child > img:not(.menu-marino-image):not(.menu-costeno-image):not(.menu-fitness-image),
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-5 > :nth-child(5) > [class*="overflow-x-auto"] > * > :first-child > img:not(.menu-marino-image):not(.menu-costeno-image):not(.menu-fitness-image),
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 > .space-y-4 > div > [class*="h-36"] > img:not(.menu-marino-image):not(.menu-costeno-image):not(.menu-fitness-image) {
     width: 100%;
     height: 100%;
     object-fit: contain !important;
@@ -1346,6 +1346,11 @@
 
   #root .menu-regular-grid .menu-costeno-image,
   #root .home-pop-card .menu-costeno-image {
+    object-fit: cover !important;
+  }
+
+  #root .menu-regular-grid .menu-fitness-image,
+  #root .home-pop-card .menu-fitness-image {
     object-fit: cover !important;
   }
 
