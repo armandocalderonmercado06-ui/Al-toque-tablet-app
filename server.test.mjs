@@ -90,6 +90,8 @@ test('serves the local PartyKub game page with its orientation-specific images',
   assert.equal(pageResponse.headers.get('content-type'), 'text/html; charset=utf-8');
   assert.match(page, /src="PartyKub-inicio-horizontal\.png"/);
   assert.match(page, /src="PartyKub-inicio-vertical\.png"/);
+  assert.match(page, /\.game-brand p\s*\{[^}]*color:\s*#fff;[^}]*font-family:\s*"Comic Sans MS",\s*"Comic Sans",\s*cursive;/);
+  assert.match(page, /\.game-brand h1\s*\{[^}]*color:\s*#fff;[^}]*font-family:\s*"Comic Sans MS",\s*"Comic Sans",\s*cursive;/);
   assert.match(page, /\.setup-logo\s*\{\s*display:\s*none;/);
   assert.match(page, /\.setup-card-sample\s*\{\s*display:\s*none;/);
 
