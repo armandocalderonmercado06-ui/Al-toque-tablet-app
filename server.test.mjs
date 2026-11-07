@@ -123,15 +123,16 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(stylesheet, /50%\s*\{\s*border-color:\s*#e8cc77;\s*box-shadow:\s*0 0 0 2px rgb\(215 184 91 \/ 34%\), 0 0 10px rgb\(215 184 91 \/ 24%\);/);
   assert.match(stylesheet, /@media \(prefers-reduced-motion: reduce\)\s*\{\s*#root \.menu-regular-grid \.menu-pop-media > span\s*\{\s*animation:\s*none;/);
   assert.match(stylesheet, /#root \.menu-bembos-media\s*\{[^}]*height:\s*clamp\(120px,\s*14vw,\s*164px\);/s);
+  assert.match(stylesheet, /#root \.menu-bembos-image\s*\{\s*object-fit:\s*cover\s*!important;\s*object-position:\s*center;/);
   assert.match(stylesheet, /#root \.bembos-promo-hover-label\s*\{\s*position:\s*absolute;\s*z-index:\s*4;\s*bottom:\s*8px;\s*left:\s*8px;/);
   assert.match(stylesheet, /#root \.bembos-promo-hover-label\s*\{[^}]*font-size:\s*11px\s*!important;[^}]*line-height:\s*1\.2;/s);
   assert.match(stylesheet, /#root \.bembos-promo-hover-label\s*\{[^}]*transform:\s*translateZ\(32px\);/s);
-  assert.match(page, /className="menu-pop-image menu-bembos-image bembos-promo-image h-full w-full rounded-2xl object-contain"/);
+  assert.match(page, /className="menu-pop-image menu-bembos-image bembos-promo-image h-full w-full rounded-2xl object-cover"/);
   assert.match(page, /className="flex space-x-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4"/);
   assert.match(page, /className=\{`w-full h-full object-cover \$\{dish\.id === '1' \? 'menu-lomo-image' : dish\.id === '2' \? 'menu-quinua-image' : dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=108"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=109"/);
   assert.match(page, /aria-label="PartyKub, juego próximamente"/);
   assert.match(page, /setPartyKubNotice\('PartyKub estará disponible próximamente\.'\)/);
   assert.match(page, /src="\/partykub-logo\.png" alt="" aria-hidden="true"/);
