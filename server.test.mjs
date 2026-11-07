@@ -79,29 +79,13 @@ test('serves new public product and game images as PNG assets', async (t) => {
   }
 });
 
-test('serves the local PartyKub game page with its orientation-specific images', async (t) => {
+test('does not expose the local PartyKub game page or its images publicly', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
   const baseUrl = `http://127.0.0.1:${server.address().port}`;
-  const pageResponse = await fetch(`${baseUrl}/Rummikub-PartyKub-Local.html`);
-  const page = await pageResponse.text();
-
-  assert.equal(pageResponse.status, 200);
-  assert.equal(pageResponse.headers.get('content-type'), 'text/html; charset=utf-8');
-  assert.match(page, /src="PartyKub-inicio-horizontal\.png"/);
-  assert.match(page, /src="PartyKub-inicio-vertical\.png"/);
-  assert.match(page, /\.game-brand p\s*\{[^}]*color:\s*#fff;[^}]*font-family:\s*"Comic Sans MS",\s*"Comic Sans",\s*cursive;/);
-  assert.match(page, /\.game-brand h1\s*\{[^}]*color:\s*#fff;[^}]*font-family:\s*"Comic Sans MS",\s*"Comic Sans",\s*cursive;/);
-  assert.match(page, /\.setup-logo\s*\{\s*display:\s*none;/);
-  assert.match(page, /\.setup-card-sample\s*\{\s*display:\s*none;/);
-
-  for (const asset of ['PartyKub-inicio-horizontal.png', 'PartyKub-inicio-vertical.png', 'PartyKub-fondo-mesa.png']) {
-    const response = await fetch(`${baseUrl}/${asset}`);
-    const image = Buffer.from(await response.arrayBuffer());
-
-    assert.equal(response.status, 200);
-    assert.equal(response.headers.get('content-type'), 'image/png');
-    assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+  for (const path of ['/Rummikub-PartyKub-Local.html', '/PartyKub-inicio-horizontal.png', '/PartyKub-inicio-vertical.png', '/PartyKub-fondo-mesa.png']) {
+    const response = await fetch(`${baseUrl}${path}`);
+    assert.equal(response.status, 404);
   }
 });
 
