@@ -1366,6 +1366,10 @@
     object-fit: cover !important;
   }
 
+  #root .menu-regular-grid .menu-lomo-image {
+    object-fit: cover !important;
+  }
+
   #root .menu-bembos-grid h4,
   #root .menu-product-grid h4,
   #root .menu-regular-grid h3 {
