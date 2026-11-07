@@ -1293,6 +1293,7 @@
     overflow: hidden;
     height: clamp(120px, 14vw, 164px);
     aspect-ratio: 4 / 3;
+    margin-inline: auto;
     background: #fffaf0;
   }
 
