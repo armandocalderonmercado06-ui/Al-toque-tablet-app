@@ -131,7 +131,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className=\{`w-full h-full object-cover \$\{dish\.id === '2' \? 'menu-quinua-image' : dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=106"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=107"/);
   assert.match(page, /aria-label="PartyKub, juego próximamente"/);
   assert.match(page, /setPartyKubNotice\('PartyKub estará disponible próximamente\.'\)/);
   assert.match(page, /src="\/partykub-logo\.png" alt="" aria-hidden="true"/);
@@ -237,6 +237,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(stylesheet, /#root \.home-pop-card\[data-selected="true"\]/);
   assert.match(stylesheet, /@keyframes tabletHomeCardGoldGlow/);
   assert.match(stylesheet, /#root \.home-pop-card-media\s*\{[^}]*overflow:\s*visible\s*!important;/s);
+  assert.match(stylesheet, /#root \.home-pop-card-media > img\s*\{\s*object-fit:\s*cover\s*!important;\s*object-position:\s*center;/);
   assert.match(page, /onPointerDown=\{handleHomeProductPointerState\}/);
   assert.match(page, /onPointerMove=\{handleHomeProductPointerState\}/);
   assert.match(page, /role="button" tabIndex=\{0\} aria-label=\{`Personalizar \$\{dish\.name\}`\} onClick=\{\(event\) => handleHomeProductSelection\(event, dish\)\}/);
