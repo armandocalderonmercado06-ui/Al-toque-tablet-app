@@ -669,7 +669,7 @@
     background: #fffaf0;
   }
 
-  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 > .space-y-4 > div > [class*="h-36"] > img:not(.menu-marino-image):not(.menu-costeno-image):not(.menu-fitness-image):not(.menu-herediano-image):not(.menu-quinua-image) {
+  #root > .flex.flex-col.h-full > [class*="min-h-0"][class*="flex-1"][class*="overflow-y-auto"] > .space-y-4 > .space-y-4 > div > [class*="h-36"] > img:not(.menu-marino-image):not(.menu-costeno-image):not(.menu-fitness-image):not(.menu-herediano-image):not(.menu-quinua-image):not(.menu-emoliente-image) {
     width: 100%;
     height: 100%;
     object-fit: contain !important;
@@ -1373,6 +1373,11 @@
 
   #root .menu-regular-grid .menu-lomo-image {
     object-fit: cover !important;
+  }
+
+  #root .menu-regular-grid .menu-emoliente-image {
+    object-fit: cover !important;
+    object-position: center;
   }
 
   #root .menu-bembos-grid h4,

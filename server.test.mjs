@@ -61,7 +61,7 @@ test('serves the campus location logo used by the home carousel', async (t) => {
 test('serves new public product and game images as PNG assets', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
-  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png', 'agua-san-luis-natural.png', 'chicha-morada-helada.png', 'combo-marino-imagen.png', 'combo-marino-nueva-imagen.png', 'combo-marino-final-imagen.png', 'combo-costeno-imagen.png', 'combo-fitness-imagen.png', 'combo-herediano-imagen.png', 'ceviche-carretillero-imagen.png', 'bowl-quinua-imagen.png', 'lomo-saltado-imagen.png', 'partykub-logo.png']) {
+  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png', 'agua-san-luis-natural.png', 'chicha-morada-helada.png', 'combo-marino-imagen.png', 'combo-marino-nueva-imagen.png', 'combo-marino-final-imagen.png', 'combo-costeno-imagen.png', 'combo-fitness-imagen.png', 'combo-herediano-imagen.png', 'ceviche-carretillero-imagen.png', 'bowl-quinua-imagen.png', 'lomo-saltado-imagen.png', 'desayuno-emoliente-pan-queso-nueva.png', 'partykub-logo.png']) {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/${asset}`);
     const image = Buffer.from(await response.arrayBuffer());
 
@@ -132,7 +132,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className=\{`w-full h-full object-cover \$\{dish\.id === '1' \? 'menu-lomo-image' : dish\.id === '2' \? 'menu-quinua-image' : dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=110"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=111"/);
   assert.match(page, /aria-label="PartyKub, juego próximamente"/);
   assert.match(page, /setPartyKubNotice\('PartyKub estará disponible próximamente\.'\)/);
   assert.match(page, /src="\/partykub-logo\.png" alt="" aria-hidden="true"/);
@@ -170,6 +170,9 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /image: '\.\/lomo-saltado-imagen\.png'/);
   assert.match(page, /dish\.id === '1' \? 'menu-lomo-image'/);
   assert.match(stylesheet, /#root \.menu-regular-grid \.menu-lomo-image\s*\{\s*object-fit:\s*cover\s*!important;/);
+  assert.match(page, /image: '\.\/desayuno-emoliente-pan-queso-nueva\.png'/);
+  assert.match(page, /dish\.id === '11' \? 'menu-emoliente-image'/);
+  assert.match(stylesheet, /#root \.menu-regular-grid \.menu-emoliente-image\s*\{\s*object-fit:\s*cover\s*!important;\s*object-position:\s*center;/);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button\s*\{[^}]*transition:\s*transform 140ms ease,\s*box-shadow 140ms ease,\s*background-color 140ms ease;/s);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button:active\s*\{\s*transform:\s*scale\(0\.96\);\s*box-shadow:\s*0 2px 6px rgb\(43 23 24 \/ 16%\);/);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button\.bottom-nav-ai-option:active\s*\{\s*transform:\s*translateY\(-13px\) scale\(0\.96\);\s*box-shadow:\s*0 2px 7px rgb\(133 93 194 \/ 20%\);/);
@@ -247,7 +250,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /role="button" tabIndex=\{0\} aria-label=\{`Personalizar \$\{dish\.name\}`\} onClick=\{\(event\) => handleHomeProductSelection\(event, dish\)\}/);
   assert.match(page, /<TabletFullscreenControl isTabletLayout=\{isTabletLayout\} \/>/);
   assert.match(page, /name: 'Vaso de emoliente y Pan con Queso'/);
-  assert.match(page, /image: 'https:\/\/al-toque-upch\.onrender\.com\/desayuno-emoliente-pan-queso\.png'/);
+  assert.match(page, /image: '\.\/desayuno-emoliente-pan-queso-nueva\.png'/);
   assert.match(page, /id: 'desayunos', label: 'Desayunos'/);
   assert.match(page, /\{ id: 'panettone', label: 'Navidad 🎄' \}/);
   assert.match(page, /border-\[#e30613\] text-\[#e30613\]/);
