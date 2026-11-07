@@ -95,6 +95,7 @@ const PUBLIC_ASSETS = new Set([
   'agua-san-luis-natural.png',
   'chicha-morada-helada.png',
   'combo-marino-imagen.png',
+  'combo-costeno-imagen.png',
   'partykub-logo.png',
   'Combo costa.png',
   'combo fitness.jpg',
