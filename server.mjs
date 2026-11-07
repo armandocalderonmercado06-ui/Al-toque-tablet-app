@@ -99,6 +99,7 @@ const PUBLIC_ASSETS = new Set([
   'combo-marino-final-imagen.png',
   'combo-costeno-imagen.png',
   'combo-fitness-imagen.png',
+  'combo-herediano-imagen.png',
   'partykub-logo.png',
   'Combo costa.png',
   'combo fitness.jpg',
