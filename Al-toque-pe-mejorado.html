@@ -3220,7 +3220,7 @@
     }
   </style>
   <link href="/al-toque-tablet.css?v=112" rel="stylesheet" />
-  <link href="/partykub-game.css?v=1" rel="stylesheet" />
+  <link href="/partykub-game.css?v=2" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -8110,14 +8110,28 @@
         return result;
       };
 
-      const leaveRoom = () => {
-        window.localStorage.removeItem('partykub-rummikub-session');
-        setSession(null);
-        setGameState(null);
-        setSelectedTileIds([]);
-        setPendingMelds([]);
+      const leaveRoom = async () => {
+        if (!session) return;
+        setBusy(true);
         setError('');
-        setNotice('Saliste de esta sala en este dispositivo.');
+        setNotice('');
+        try {
+          await requestGameApi(`/api/rummikub/rooms/${encodeURIComponent(session.code)}/leave`, {
+            method: 'POST',
+            body: JSON.stringify({ token: session.token })
+          });
+          window.localStorage.removeItem('partykub-rummikub-session');
+          setSession(null);
+          setGameState(null);
+          setSelectedSeat(null);
+          setSelectedTileIds([]);
+          setPendingMelds([]);
+          setNotice('Saliste de la sala.');
+        } catch (requestError) {
+          setError(requestError.message);
+        } finally {
+          setBusy(false);
+        }
       };
 
       const copyInvite = async () => {
@@ -8231,8 +8245,11 @@
                   {gameState.players.map((player) => <div key={player.seat} className={`rummikub-seat ${player.joined ? 'is-occupied' : ''}`}><span>Asiento {player.seat + 1}</span><strong>{player.joined ? player.name : 'Esperando jugador…'}</strong>{player.joined && <small>{player.seat === 0 ? 'Anfitrión' : 'Listo'}</small>}</div>)}
                 </div>
                 <div className="rummikub-rule-strip"><img src="/rummikub-tile-pool.png" alt="" /><p>Recibirán 14 fichas cada uno. La reserva y las manos permanecerán ocultas para los demás.</p><img src="/rummikub-player-rack.png" alt="" /></div>
-                {gameState.isHost && <button className="rummikub-primary-button" type="button" disabled={busy || occupiedSeats !== 4} onClick={() => sendAction({ type: 'start' })}>Iniciar partida</button>}
-                {!gameState.isHost && <p className="rummikub-waiting-copy">El anfitrión iniciará la partida cuando estén los cuatro.</p>}
+                <div className="rummikub-lobby-actions">
+                  {gameState.isHost && <button className="rummikub-primary-button" type="button" disabled={busy || occupiedSeats !== 4} onClick={() => sendAction({ type: 'start' })}>Iniciar partida</button>}
+                  {!gameState.isHost && <p className="rummikub-waiting-copy">El anfitrión iniciará la partida cuando estén los cuatro.</p>}
+                  <button className="rummikub-leave-button" type="button" disabled={busy} onClick={leaveRoom}>Salir de la sala</button>
+                </div>
               </div>
               {(error || notice) && <p className={`rummikub-feedback ${error ? 'is-error' : ''}`} role="status">{error || notice}</p>}
             </section>
@@ -8246,14 +8263,14 @@
           <section className="rummikub-shell rummikub-table-shell" role="dialog" aria-modal="true" aria-labelledby="rummikub-table-title">
             <header className="rummikub-header">
               <div className="rummikub-brand"><img src="/partykub-game-logo.png" alt="PartyKub" /><div><p>{gameState.gameMode === 'solo' ? 'Partida contra bots' : `Sala ${gameState.roomCode}`}</p><h1 id="rummikub-table-title">{gameState.status === 'complete' ? '¡Rummikub!' : 'Mesa de juego'}</h1></div></div>
-              <div className="rummikub-header-actions"><span className="rummikub-reserve-count">Reserva: {gameState.reserveCount}</span><button type="button" className="rummikub-icon-button" onClick={onClose} aria-label="Minimizar juego">×</button></div>
+              <div className="rummikub-header-actions"><span className="rummikub-reserve-count">Reserva: {gameState.reserveCount}</span><button type="button" className="rummikub-leave-button" disabled={busy} onClick={leaveRoom}>{gameState.gameMode === 'solo' ? 'Salir de la partida' : 'Salir de la sala'}</button><button type="button" className="rummikub-icon-button" onClick={onClose} aria-label="Minimizar juego">×</button></div>
             </header>
             <div className="rummikub-content rummikub-play-content">
               <div className="rummikub-player-strip">
                 {gameState.players.map((player) => <div key={player.seat} className={`rummikub-player-chip ${player.seat === gameState.currentSeat ? 'is-current' : ''} ${player.seat === gameState.viewerSeat ? 'is-you' : ''}`}><span>{player.name}</span><strong>{player.tileCount} fichas</strong>{player.isBot && <small>Bot</small>}{player.opened && <small>Apertura lista</small>}</div>)}
               </div>
               {gameState.status === 'complete' ? (
-                <div className="rummikub-winner-panel"><img src="/rummikub-campus-pair.png" alt="" /><div><span className="rummikub-kicker">Fin de la ronda</span><h2>{gameState.message}</h2><p>Gracias por jugar y compartir la mesa.</p><button type="button" className="rummikub-primary-button" onClick={leaveRoom}>Volver al juego</button></div></div>
+                <div className="rummikub-winner-panel"><img src="/rummikub-campus-pair.png" alt="" /><div><span className="rummikub-kicker">Fin de la ronda</span><h2>{gameState.message}</h2><p>Gracias por jugar y compartir la mesa.</p><button type="button" className="rummikub-primary-button" disabled={busy} onClick={leaveRoom}>{gameState.gameMode === 'solo' ? 'Salir de la partida' : 'Salir de la sala'}</button></div></div>
               ) : (
                 <>
                   <div className="rummikub-turn-heading"><span className="rummikub-kicker">{isMyTurn ? 'Tu turno' : `Turno de ${currentTurn?.name || 'jugador'}`}</span><span>{gameState.message}</span></div>

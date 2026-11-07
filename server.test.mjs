@@ -141,7 +141,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
   assert.match(page, /href="\/al-toque-tablet\.css\?v=112"/);
-  assert.match(page, /href="\/partykub-game\.css\?v=1"/);
+  assert.match(page, /href="\/partykub-game\.css\?v=2"/);
   const gameStylesResponse = await fetch(`${baseUrl}/partykub-game.css`);
   assert.equal(gameStylesResponse.status, 200);
   assert.equal(gameStylesResponse.headers.get('content-type'), 'text/css; charset=utf-8');

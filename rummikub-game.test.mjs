@@ -144,6 +144,37 @@ test('starts solo games against three bots and advances bots through their turns
   assert.ok(room.players.filter((player) => player.isBot).every((player) => player.token !== host.playerToken));
 });
 
+test('allows lobby departures, transfers the host, and reuses the vacant seat', () => {
+  const rooms = new RummikubRooms();
+  const host = rooms.create('Ana');
+  const guest = rooms.join(host.roomCode, 'Luis');
+
+  rooms.leave(host.roomCode, host.playerToken);
+
+  const room = rooms.rooms.get(host.roomCode);
+  assert.equal(room.players[0], null);
+  assert.equal(room.hostToken, guest.playerToken);
+  assert.equal(rooms.snapshot(host.roomCode, guest.playerToken).isHost, true);
+  assert.throws(() => rooms.snapshot(host.roomCode, host.playerToken), /acceso a esta sala/);
+
+  const replacement = rooms.join(host.roomCode, 'Mia');
+  assert.equal(replacement.state.viewerSeat, 0);
+  assert.equal(replacement.state.players[0].name, 'Mia');
+});
+
+test('keeps an online game moving with a bot when a player leaves', () => {
+  const { rooms, host, players } = prepareFourPlayerRoom();
+  rooms.act(host.roomCode, host.playerToken, { type: 'start' });
+
+  rooms.leave(host.roomCode, host.playerToken);
+
+  const room = rooms.rooms.get(host.roomCode);
+  assert.equal(room.players[0].isBot, true);
+  assert.equal(room.hostToken, players[1].playerToken);
+  assert.throws(() => rooms.snapshot(host.roomCode, host.playerToken), /acceso a esta sala/);
+  assert.equal(rooms.snapshot(host.roomCode, players[1].playerToken).isHost, true);
+});
+
 test('bots make a valid 30-point opening when their rack allows it', () => {
   const rooms = new RummikubRooms();
   const host = rooms.create('Armando', { mode: 'solo' });
@@ -246,9 +277,19 @@ test('exposes room creation, joining, private hands, and actions through same-or
   assert.equal(declined.status, 200);
   assert.equal(declined.payload.state.hand.length, 15);
 
+  const left = await api(`/api/rummikub/rooms/${code}/leave`, 'POST', { token: access[0].token });
+  assert.equal(left.status, 200);
+  assert.equal(left.payload.left, true);
+  assert.equal((await api(`/api/rummikub/rooms/${code}?token=${access[0].token}`)).status, 401);
+  const remainingHost = await api(`/api/rummikub/rooms/${code}?token=${access[1].token}`);
+  assert.equal(remainingHost.payload.state.isHost, true);
+  assert.equal(remainingHost.payload.state.players[0].isBot, true);
+
   const solo = await api('/api/rummikub/rooms', 'POST', { name: 'Sola', mode: 'solo' });
   assert.equal(solo.status, 201);
   assert.equal(solo.payload.state.gameMode, 'solo');
   assert.equal(solo.payload.state.status, 'playing');
   assert.equal(solo.payload.state.players.filter((player) => player.isBot).length, 3);
+  assert.equal((await api(`/api/rummikub/rooms/${solo.payload.roomCode}/leave`, 'POST', { token: solo.payload.playerToken })).status, 200);
+  assert.equal((await api(`/api/rummikub/rooms/${solo.payload.roomCode}?token=${solo.payload.playerToken}`)).status, 404);
 });

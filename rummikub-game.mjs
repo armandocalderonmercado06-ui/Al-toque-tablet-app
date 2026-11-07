@@ -472,10 +472,11 @@ export class RummikubRooms {
     room.code = code;
     room.mode = mode;
     room.hostToken = token;
-    room.players = [{ seat: 0, name: cleanName, token, hand: [], opened: false, isBot: false, lastSeenAt: Date.now() }];
+    room.players = Array(4).fill(null);
+    room.players[0] = { seat: 0, name: cleanName, token, hand: [], opened: false, isBot: false, lastSeenAt: Date.now() };
     if (mode === 'solo') {
       for (const [index, botName] of ['Bot Rojo', 'Bot Azul', 'Bot Amarillo'].entries()) {
-        room.players.push({
+        room.players[index + 1] = {
           seat: index + 1,
           name: botName,
           token: randomUUID(),
@@ -483,7 +484,7 @@ export class RummikubRooms {
           opened: false,
           isBot: true,
           lastSeenAt: Date.now()
-        });
+        };
       }
       startGame(room);
       advanceBotTurns(room);
@@ -499,15 +500,58 @@ export class RummikubRooms {
     const room = this.rooms.get(normalizedCode);
     assert(room, 'No se encontró esa sala. Verifica el código.', 404);
     assert(room.status === 'lobby', 'La partida ya comenzó y no acepta más jugadores.', 409);
-    assert(room.players.length < 4, 'La sala ya tiene 4 participantes.', 409);
+    const seat = room.players.findIndex((player) => !player);
+    assert(seat !== -1, 'La sala ya tiene 4 participantes.', 409);
     const cleanName = normalizePlayerName(name);
-    assert(!room.players.some((player) => player.name.toLocaleLowerCase() === cleanName.toLocaleLowerCase()), 'Ese nombre ya está en la sala.');
+    assert(!room.players.some((player) => player && player.name.toLocaleLowerCase() === cleanName.toLocaleLowerCase()), 'Ese nombre ya está en la sala.');
     const token = randomUUID();
-    const player = { seat: room.players.length, name: cleanName, token, hand: [], opened: false, isBot: false, lastSeenAt: Date.now() };
-    room.players.push(player);
+    const player = { seat, name: cleanName, token, hand: [], opened: false, isBot: false, lastSeenAt: Date.now() };
+    room.players[seat] = player;
     room.message = `${cleanName} se unió a la sala.`;
     room.lastUpdatedAt = Date.now();
     return { roomCode: normalizedCode, playerToken: token, state: getSnapshot(room, player) };
+  }
+
+  leave(code, token) {
+    const room = this.getRoom(code);
+    const player = this.getPlayer(room, token);
+    const wasHost = player.token === room.hostToken;
+    if (room.mode === 'solo') {
+      this.rooms.delete(room.code);
+      return { left: true };
+    }
+
+    if (room.status === 'lobby') {
+      room.players[player.seat] = null;
+      const nextHost = room.players.find((candidate) => candidate && !candidate.isBot);
+      if (!nextHost) {
+        this.rooms.delete(room.code);
+        return { left: true };
+      }
+      if (wasHost) room.hostToken = nextHost.token;
+      room.message = `${player.name} salió de la sala.`;
+    } else {
+      player.token = randomUUID();
+      player.isBot = true;
+      if (room.status === 'playing') player.name = `Bot ${player.name}`;
+      const nextHost = room.players.find((candidate) => candidate && !candidate.isBot);
+      if (!nextHost) {
+        this.rooms.delete(room.code);
+        return { left: true };
+      }
+      if (wasHost) room.hostToken = nextHost.token;
+      if (room.status === 'playing') {
+        room.message = `${player.name} continuará la partida como bot.`;
+        if (room.turnPhase === 'answer' && room.questionTarget === player.seat) {
+          room.turnPhase = 'play';
+          room.questionTarget = null;
+          room.message = `${player.name} respondió la pregunta.`;
+        }
+        advanceBotTurns(room);
+      }
+    }
+    room.lastUpdatedAt = Date.now();
+    return { left: true };
   }
 
   snapshot(code, token) {
@@ -524,7 +568,7 @@ export class RummikubRooms {
 
     if (action.type === 'start') {
       assert(player.token === room.hostToken, 'Solo quien creó la sala puede iniciar la partida.', 403);
-      assert(room.status === 'lobby' && room.players.length === 4, 'Se necesitan 4 participantes para comenzar.', 409);
+      assert(room.status === 'lobby' && room.players.filter(Boolean).length === 4, 'Se necesitan 4 participantes para comenzar.', 409);
       startGame(room);
     } else if (action.type === 'ask') {
       assert(room.status === 'playing' && room.turnPhase === 'question' && player.seat === room.currentSeat, 'No es tu momento de hacer la pregunta.', 409);
@@ -578,7 +622,7 @@ export class RummikubRooms {
 
   getPlayer(room, token) {
     assert(typeof token === 'string' && token.length >= 30, 'Vuelve a entrar a la sala desde este dispositivo.', 401);
-    const player = room.players.find((candidate) => candidate.token === token);
+    const player = room.players.find((candidate) => candidate?.token === token);
     assert(player, 'Tu acceso a esta sala no es válido.', 401);
     player.lastSeenAt = Date.now();
     return player;
@@ -605,6 +649,13 @@ export async function handleRummikubRequest(request, response, requestUrl, rooms
       const mode = body?.mode === undefined ? 'online' : body.mode;
       assert(mode === 'online' || mode === 'solo', 'Selecciona una modalidad de juego.');
       json(response, 201, rooms.create(body?.name, { mode }));
+      return true;
+    }
+
+    const leaveMatch = /^\/api\/rummikub\/rooms\/([A-HJ-NP-Z2-9]{6})\/leave$/i.exec(requestUrl.pathname);
+    if (request.method === 'POST' && leaveMatch) {
+      const body = await readJson(request);
+      json(response, 200, rooms.leave(leaveMatch[1], body?.token));
       return true;
     }
 
