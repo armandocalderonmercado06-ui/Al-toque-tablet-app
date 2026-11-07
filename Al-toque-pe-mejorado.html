@@ -3219,7 +3219,7 @@
       .new-rider-message-sticker { animation: none; }
     }
   </style>
-  <link href="/al-toque-tablet.css?v=104" rel="stylesheet" />
+  <link href="/al-toque-tablet.css?v=105" rel="stylesheet" />
 </head>
 <body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
   <div id="root" class="w-full max-w-[390px] h-[100vh] sm:h-[844px] bg-white sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col border-0 sm:border-[8px] border-gray-800 relative"></div>
@@ -4164,7 +4164,7 @@
         time: '5 min',
         badge: 'Para una pausa',
         isPopular: false,
-        image: 'https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?auto=format&fit=crop&w=600&q=80',
+        image: './ceviche-carretillero-imagen.png',
         components: ['Ceviche de pescado', 'Camote glaseado', 'Chicharrón de pota']
       },
       {
@@ -8897,7 +8897,7 @@
                   className="menu-pop-card cursor-pointer bg-white border border-gray-100 rounded-3xl p-3 shadow-sm space-y-2 text-left"
                 >
                   <div className="menu-pop-media relative h-36 rounded-2xl">
-                    <img src={dish.image} alt={dish.name} className={`menu-pop-image w-full h-full rounded-2xl object-cover ${dish.id === '4' ? 'menu-herediano-image' : dish.id === '5' ? 'menu-fitness-image' : dish.id === '6' ? 'menu-chicha-image' : dish.id === '7' ? 'menu-maracuya-image' : dish.id === '8' ? 'menu-costeno-image' : dish.id === '9' ? 'menu-marino-image' : dish.id === '10' ? 'menu-agua-image' : ''}`} />
+                    <img src={dish.image} alt={dish.name} className={`menu-pop-image w-full h-full rounded-2xl object-cover ${dish.id === '3' ? 'menu-ceviche-image' : dish.id === '4' ? 'menu-herediano-image' : dish.id === '5' ? 'menu-fitness-image' : dish.id === '6' ? 'menu-chicha-image' : dish.id === '7' ? 'menu-maracuya-image' : dish.id === '8' ? 'menu-costeno-image' : dish.id === '9' ? 'menu-marino-image' : dish.id === '10' ? 'menu-agua-image' : ''}`} />
                     <span className={`absolute top-2 left-2 bg-white/90 backdrop-blur-md text-[10px] font-bold px-2.5 py-0.5 rounded-full text-dark ${dish.isPopular ? 'menu-popular-badge' : ''}`}>{dish.badge}</span>
                   </div>
                   <div>

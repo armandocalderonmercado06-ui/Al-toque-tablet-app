@@ -61,7 +61,7 @@ test('serves the campus location logo used by the home carousel', async (t) => {
 test('serves new public product and game images as PNG assets', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
-  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png', 'agua-san-luis-natural.png', 'chicha-morada-helada.png', 'combo-marino-imagen.png', 'combo-marino-nueva-imagen.png', 'combo-marino-final-imagen.png', 'combo-costeno-imagen.png', 'combo-fitness-imagen.png', 'combo-herediano-imagen.png', 'partykub-logo.png']) {
+  for (const asset of ['jugo-maracuya-helada.png', 'agua-san-luis-helada.png', 'agua-san-luis-natural.png', 'chicha-morada-helada.png', 'combo-marino-imagen.png', 'combo-marino-nueva-imagen.png', 'combo-marino-final-imagen.png', 'combo-costeno-imagen.png', 'combo-fitness-imagen.png', 'combo-herediano-imagen.png', 'ceviche-carretillero-imagen.png', 'partykub-logo.png']) {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/${asset}`);
     const image = Buffer.from(await response.arrayBuffer());
 
@@ -131,7 +131,7 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /className=\{`w-full h-full object-cover \$\{dish\.id === '9' \? 'menu-marino-image' : ''\}`\}/);
   assert.match(stylesheet, /--tablet-brand:\s*#a50f2d/);
   assert.match(stylesheet, /--tablet-yellow-accent:\s*#ffc61a/);
-  assert.match(page, /href="\/al-toque-tablet\.css\?v=104"/);
+  assert.match(page, /href="\/al-toque-tablet\.css\?v=105"/);
   assert.match(page, /aria-label="PartyKub, juego próximamente"/);
   assert.match(page, /setPartyKubNotice\('PartyKub estará disponible próximamente\.'\)/);
   assert.match(page, /src="\/partykub-logo\.png" alt="" aria-hidden="true"/);
@@ -160,6 +160,9 @@ test('serves the tablet stylesheet and includes it in the application page', asy
   assert.match(page, /image: '\.\/combo-herediano-imagen\.png'/);
   assert.match(page, /dish\.id === '4' \? 'menu-herediano-image'/);
   assert.match(stylesheet, /#root \.menu-regular-grid \.menu-herediano-image,\s*#root \.home-pop-card \.menu-herediano-image\s*\{\s*object-fit:\s*cover\s*!important;/);
+  assert.match(page, /image: '\.\/ceviche-carretillero-imagen\.png'/);
+  assert.match(page, /dish\.id === '3' \? 'menu-ceviche-image'/);
+  assert.match(stylesheet, /#root \.menu-regular-grid \.menu-ceviche-image\s*\{\s*object-fit:\s*cover\s*!important;/);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button\s*\{[^}]*transition:\s*transform 140ms ease,\s*box-shadow 140ms ease,\s*background-color 140ms ease;/s);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button:active\s*\{\s*transform:\s*scale\(0\.96\);\s*box-shadow:\s*0 2px 6px rgb\(43 23 24 \/ 16%\);/);
   assert.match(stylesheet, /#root nav\[aria-label="Navegación principal"\] button\.bottom-nav-ai-option:active\s*\{\s*transform:\s*translateY\(-13px\) scale\(0\.96\);\s*box-shadow:\s*0 2px 7px rgb\(133 93 194 \/ 20%\);/);
