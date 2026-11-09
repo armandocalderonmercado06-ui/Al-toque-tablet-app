@@ -58,6 +58,20 @@ test('serves the campus location logo used by the home carousel', async (t) => {
   assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
 });
 
+test('uses the supplied full-width photos in each PartyKub gallery card', async () => {
+  const [page, stylesheet] = await Promise.all([
+    readFile(join(process.cwd(), 'Al-toque-pe-mejorado.html'), 'utf8'),
+    readFile(join(process.cwd(), 'partykub-game.css'), 'utf8')
+  ]);
+  const gallery = page.match(/<div className="rummikub-photo-row">([\s\S]*?)<\/div>/)?.[1];
+
+  assert.ok(gallery);
+  for (const asset of ['rummikub-campus-table-gallery.png', 'rummikub-tile-pool-gallery.png', 'rummikub-player-rack-gallery.png']) {
+    assert.ok(gallery.includes(`src="/${asset}"`));
+  }
+  assert.match(stylesheet, /\.rummikub-photo-row img\s*\{[^}]*width:\s*100%;[^}]*aspect-ratio:\s*3\s*\/\s*1;/s);
+});
+
 test('serves new public product and game images as PNG assets', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
@@ -69,7 +83,7 @@ test('serves new public product and game images as PNG assets', async (t) => {
     assert.equal(response.headers.get('content-type'), 'image/png');
     assert.equal(image.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
   }
-  for (const asset of ['partykub-game-logo.png', 'partykub-questions-preview.png', 'partykub-question-cards.png', 'rummikub-campus-pair.png', 'rummikub-campus-table.png', 'rummikub-tile-pool.png', 'rummikub-player-rack.png']) {
+  for (const asset of ['partykub-game-logo.png', 'partykub-questions-preview.png', 'partykub-question-cards.png', 'rummikub-campus-pair.png', 'rummikub-campus-table.png', 'rummikub-tile-pool.png', 'rummikub-player-rack.png', 'rummikub-campus-table-gallery.png', 'rummikub-tile-pool-gallery.png', 'rummikub-player-rack-gallery.png']) {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/${asset}`);
     const image = Buffer.from(await response.arrayBuffer());
 
