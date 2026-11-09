@@ -246,7 +246,7 @@
 
 .rummikub-info-section {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
   align-items: center;
   gap: 14px;
   margin-top: 18px;
