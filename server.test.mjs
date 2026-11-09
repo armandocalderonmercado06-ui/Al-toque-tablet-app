@@ -72,6 +72,14 @@ test('uses the supplied full-width photos in each PartyKub gallery card', async 
   assert.match(stylesheet, /\.rummikub-photo-row img\s*\{[^}]*width:\s*100%;[^}]*aspect-ratio:\s*3\s*\/\s*1;/s);
 });
 
+test('fills the viewport with the PartyKub intro and scales its animated canvas for sharpness', async () => {
+  const intro = await readFile(join(process.cwd(), 'partykub-solo-intro.html'), 'utf8');
+
+  assert.match(intro, /\.stage\s*\{[^}]*width:\s*100vw;[^}]*height:\s*100vh;[^}]*height:\s*100dvh;/s);
+  assert.match(intro, /Math\.min\(window\.devicePixelRatio \|\| 1, 2\)/);
+  assert.match(intro, /ctx\.imageSmoothingQuality = 'high'/);
+});
+
 test('serves new public product and game images as PNG assets', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);

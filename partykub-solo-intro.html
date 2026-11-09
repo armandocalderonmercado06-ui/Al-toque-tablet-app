@@ -9,11 +9,13 @@
   html,body{height:100%;background:#041a3a;overflow:hidden}
   body{display:grid;place-items:center}
 
-  /* Escenario 16:9 que se ajusta a cualquier pantalla */
+  /* El escenario ocupa toda la pantalla, incluso fuera de 16:9 */
   .stage{
-    position:relative;
-    width:min(100vw, calc(100vh * 16 / 9));
-    aspect-ratio:16/9;
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100vh;
+    height:100dvh;
     container-type:inline-size;
     overflow:hidden;
     background:#0b3d7a;
@@ -127,6 +129,16 @@
   const src   = document.getElementById('txtSrc');
   const TX = 386, TY = 289, TW = 828, TH = 301, SW = 3;
 
+  function resizeCanvas(){
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const { width, height } = stage.getBoundingClientRect();
+    cvs.width = Math.round(width * pixelRatio);
+    cvs.height = Math.round(height * pixelRatio);
+    ctx.setTransform(cvs.width / 1452, 0, 0, cvs.height / 817, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+  }
+
   const clamp = (v,a=0,b=1) => Math.min(b, Math.max(a, v));
   const smooth = u => { u = clamp(u); return u*u*(3-2*u); };
   const easeOutBack = u => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3*Math.pow(u-1,3) + c1*Math.pow(u-1,2); };
@@ -134,7 +146,7 @@
   let t0 = 0, raf = 0;
 
   function draw(t){
-    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    ctx.clearRect(0, 0, 1452, 817);
     ctx.imageSmoothingQuality = 'high';
     const env = smooth((t - 1.8) / 0.6);              // la ola entra suave tras la caída
 
@@ -184,6 +196,9 @@
     t0 = performance.now();
     raf = requestAnimationFrame(loop);
   }
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
 
   // Espera a que carguen las imágenes (máx. 1 s) y arranca la intro
   const ready = Promise.all([...document.images].map(i => i.decode ? i.decode().catch(()=>{}) : 0));
