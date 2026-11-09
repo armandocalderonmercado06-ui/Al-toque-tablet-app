@@ -107,6 +107,7 @@ const PUBLIC_ASSETS = new Set([
   'desayuno-emoliente-pan-queso-nueva.png',
   'partykub-game-logo.png',
   'partykub-game.css',
+  'partykub-solo-intro.html',
   'partykub-questions-preview.png',
   'partykub-question-cards.png',
   'rummikub-campus-pair.png',
@@ -2002,9 +2003,9 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
       const fileInfo = await stat(filePath);
       if (!fileInfo.isFile()) return json(response, 404, { error: 'No se encontró el recurso solicitado.' });
       const content = await readFile(filePath);
-      if (assetName === HTML_FILE || assetName === AUDIOMACK_TERMS_FILE || assetName === COIN_FILE) {
+      if (assetName === HTML_FILE || assetName === AUDIOMACK_TERMS_FILE || assetName === COIN_FILE || assetName === 'partykub-solo-intro.html') {
         return sendHtml(request, response, content, {
-          allowSameOriginFrame: assetName === COIN_FILE,
+          allowSameOriginFrame: assetName === COIN_FILE || assetName === 'partykub-solo-intro.html',
           cacheKey: `html:${assetName}`
         });
       }
