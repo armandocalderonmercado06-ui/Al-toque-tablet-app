@@ -8237,7 +8237,6 @@
         return ReactDOM.createPortal(
           <div className="rummikub-overlay rummikub-solo-intro" role="dialog" aria-modal="true" aria-label="Partida de PartyKub">
             <iframe ref={soloIntroFrameRef} className="rummikub-solo-intro-frame" src={gameUrl} title="Partida de PartyKub" />
-            <button type="button" className="rummikub-icon-button" onClick={onClose} aria-label="Cerrar partida">×</button>
           </div>,
           document.body
         );

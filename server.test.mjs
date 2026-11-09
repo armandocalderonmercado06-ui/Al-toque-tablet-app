@@ -130,6 +130,8 @@ test('serves the improved PartyKub iframe and its required assets without exposi
   assert.equal(appResponse.status, 200);
   assert.match(appHtml, /soloIntroTimerRef\.current = window\.setTimeout\(\(\) => \{\s*setSoloIntroActive\(false\);\s*setSoloGameActive\(true\);\s*\}, 5000\);/);
   assert.match(appHtml, /partykub-improved-game\.html\?embedded=1&name=/);
+  assert.match(appHtml, /if \(soloIntroActive\) \{[\s\S]*?aria-label="Cerrar introducción"/);
+  assert.match(appHtml, /if \(soloGameActive\) \{[\s\S]*?<iframe[^>]+title="Partida de PartyKub" \/>[\s\n]*<\/div>/);
   assert.equal(gameResponse.status, 200);
   assert.equal(gameResponse.headers.get('x-frame-options'), 'SAMEORIGIN');
   assert.match(gameHtml, /const embeddedGame = new URLSearchParams\(window\.location\.search\)\.get\('embedded'\) === '1'/);
