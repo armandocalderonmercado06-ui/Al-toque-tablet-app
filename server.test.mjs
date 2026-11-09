@@ -117,6 +117,43 @@ test('does not expose the local PartyKub game page or its images publicly', asyn
   }
 });
 
+test('serves the improved PartyKub iframe and its required assets without exposing the local source page', async (t) => {
+  const testDataDir = await createReelsTestDirectory();
+  const server = await createReelsTestServer(t, testDataDir);
+  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+  const [appResponse, gameResponse] = await Promise.all([
+    fetch(baseUrl),
+    fetch(`${baseUrl}/partykub-improved-game.html?embedded=1&name=Prueba`)
+  ]);
+  const [appHtml, gameHtml] = await Promise.all([appResponse.text(), gameResponse.text()]);
+
+  assert.equal(appResponse.status, 200);
+  assert.match(appHtml, /soloIntroTimerRef\.current = window\.setTimeout\(\(\) => \{\s*setSoloIntroActive\(false\);\s*setSoloGameActive\(true\);\s*\}, 5000\);/);
+  assert.match(appHtml, /partykub-improved-game\.html\?embedded=1&name=/);
+  assert.equal(gameResponse.status, 200);
+  assert.equal(gameResponse.headers.get('x-frame-options'), 'SAMEORIGIN');
+  assert.match(gameHtml, /const embeddedGame = new URLSearchParams\(window\.location\.search\)\.get\('embedded'\) === '1'/);
+  assert.match(gameHtml, /startGame\(window\.innerWidth >= window\.innerHeight \? 'horizontal' : 'vertical'\)/);
+  assert.match(gameHtml, /\$\('#splash'\)\.hidden = true;[\s\S]*?\$\('#setup'\)\.hidden = true;/);
+  assert.match(gameHtml, /if \(!embeddedGame\) enterFullscreen\(layout\)/);
+  assert.match(gameHtml, /html\.embedded-game \.game\[data-layout="horizontal"\] \.game-grid \{ align-items: stretch; \}/);
+  assert.match(gameHtml, /partykub-improved-game-exit/);
+  assert.doesNotMatch(gameHtml, /Rummikub-PartyKub-Local\.html/);
+
+  for (const [asset, contentType] of [
+    ['PartyKub-3d-table.js', 'text/javascript; charset=utf-8'],
+    ['Baloo2-ExtraBold.ttf', 'font/ttf'],
+    ['PartyKub-fondo-mesa.png', 'image/png'],
+    ['PartyKub-splash-background.png', 'image/png']
+  ]) {
+    const response = await fetch(`${baseUrl}/${encodeURIComponent(asset)}`);
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('content-type'), contentType);
+  }
+  const localGameResponse = await fetch(`${baseUrl}/Rummikub-PartyKub-Local.html`);
+  assert.equal(localGameResponse.status, 404);
+});
+
 test('serves the tablet stylesheet and includes it in the application page', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);

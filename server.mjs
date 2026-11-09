@@ -108,6 +108,19 @@ const PUBLIC_ASSETS = new Set([
   'partykub-game-logo.png',
   'partykub-game.css',
   'partykub-solo-intro.html',
+  'partykub-improved-game.html',
+  'PartyKub-3d-table.js',
+  'Baloo2-ExtraBold.ttf',
+  'PartyKub-fondo-mesa.png',
+  'partykub-new-logo.png',
+  'PartyKub-splash-word-hd.png',
+  'PartyKub-splash-rainbow-ribbon.png',
+  'PartyKub-splash-star.png',
+  'PartyKub-splash-hat.png',
+  'PartyKub-splash-balloon.png',
+  'PartyKub-splash-left-tiles.png',
+  'PartyKub-splash-four-tile-crop.png',
+  'PartyKub-splash-background.png',
   'partykub-questions-preview.png',
   'partykub-question-cards.png',
   'rummikub-campus-pair.png',
@@ -2003,20 +2016,22 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
       const fileInfo = await stat(filePath);
       if (!fileInfo.isFile()) return json(response, 404, { error: 'No se encontró el recurso solicitado.' });
       const content = await readFile(filePath);
-      if (assetName === HTML_FILE || assetName === AUDIOMACK_TERMS_FILE || assetName === COIN_FILE || assetName === 'partykub-solo-intro.html') {
+      if (assetName === HTML_FILE || assetName === AUDIOMACK_TERMS_FILE || assetName === COIN_FILE || assetName === 'partykub-solo-intro.html' || assetName === 'partykub-improved-game.html') {
         return sendHtml(request, response, content, {
-          allowSameOriginFrame: assetName === COIN_FILE || assetName === 'partykub-solo-intro.html',
+          allowSameOriginFrame: assetName === COIN_FILE || assetName === 'partykub-solo-intro.html' || assetName === 'partykub-improved-game.html',
           cacheKey: `html:${assetName}`
         });
       }
       const types = {
         '.css': 'text/css; charset=utf-8',
+        '.js': 'text/javascript; charset=utf-8',
         '.jpg': 'image/jpeg',
         '.jpeg': 'image/jpeg',
         '.png': 'image/png',
         '.webp': 'image/webp',
         '.svg': 'image/svg+xml',
-        '.mp3': 'audio/mpeg'
+        '.mp3': 'audio/mpeg',
+        '.ttf': 'font/ttf'
       };
       return sendStaticContent(request, response, content, {
         'Content-Type': types[extname(assetName)] || 'application/octet-stream',
