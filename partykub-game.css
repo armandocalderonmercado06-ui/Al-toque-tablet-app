@@ -10,6 +10,28 @@
   font-family: Outfit, Inter, system-ui, sans-serif;
 }
 
+.rummikub-solo-intro {
+  padding: 0;
+  background: #041a3a;
+}
+
+.rummikub-solo-intro-frame {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #041a3a;
+}
+
+.rummikub-solo-intro > .rummikub-icon-button {
+  position: absolute;
+  z-index: 1;
+  top: 16px;
+  right: 16px;
+  background: rgb(255 255 255 / 78%);
+}
+
 .rummikub-shell {
   display: flex;
   width: min(1120px, 100%);
