@@ -1454,7 +1454,8 @@
         ['Compartir música, reírse juntos y poder conversar con confianza.', 'Tener curiosidad por las mismas cosas y respetar las diferencias.', 'Disfrutar actividades juntos y apoyarse mutuamente.']
       ];
       const $ = (selector) => document.querySelector(selector);
-      const embeddedGame = new URLSearchParams(window.location.search).get('embedded') === '1';
+      const embeddedGame = document.documentElement.dataset.embeddedGame === 'true'
+        || new URLSearchParams(window.location.search).get('embedded') === '1';
       const SAVED_GAMES_KEY = 'partykub.saved-games.v1';
       const SUPABASE_URL = 'https://xfbqiiwbxpqplpcmfdap.supabase.co';
       const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_A0u-GQuGr8vy5HAiQF_9-Q_vRt40SWY';
@@ -3102,7 +3103,9 @@
         $('#splash').hidden = true;
         $('#setup').hidden = true;
         $('#answer-tilt-enabled').checked = false;
-        $('#player-name').value = new URLSearchParams(window.location.search).get('name') || 'Jugador';
+        $('#player-name').value = document.documentElement.dataset.playerName
+          || new URLSearchParams(window.location.search).get('name')
+          || 'Jugador';
         try {
           startGame(window.innerWidth >= window.innerHeight ? 'horizontal' : 'vertical');
         } finally {

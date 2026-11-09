@@ -36,6 +36,19 @@ async function createReelsTestDirectory() {
   return mkdtemp(join(process.cwd(), `.reels-test-${randomUUID()}-`));
 }
 
+test('preloads PartyKub game resources during startup and reuses the prepared document', async () => {
+  const [appHtml, gameHtml] = await Promise.all([
+    readFile(join(process.cwd(), 'Al-toque-pe-mejorado.html'), 'utf8'),
+    readFile(join(process.cwd(), 'partykub-improved-game.html'), 'utf8')
+  ]);
+  assert.match(appHtml, /window\.partyKubGamePreloadPromise = new Promise/);
+  assert.match(appHtml, /requestIdleCallback\(startPreload, \{ timeout: 2500 \}\)/);
+  assert.match(appHtml, /fetch\('\/partykub-improved-game\.html', \{ cache: 'no-store' \}\)/);
+  assert.match(appHtml, /gameAssets\.map\(\(asset\) => fetch\(asset, \{ cache: 'force-cache' \}\)\)/);
+  assert.match(appHtml, /srcDoc=\{gameDocument\}/);
+  assert.match(gameHtml, /document\.documentElement\.dataset\.embeddedGame === 'true'/);
+});
+
 test('serves the Reel watermark image as a public PNG asset', async (t) => {
   const testDataDir = await createReelsTestDirectory();
   const server = await createReelsTestServer(t, testDataDir);
@@ -128,13 +141,19 @@ test('serves the improved PartyKub iframe and its required assets without exposi
   const [appHtml, gameHtml] = await Promise.all([appResponse.text(), gameResponse.text()]);
 
   assert.equal(appResponse.status, 200);
+  assert.match(appHtml, /window\.loadPartyKubGameResources = async \(\) =>/);
+  assert.match(appHtml, /requestIdleCallback\(startPreload, \{ timeout: 2500 \}\)/);
+  assert.match(appHtml, /fetch\('\/partykub-improved-game\.html', \{ cache: 'no-store' \}\)/);
+  assert.match(appHtml, /PartyKub-splash-background\.png/);
   assert.match(appHtml, /soloIntroTimerRef\.current = window\.setTimeout\(\(\) => \{\s*setSoloIntroActive\(false\);\s*setSoloGameActive\(true\);\s*\}, 5000\);/);
-  assert.match(appHtml, /partykub-improved-game\.html\?embedded=1&name=/);
+  assert.match(appHtml, /srcDoc=\{gameDocument\}/);
+  assert.match(appHtml, /data-embedded-game="true" data-player-name=/);
   assert.match(appHtml, /if \(soloIntroActive\) \{[\s\S]*?aria-label="Cerrar introducción"/);
   assert.match(appHtml, /if \(soloGameActive\) \{[\s\S]*?<iframe[^>]+title="Partida de PartyKub" \/>[\s\n]*<\/div>/);
   assert.equal(gameResponse.status, 200);
   assert.equal(gameResponse.headers.get('x-frame-options'), 'SAMEORIGIN');
-  assert.match(gameHtml, /const embeddedGame = new URLSearchParams\(window\.location\.search\)\.get\('embedded'\) === '1'/);
+  assert.match(gameHtml, /document\.documentElement\.dataset\.embeddedGame === 'true'/);
+  assert.match(gameHtml, /document\.documentElement\.dataset\.playerName/);
   assert.match(gameHtml, /startGame\(window\.innerWidth >= window\.innerHeight \? 'horizontal' : 'vertical'\)/);
   assert.match(gameHtml, /\$\('#splash'\)\.hidden = true;[\s\S]*?\$\('#setup'\)\.hidden = true;/);
   assert.match(gameHtml, /if \(!embeddedGame\) enterFullscreen\(layout\)/);

@@ -4,6 +4,50 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Al Toque - UPCH Campus</title>
+  <script>
+    (() => {
+      const gameAssets = [
+        '/PartyKub-3d-table.js',
+        '/Baloo2-ExtraBold.ttf',
+        '/PartyKub-fondo-mesa.png',
+        '/partykub-new-logo.png',
+        '/PartyKub-splash-word-hd.png',
+        '/PartyKub-splash-rainbow-ribbon.png',
+        '/PartyKub-splash-star.png',
+        '/PartyKub-splash-hat.png',
+        '/PartyKub-splash-balloon.png',
+        '/PartyKub-splash-left-tiles.png',
+        '/PartyKub-splash-four-tile-crop.png',
+        '/PartyKub-splash-background.png'
+      ];
+
+      window.loadPartyKubGameResources = async () => {
+        const [gameResponse, ...assetResponses] = await Promise.all([
+          fetch('/partykub-improved-game.html', { cache: 'no-store' }),
+          ...gameAssets.map((asset) => fetch(asset, { cache: 'force-cache' }))
+        ]);
+        if (!gameResponse.ok) throw new Error(`No se pudo precargar PartyKub (${gameResponse.status}).`);
+        const failedAsset = assetResponses.find((response) => !response.ok);
+        if (failedAsset) throw new Error(`No se pudo precargar un recurso de PartyKub (${failedAsset.status}).`);
+        const gameDocument = await gameResponse.text();
+        await Promise.all(assetResponses.map((response) => response.arrayBuffer()));
+        return gameDocument.replace(/<head\b[^>]*>/i, (head) => `${head}<base href="${window.location.origin}/">`);
+      };
+
+      let resolvePreload;
+      let rejectPreload;
+      window.partyKubGamePreloadPromise = new Promise((resolve, reject) => {
+        resolvePreload = resolve;
+        rejectPreload = reject;
+      });
+      const startPreload = () => {
+        window.loadPartyKubGameResources().then(resolvePreload, rejectPreload);
+        window.partyKubGamePreloadPromise.catch((error) => console.error('Error precargando PartyKub:', error));
+      };
+      if (window.requestIdleCallback) window.requestIdleCallback(startPreload, { timeout: 2500 });
+      else window.setTimeout(startPreload, 1200);
+    })();
+  </script>
   <script src="https://cdn.botpress.cloud/webchat/v5.0/inject.js" defer></script>
   <script src="https://files.bpcontent.cloud/2026/10/11/22/20261011222049-IGT6DVHC.js" defer></script>
   <script>
@@ -7990,11 +8034,26 @@
       const [soloIntroActive, setSoloIntroActive] = useState(false);
       const [soloGameActive, setSoloGameActive] = useState(false);
       const [soloPlayerName, setSoloPlayerName] = useState('');
+      const [soloGameDocument, setSoloGameDocument] = useState('');
+      const [soloGameLoadError, setSoloGameLoadError] = useState('');
       const soloIntroFrameRef = useRef(null);
       const soloIntroTimerRef = useRef(null);
       const soloIntroFallbackRef = useRef(null);
       const closeHandlerRef = useRef(onClose);
       closeHandlerRef.current = onClose;
+
+      useEffect(() => {
+        let isMounted = true;
+        window.partyKubGamePreloadPromise
+          .then((gameDocument) => {
+            if (isMounted) setSoloGameDocument(gameDocument);
+          })
+          .catch((error) => {
+            console.error('Error precargando PartyKub:', error);
+            if (isMounted) setSoloGameLoadError(error.message);
+          });
+        return () => { isMounted = false; };
+      }, []);
 
       useEffect(() => {
         const handleIntroStarted = (event) => {
@@ -8233,10 +8292,41 @@
       }
 
       if (soloGameActive) {
-        const gameUrl = `/partykub-improved-game.html?embedded=1&name=${encodeURIComponent(soloPlayerName)}`;
+        const escapedPlayerName = soloPlayerName
+          .replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        const gameDocument = soloGameDocument.replace(
+          /<html\b([^>]*)>/i,
+          `<html$1 data-embedded-game="true" data-player-name="${escapedPlayerName}">`
+        );
+        if (!soloGameDocument) {
+          return ReactDOM.createPortal(
+            <div className="rummikub-overlay" role="dialog" aria-modal="true" aria-label="Preparando PartyKub">
+              <section role={soloGameLoadError ? 'alert' : 'status'} aria-live="polite" style={{ maxWidth: 480, padding: 28, textAlign: 'center', color: '#172b49' }}>
+                <p>{soloGameLoadError || 'Preparando los recursos de PartyKub...'}</p>
+                {soloGameLoadError && (
+                  <button type="button" className="rummikub-primary-button" onClick={() => {
+                    setSoloGameLoadError('');
+                    window.partyKubGamePreloadPromise = window.loadPartyKubGameResources();
+                    window.partyKubGamePreloadPromise
+                      .then(setSoloGameDocument)
+                      .catch((error) => {
+                        console.error('Error precargando PartyKub:', error);
+                        setSoloGameLoadError(error.message);
+                      });
+                  }}>Reintentar carga</button>
+                )}
+                <button type="button" className="rummikub-secondary-button" onClick={onClose}>Volver</button>
+              </section>
+            </div>,
+            document.body
+          );
+        }
         return ReactDOM.createPortal(
           <div className="rummikub-overlay rummikub-solo-intro" role="dialog" aria-modal="true" aria-label="Partida de PartyKub">
-            <iframe ref={soloIntroFrameRef} className="rummikub-solo-intro-frame" src={gameUrl} title="Partida de PartyKub" />
+            <iframe ref={soloIntroFrameRef} className="rummikub-solo-intro-frame" srcDoc={gameDocument} title="Partida de PartyKub" />
           </div>,
           document.body
         );
