@@ -73,11 +73,17 @@ test('uses the supplied full-width photos in each PartyKub gallery card', async 
 });
 
 test('fills the viewport with the PartyKub intro and scales its animated canvas for sharpness', async () => {
-  const intro = await readFile(join(process.cwd(), 'partykub-solo-intro.html'), 'utf8');
+  const [intro, page, stylesheet] = await Promise.all([
+    readFile(join(process.cwd(), 'partykub-solo-intro.html'), 'utf8'),
+    readFile(join(process.cwd(), 'Al-toque-pe-mejorado.html'), 'utf8'),
+    readFile(join(process.cwd(), 'partykub-game.css'), 'utf8')
+  ]);
 
   assert.match(intro, /\.stage\s*\{[^}]*width:\s*100vw;[^}]*height:\s*100vh;[^}]*height:\s*100dvh;/s);
   assert.match(intro, /Math\.min\(window\.devicePixelRatio \|\| 1, 2\)/);
   assert.match(intro, /ctx\.imageSmoothingQuality = 'high'/);
+  assert.match(page, /href="\/partykub-game\.css\?v=5"/);
+  assert.match(stylesheet, /\.rummikub-solo-intro-frame\s*\{[^}]*position:\s*fixed;[^}]*inset:\s*0;[^}]*width:\s*100vw;[^}]*height:\s*100vh;[^}]*height:\s*100dvh;/s);
 });
 
 test('serves new public product and game images as PNG assets', async (t) => {
