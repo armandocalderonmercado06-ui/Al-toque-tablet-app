@@ -24,6 +24,10 @@ const TURN_USER = process.env.TURN_USER || '';
 const TURN_PASS = process.env.TURN_PASS || '';
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || '';
 const KERAS_API_URL = process.env.KERAS_API_URL || 'http://127.0.0.1:5000/preguntar';
+const OLLAMA_BASE_URL = (process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434').replace(/\/+$/, '');
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.2:3b';
+const OLLAMA_VISION_MODEL = process.env.OLLAMA_VISION_MODEL || 'qwen3.5:2b';
+const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY || '';
 const DATA_DIR = resolve(APP_DIR, process.env.DATA_DIR || 'data');
 const ORDERS_FILE = join(DATA_DIR, 'orders.json');
 const REELS_FILE = join(DATA_DIR, 'reels.json');
@@ -421,21 +425,23 @@ async function readJson(request, maxBytes = MAX_BODY_BYTES) {
   }
 }
 
-async function upstreamJson(url, options, providerName, fetchImpl = fetch) {
+async function upstreamJson(url, options, providerName, fetchImpl = fetch, timeoutMs = 45_000) {
   let response;
   try {
-    response = await fetchImpl(url, { ...options, signal: AbortSignal.timeout(45_000) });
+    response = await fetchImpl(url, { ...options, signal: AbortSignal.timeout(timeoutMs) });
   } catch {
     throw new Error(`No se pudo conectar con ${providerName}. Verifica tu conexión a internet e inténtalo otra vez.`);
   }
 
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const message = payload?.error?.message || payload?.error?.message?.value;
+    const message = typeof payload?.error === 'string'
+      ? payload.error
+      : payload?.error?.message || payload?.error?.message?.value;
     if (response.status === 401 || response.status === 403) {
       throw new Error(`${providerName} rechazó las credenciales o permisos configurados.`);
     }
-    if (response.status === 429) {
+    if (response.status === 429 && providerName.startsWith('OpenAI')) {
       throw new Error(`${providerName} rechazó la solicitud por límite de uso o cuota. Revisa los límites, el saldo y la facturación de tu cuenta API; si solo es un límite temporal, espera un momento y vuelve a intentarlo.`);
     }
     throw new Error(message ? `${providerName}: ${message}` : `${providerName} respondió con el error ${response.status}.`);
@@ -507,6 +513,40 @@ async function askOpenAI(text, history, memory, item, webSearch, provider, order
   }, `OpenAI (${provider})`, fetchImpl);
   if (!result.output_text) throw new Error(`OpenAI no devolvió una respuesta para el perfil ${provider}.`);
   return { reply: result.output_text, sources: citationsFromOpenAI(result) };
+}
+
+async function askOllama(text, history, memory, item, webSearch, provider, orderHistory, assistantMode, image, ollamaBaseUrl, ollamaModel, ollamaVisionModel, ollamaApiKey, fetchImpl = fetch) {
+  const instructions = assistantMode === 'rider-support'
+    ? makeRiderSupportInstructions()
+    : makeSystemInstructions(item, false, provider, orderHistory);
+  const prompt = composePrompt(instructions, history, memory, text, item, orderHistory);
+  const model = image ? ollamaVisionModel : ollamaModel;
+  const userMessage = {
+    role: 'user',
+    content: prompt[1].content,
+    ...(image ? { images: [image.data.slice(image.data.indexOf(',') + 1)] } : {})
+  };
+  if (webSearch) {
+    userMessage.content += '\n\nNo tienes acceso a internet en esta respuesta. No presentes datos actuales ni afirmes haber consultado fuentes; indícalo si es relevante.';
+  }
+  const result = await upstreamJson(`${ollamaBaseUrl}/api/chat`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(ollamaApiKey ? { Authorization: `Bearer ${ollamaApiKey}` } : {})
+    },
+    body: JSON.stringify({
+      model,
+      messages: [
+        { role: 'system', content: prompt[0].content },
+        userMessage
+      ],
+      stream: false
+    })
+  }, 'Ollama', fetchImpl, 120_000);
+  const reply = typeof result.message?.content === 'string' ? result.message.content.trim() : '';
+  if (!reply) throw new Error(`Ollama no devolvió una respuesta para el perfil ${provider}.`);
+  return { reply, model };
 }
 
 async function askKeras(text, history, memory, fetchImpl = fetch) {
@@ -1114,7 +1154,7 @@ async function handleReelsRequest(request, response, requestUrl, reels, persistR
   }
 }
 
-async function handleRequest(request, response, orders, idempotencyKeys, callSessions, orderChats, persistOrders, notifyOrderChange, youtubeApiKey, openAIApiKey, fetchImpl, reels, persistReels, reelsVideosDir, reelsDeletePassword, videoStorage, maxVideoBytes, rummikubRooms) {
+async function handleRequest(request, response, orders, idempotencyKeys, callSessions, orderChats, persistOrders, notifyOrderChange, youtubeApiKey, openAIApiKey, ollamaBaseUrl, ollamaModel, ollamaVisionModel, ollamaApiKey, fetchImpl, reels, persistReels, reelsVideosDir, reelsDeletePassword, videoStorage, maxVideoBytes, rummikubRooms) {
   const requestUrl = new URL(request.url || '/', `http://${request.headers.host}`);
 
   if (await handleRummikubRequest(request, response, requestUrl, rummikubRooms, { json, readJson, sameOrigin })) return;
@@ -1811,8 +1851,26 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
 
     const text = typeof body.text === 'string' ? body.text.trim() : '';
     const provider = body.provider;
-    if (!text || text.length > MAX_MESSAGE_LENGTH) {
-      return json(response, 400, { error: `Escribe un mensaje de 1 a ${MAX_MESSAGE_LENGTH} caracteres.` });
+    if (text.length > MAX_MESSAGE_LENGTH) {
+      return json(response, 400, { error: `El mensaje no puede superar los ${MAX_MESSAGE_LENGTH} caracteres.` });
+    }
+    let image;
+    if (body.image !== undefined) {
+      const { name, mimeType, data } = body.image || {};
+      const match = typeof data === 'string'
+        ? /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/.exec(data)
+        : null;
+      const bytes = match ? Buffer.from(match[2], 'base64') : null;
+      if (typeof name !== 'string' || !name.trim() || name.length > 120
+        || !['image/jpeg', 'image/png', 'image/webp'].includes(mimeType)
+        || !match || match[1] !== mimeType || !bytes?.length
+        || bytes.length > MAX_CHAT_ATTACHMENT_BYTES || bytes.toString('base64') !== match[2]) {
+        return json(response, 400, { error: 'La imagen adjunta no es válida o supera el tamaño permitido.' });
+      }
+      image = { name, mimeType, data };
+    }
+    if (!text && !image) {
+      return json(response, 400, { error: `Escribe un mensaje de 1 a ${MAX_MESSAGE_LENGTH} caracteres o adjunta una imagen.` });
     }
     if (!['ChatGPT', 'Copilot', 'Gemini'].includes(provider)) {
       return json(response, 400, { error: 'Selecciona ChatGPT, Copilot o Gemini.' });
@@ -1832,7 +1890,7 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
     const asksForPersonalizedRecommendation = orderHistory.length > 0
       && /\b(recomiend|recomend|favorit|suel(?:o|es)|como siempre|basado|historial|pedir|pide|segun (?:mis )?(?:compras|pedidos))\b/.test(normalize(text));
     const localAnswer = assistantMode === 'menu' ? getLocalMenuAnswer(text) : null;
-    if (localAnswer && !asksForPersonalizedRecommendation) {
+    if (localAnswer && !image && !asksForPersonalizedRecommendation) {
       return json(response, 200, {
         reply: styleLocalAnswer(localAnswer.reply, provider),
         sources: [],
@@ -1864,14 +1922,17 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
     const webSearch = assistantMode === 'menu' && shouldUseWebSearch(text);
     const memory = typeof body.memory === 'string' ? body.memory : '';
     try {
-      const answer = await askOpenAI(text, body.history, memory, dish, webSearch, provider, orderHistory, assistantMode, openAIApiKey, fetchImpl);
+      const useOpenAIWebSearch = webSearch && Boolean(openAIApiKey) && !image;
+      const answer = useOpenAIWebSearch
+        ? await askOpenAI(text, body.history, memory, dish, true, provider, orderHistory, assistantMode, openAIApiKey, fetchImpl)
+        : await askOllama(text || 'Describe la imagen adjunta.', body.history, memory, dish, webSearch, provider, orderHistory, assistantMode, image, ollamaBaseUrl, ollamaModel, ollamaVisionModel, ollamaApiKey, fetchImpl);
       return json(response, 200, {
         reply: answer.reply,
-        sources: answer.sources,
+        sources: answer.sources || [],
         intent,
         dishId: dish?.id || null,
-        webSearchUsed: webSearch,
-        engine: 'OpenAI API'
+        webSearchUsed: useOpenAIWebSearch && webSearch,
+        engine: answer.model ? `Ollama · ${answer.model}` : 'OpenAI API'
       });
     } catch (error) {
       if (assistantMode === 'rider-support') {
@@ -1888,7 +1949,7 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
           });
         } catch (fallbackError) {
           return json(response, 502, {
-            error: `OpenAI no está disponible (${error.message}). El modelo local tampoco pudo responder: ${fallbackError.message}`
+            error: `Ollama no está disponible (${error.message}). El modelo local tampoco pudo responder: ${fallbackError.message}`
           });
         }
       }
@@ -2054,6 +2115,10 @@ export function createAlToqueServer({
   reelsDeletePassword = REELS_DELETE_PASSWORD,
   youtubeApiKey = YOUTUBE_API_KEY,
   openAIApiKey = process.env.OPENAI_API_KEY,
+  ollamaBaseUrl = OLLAMA_BASE_URL,
+  ollamaModel = OLLAMA_MODEL,
+  ollamaVisionModel = OLLAMA_VISION_MODEL,
+  ollamaApiKey = OLLAMA_API_KEY,
   fetchImpl = fetch,
   persistenceStore
 } = {}) {
@@ -2197,6 +2262,10 @@ export function createAlToqueServer({
       notifyOrderChange,
       youtubeApiKey,
       openAIApiKey,
+      ollamaBaseUrl.replace(/\/+$/, ''),
+      ollamaModel,
+      ollamaVisionModel,
+      ollamaApiKey,
       fetchImpl,
       reels,
       persistReels,
