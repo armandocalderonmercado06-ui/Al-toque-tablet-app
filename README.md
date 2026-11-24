@@ -15,13 +15,11 @@ las rutas `/api`; no se puede alojar como una pagina estatica en GitHub Pages.
 - En Pedido, elige el punto de recojo entre la puerta principal, el patio y el área de tutoría; la selección se comparte con el repartidor y aparece en el seguimiento.
 - En Menú, busca platos, combos o bebidas; si no hay coincidencias, la app lo indica y permite limpiar la búsqueda. Los filtros anuncian la categoría seleccionada.
 - Copia `.env.example` a `.env` para configurar integraciones opcionales.
-- Instala Ollama y descarga los modelos para el chat y las imágenes:
-  `ollama pull llama3.2:3b` y `ollama pull qwen3.5:2b`. ChatGPT y Gemini usan
-  `OLLAMA_MODEL`; las imágenes adjuntas usan `OLLAMA_VISION_MODEL`.
-- `OLLAMA_BASE_URL` apunta por defecto a `http://127.0.0.1:11434`. El chat
-  conserva la búsqueda web con OpenAI solo si configuras `OPENAI_API_KEY`.
-- Si el proxy de Ollama requiere autenticación Bearer, configura `OLLAMA_API_KEY`
-  como variable privada del servidor; nunca la guardes en Git ni en el navegador.
+- ChatGPT y Gemini responden mediante el bot de Botpress, con búsqueda web y
+  conversaciones independientes por asistente. La búsqueda web debe estar
+  habilitada en la configuración del bot de Botpress.
+- `OPENAI_API_KEY` solo se necesita para solicitudes opcionales de Copilot al
+  servidor; no interviene en las conversaciones de ChatGPT ni Gemini.
 - Define `REELS_DELETE_PASSWORD` con una clave privada para habilitar la
   eliminacion de Reels. Sin ella, esa operacion falla de forma cerrada.
 
@@ -60,8 +58,5 @@ Render Free puede dormir cuando no recibe tráfico y los proyectos gratuitos de
 Supabase pueden pausarse tras una semana sin actividad. Los historiales y
 videos locales existentes no se incluyen ni se migran.
 
-Para habilitar el chat en Render, configura `OLLAMA_BASE_URL` con una dirección
-HTTPS accesible desde el servidor Render y que exponga la API de Ollama. El
-`localhost` de Render apunta al propio servicio, no a tu computadora. Protege
-Ollama detrás de un proxy autenticado y configura su token en `OLLAMA_API_KEY`;
-no expongas el puerto de Ollama directamente a internet.
+ChatGPT y Gemini se conectan directamente al bot de Botpress desde la página.
+No requieren un servicio Ollama ni una clave de OpenAI en Render.

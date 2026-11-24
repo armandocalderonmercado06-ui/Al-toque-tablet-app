@@ -23,11 +23,6 @@ const TURN_URL = process.env.TURN_URL || '';
 const TURN_USER = process.env.TURN_USER || '';
 const TURN_PASS = process.env.TURN_PASS || '';
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || '';
-const KERAS_API_URL = process.env.KERAS_API_URL || 'http://127.0.0.1:5000/preguntar';
-const OLLAMA_BASE_URL = (process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434').replace(/\/+$/, '');
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.2:3b';
-const OLLAMA_VISION_MODEL = process.env.OLLAMA_VISION_MODEL || 'qwen3.5:2b';
-const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY || '';
 const DATA_DIR = resolve(APP_DIR, process.env.DATA_DIR || 'data');
 const ORDERS_FILE = join(DATA_DIR, 'orders.json');
 const REELS_FILE = join(DATA_DIR, 'reels.json');
@@ -513,56 +508,6 @@ async function askOpenAI(text, history, memory, item, webSearch, provider, order
   }, `OpenAI (${provider})`, fetchImpl);
   if (!result.output_text) throw new Error(`OpenAI no devolvió una respuesta para el perfil ${provider}.`);
   return { reply: result.output_text, sources: citationsFromOpenAI(result) };
-}
-
-async function askOllama(text, history, memory, item, webSearch, provider, orderHistory, assistantMode, image, ollamaBaseUrl, ollamaModel, ollamaVisionModel, ollamaApiKey, fetchImpl = fetch) {
-  const instructions = assistantMode === 'rider-support'
-    ? makeRiderSupportInstructions()
-    : makeSystemInstructions(item, false, provider, orderHistory);
-  const prompt = composePrompt(instructions, history, memory, text, item, orderHistory);
-  const model = image ? ollamaVisionModel : ollamaModel;
-  const userMessage = {
-    role: 'user',
-    content: prompt[1].content,
-    ...(image ? { images: [image.data.slice(image.data.indexOf(',') + 1)] } : {})
-  };
-  if (webSearch) {
-    userMessage.content += '\n\nNo tienes acceso a internet en esta respuesta. No presentes datos actuales ni afirmes haber consultado fuentes; indícalo si es relevante.';
-  }
-  const result = await upstreamJson(`${ollamaBaseUrl}/api/chat`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(ollamaApiKey ? { Authorization: `Bearer ${ollamaApiKey}` } : {})
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: prompt[0].content },
-        userMessage
-      ],
-      stream: false
-    })
-  }, 'Ollama', fetchImpl, 120_000);
-  const reply = typeof result.message?.content === 'string' ? result.message.content.trim() : '';
-  if (!reply) throw new Error(`Ollama no devolvió una respuesta para el perfil ${provider}.`);
-  return { reply, model };
-}
-
-async function askKeras(text, history, memory, fetchImpl = fetch) {
-  const prompt = composePrompt(makeRiderSupportInstructions(), history, memory, text, null);
-  const response = await upstreamJson(KERAS_API_URL,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pregunta: `${prompt[0].content}\n\n${prompt[1].content}` })
-    },
-    'el modelo local Keras',
-    fetchImpl
-  );
-  const reply = typeof response.respuesta === 'string' ? response.respuesta.trim() : '';
-  if (!reply) throw new Error('El modelo local Keras no devolvió una respuesta para la consulta de soporte.');
-  return { reply };
 }
 
 function rateLimit(request, limits = rateLimits, maximum = 20) {
@@ -1154,7 +1099,7 @@ async function handleReelsRequest(request, response, requestUrl, reels, persistR
   }
 }
 
-async function handleRequest(request, response, orders, idempotencyKeys, callSessions, orderChats, persistOrders, notifyOrderChange, youtubeApiKey, openAIApiKey, ollamaBaseUrl, ollamaModel, ollamaVisionModel, ollamaApiKey, fetchImpl, reels, persistReels, reelsVideosDir, reelsDeletePassword, videoStorage, maxVideoBytes, rummikubRooms) {
+async function handleRequest(request, response, orders, idempotencyKeys, callSessions, orderChats, persistOrders, notifyOrderChange, youtubeApiKey, openAIApiKey, fetchImpl, reels, persistReels, reelsVideosDir, reelsDeletePassword, videoStorage, maxVideoBytes, rummikubRooms) {
   const requestUrl = new URL(request.url || '/', `http://${request.headers.host}`);
 
   if (await handleRummikubRequest(request, response, requestUrl, rummikubRooms, { json, readJson, sameOrigin })) return;
@@ -1330,13 +1275,14 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
     const openAIAvailable = Boolean(openAIApiKey);
     return json(response, 200, {
       providers: {
-        chatgpt: openAIAvailable,
+        chatgpt: true,
         copilot: openAIAvailable,
-        gemini: openAIAvailable,
+        gemini: true,
+        botpress: true,
         sharedOpenAI: openAIAvailable
       },
       personas: Object.keys(ASSISTANT_PERSONAS),
-      engine: 'OpenAI API'
+      engine: 'Botpress'
     });
   }
 
@@ -1875,6 +1821,9 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
     if (!['ChatGPT', 'Copilot', 'Gemini'].includes(provider)) {
       return json(response, 400, { error: 'Selecciona ChatGPT, Copilot o Gemini.' });
     }
+    if (provider === 'ChatGPT' || provider === 'Gemini') {
+      return json(response, 409, { error: `${provider} responde mediante Botpress desde la página de IA.` });
+    }
     const assistantMode = body.assistantMode === undefined ? 'menu' : body.assistantMode;
     if (!['menu', 'rider-support'].includes(assistantMode)) {
       return json(response, 400, { error: 'El tipo de asistente solicitado no es válido.' });
@@ -1922,37 +1871,17 @@ async function handleRequest(request, response, orders, idempotencyKeys, callSes
     const webSearch = assistantMode === 'menu' && shouldUseWebSearch(text);
     const memory = typeof body.memory === 'string' ? body.memory : '';
     try {
-      const useOpenAIWebSearch = webSearch && Boolean(openAIApiKey) && !image;
-      const answer = useOpenAIWebSearch
-        ? await askOpenAI(text, body.history, memory, dish, true, provider, orderHistory, assistantMode, openAIApiKey, fetchImpl)
-        : await askOllama(text || 'Describe la imagen adjunta.', body.history, memory, dish, webSearch, provider, orderHistory, assistantMode, image, ollamaBaseUrl, ollamaModel, ollamaVisionModel, ollamaApiKey, fetchImpl);
+      if (image) return json(response, 400, { error: 'El chat del servidor no admite imágenes.' });
+      const answer = await askOpenAI(text, body.history, memory, dish, webSearch, provider, orderHistory, assistantMode, openAIApiKey, fetchImpl);
       return json(response, 200, {
         reply: answer.reply,
         sources: answer.sources || [],
         intent,
         dishId: dish?.id || null,
-        webSearchUsed: useOpenAIWebSearch && webSearch,
-        engine: answer.model ? `Ollama · ${answer.model}` : 'OpenAI API'
+        webSearchUsed: webSearch,
+        engine: 'OpenAI API'
       });
     } catch (error) {
-      if (assistantMode === 'rider-support') {
-        try {
-          const answer = await askKeras(text, body.history, memory, fetchImpl);
-          return json(response, 200, {
-            reply: answer.reply,
-            sources: [],
-            intent,
-            dishId: null,
-            webSearchUsed: false,
-            engine: 'Keras local',
-            fallbackFrom: 'OpenAI API'
-          });
-        } catch (fallbackError) {
-          return json(response, 502, {
-            error: `Ollama no está disponible (${error.message}). El modelo local tampoco pudo responder: ${fallbackError.message}`
-          });
-        }
-      }
       const status = error.status || (error.message.includes('todavía no está configurado') || error.message.includes('necesita MICROSOFT_') ? 503 : 502);
       return json(response, status, { error: error.message });
     }
@@ -2115,10 +2044,6 @@ export function createAlToqueServer({
   reelsDeletePassword = REELS_DELETE_PASSWORD,
   youtubeApiKey = YOUTUBE_API_KEY,
   openAIApiKey = process.env.OPENAI_API_KEY,
-  ollamaBaseUrl = OLLAMA_BASE_URL,
-  ollamaModel = OLLAMA_MODEL,
-  ollamaVisionModel = OLLAMA_VISION_MODEL,
-  ollamaApiKey = OLLAMA_API_KEY,
   fetchImpl = fetch,
   persistenceStore
 } = {}) {
@@ -2262,10 +2187,6 @@ export function createAlToqueServer({
       notifyOrderChange,
       youtubeApiKey,
       openAIApiKey,
-      ollamaBaseUrl.replace(/\/+$/, ''),
-      ollamaModel,
-      ollamaVisionModel,
-      ollamaApiKey,
       fetchImpl,
       reels,
       persistReels,

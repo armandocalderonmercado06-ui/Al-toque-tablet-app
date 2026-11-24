@@ -1111,7 +1111,16 @@ test('reserves web search for current or complex questions', () => {
   assert.equal(shouldUseWebSearch('¿Cuál es el origen histórico del ceviche?'), true);
 });
 
-test('uses Ollama-backed assistants with three distinct response personas', () => {
+test('sends ChatGPT and Gemini messages to separate Botpress web-search conversations', async () => {
+  const page = await readFile(join(process.cwd(), 'Al-toque-pe-mejorado.html'), 'utf8');
+  assert.match(page, /storageKey: `altoque-\$\{assistantProvider\.toLowerCase\(\)\}-\$\{conversationId\}-v1`/);
+  assert.match(page, /botpress\.sendMessage\(botpressQuestion\)/);
+  assert.match(page, /Busca en internet usando la herramienta web habilitada en Botpress/);
+  assert.match(page, /askBotpressAssistant\(provider, conversationId, text\)/);
+  assert.doesNotMatch(page, /fetch\('\/api\/chat'/);
+});
+
+test('keeps distinct assistant response personas', () => {
   const personas = ['ChatGPT', 'Copilot', 'Gemini'].map(getAssistantPersona);
   assert.equal(new Set(personas).size, 3);
   assert.match(getAssistantPersona('Copilot'), /práctico/);
@@ -1131,196 +1140,33 @@ test('gives the rider support assistant empathetic, practical, and truthful guid
   assert.match(instructions, /lugar seguro/i);
 });
 
-test('routes rider support questions to Ollama with dedicated support instructions', async (t) => {
-  const testDataDir = await mkdtemp(join(tmpdir(), 'altoque-rider-support-test-'));
-  let requestedUrl;
-  let requestedBody;
-  let requestedHeaders;
-  const server = createAlToqueServer({
-    ordersFile: join(testDataDir, 'orders.json'),
-    openAIApiKey: '',
-    ollamaBaseUrl: 'http://ollama.test',
-    ollamaApiKey: 'test-ollama-api-key',
-    fetchImpl: async (url, options) => {
-      requestedUrl = new URL(url);
-      requestedBody = JSON.parse(options.body);
-      requestedHeaders = options.headers;
-      return new Response(JSON.stringify({ message: { content: 'Siento que estés pasando por esto. Revisemos juntos qué puedes hacer.' } }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+test('routes ChatGPT and Gemini through Botpress instead of server-side chat providers', async (t) => {
+  const testDataDir = await createReelsTestDirectory();
+  const requestedUrls = [];
+  const server = await createReelsTestServer(t, testDataDir, undefined, undefined, async (url) => {
+    requestedUrls.push(new URL(url));
+    throw new Error('No se esperaba ninguna solicitud a un proveedor externo.');
   });
-  await new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(0, '127.0.0.1', resolve);
-  });
-  t.after(async () => {
-    await new Promise((resolve, reject) => {
-      server.close((error) => error ? reject(error) : resolve());
-    });
-    await rm(testDataDir, { recursive: true, force: true });
-  });
-
   const baseUrl = `http://127.0.0.1:${server.address().port}`;
-  const response = await fetch(`${baseUrl}/api/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Origin: baseUrl },
-    body: JSON.stringify({
-      provider: 'ChatGPT',
-      assistantMode: 'rider-support',
-      text: 'Mi pedido se está demorando y estoy preocupado.',
-      history: [],
-      memory: ''
-    })
-  });
-  assert.equal(response.status, 200);
-  const payload = await response.json();
-  assert.equal(payload.reply, 'Siento que estés pasando por esto. Revisemos juntos qué puedes hacer.');
-  assert.equal(payload.engine, 'Ollama · llama3.2:3b');
-  assert.equal(requestedUrl.origin, 'http://ollama.test');
-  assert.equal(requestedUrl.pathname, '/api/chat');
-  assert.equal(requestedBody.model, 'llama3.2:3b');
-  assert.equal(requestedHeaders.Authorization, 'Bearer test-ollama-api-key');
-  assert.equal(requestedBody.messages[0].role, 'system');
-  assert.match(requestedBody.messages[0].content, /amabilidad, empatía y respeto/i);
-  assert.match(requestedBody.messages[0].content, /No inventes funciones/i);
-  assert.match(requestedBody.messages[1].content, /Mi pedido se está demorando y estoy preocupado/);
-});
 
-test('uses the Ollama text and vision models for chat and image messages', async (t) => {
-  const testDataDir = await mkdtemp(join(tmpdir(), 'altoque-ollama-models-test-'));
-  const requestedBodies = [];
-  const server = createAlToqueServer({
-    ordersFile: join(testDataDir, 'orders.json'),
-    openAIApiKey: '',
-    ollamaBaseUrl: 'http://ollama.test/',
-    ollamaModel: 'llama3.2:3b',
-    ollamaVisionModel: 'qwen3.5:2b',
-    fetchImpl: async (url, options) => {
-      requestedBodies.push({ url: new URL(url), body: JSON.parse(options.body) });
-      return new Response(JSON.stringify({ message: { content: 'Respuesta de prueba.' } }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-  });
-  await new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(0, '127.0.0.1', resolve);
-  });
-  t.after(async () => {
-    await new Promise((resolve, reject) => {
-      server.close((error) => error ? reject(error) : resolve());
+  for (const provider of ['ChatGPT', 'Gemini']) {
+    const response = await fetch(`${baseUrl}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: baseUrl },
+      body: JSON.stringify({ provider, text: '¿Qué noticias hay hoy?', history: [] })
     });
-    await rm(testDataDir, { recursive: true, force: true });
-  });
+    assert.equal(response.status, 409);
+    assert.match((await response.json()).error, /Botpress/);
+  }
+  assert.deepEqual(requestedUrls, []);
 
-  const baseUrl = `http://127.0.0.1:${server.address().port}`;
-  const ask = (body) => fetch(`${baseUrl}/api/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Origin: baseUrl },
-    body: JSON.stringify(body)
-  });
-  const textResponse = await ask({ provider: 'ChatGPT', text: 'Hola', history: [] });
-  assert.equal(textResponse.status, 200);
-  assert.equal((await textResponse.json()).engine, 'Ollama · llama3.2:3b');
-  assert.equal(requestedBodies[0].body.model, 'llama3.2:3b');
-  assert.equal(requestedBodies[0].body.stream, false);
-
-  const recommendationResponse = await ask({
-    provider: 'Gemini',
-    text: 'Explica por qué recomiendas algo ligero para almorzar.',
-    history: []
-  });
-  assert.equal(recommendationResponse.status, 200);
-  assert.equal((await recommendationResponse.json()).dishId, '2');
-  assert.match(requestedBodies[1].body.messages[0].content, /Estilo Gemini/);
-  assert.match(requestedBodies[1].body.messages[0].content, /Recomienda únicamente este producto disponible: Bowl de quinua/);
-  assert.match(requestedBodies[1].body.messages[1].content, /Bowl de quinua, S\/12\.00, 5 min/);
-
-  const imageResponse = await ask({
-    provider: 'Gemini',
-    text: '¿Qué bebidas ofrecen hoy?',
-    history: [],
-    image: { name: 'foto.png', mimeType: 'image/png', data: 'data:image/png;base64,aGVsbG8=' }
-  });
-  assert.equal(imageResponse.status, 200);
-  assert.equal((await imageResponse.json()).engine, 'Ollama · qwen3.5:2b');
-  assert.equal(requestedBodies[2].body.model, 'qwen3.5:2b');
-  assert.deepEqual(requestedBodies[2].body.messages[1].images, ['aGVsbG8=']);
-
-  const invalidImageResponse = await ask({
-    provider: 'Gemini',
-    text: '¿Qué ves?',
-    image: { name: 'foto.svg', mimeType: 'image/svg+xml', data: 'data:image/svg+xml;base64,PHN2Zz4=' }
-  });
-  assert.equal(invalidImageResponse.status, 400);
-  assert.equal(requestedBodies.length, 3);
-});
-
-test('falls back to the local Keras model for rider support when Ollama is unavailable', async (t) => {
-  const testDataDir = await mkdtemp(join(tmpdir(), 'altoque-rider-support-fallback-test-'));
-  const requestedCalls = [];
-  const server = createAlToqueServer({
-    ordersFile: join(testDataDir, 'orders.json'),
-    openAIApiKey: '',
-    ollamaBaseUrl: 'http://ollama.test',
-    fetchImpl: async (url, options) => {
-      const requestedUrl = new URL(url);
-      requestedCalls.push({ requestedUrl, options });
-      if (requestedUrl.hostname === 'ollama.test') {
-        return new Response(JSON.stringify({ error: 'Ollama no está disponible.' }), {
-          status: 429,
-          headers: { 'Content-Type': 'application/json' }
-        });
-      }
-      return new Response(JSON.stringify({
-        respuesta: 'Siento que estés pasando por esta demora. Revisa el estado y contacta a soporte con el número del pedido.'
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-  });
-  await new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(0, '127.0.0.1', resolve);
-  });
-  t.after(async () => {
-    await new Promise((resolve, reject) => {
-      server.close((error) => error ? reject(error) : resolve());
-    });
-    await rm(testDataDir, { recursive: true, force: true });
-  });
-
-  const baseUrl = `http://127.0.0.1:${server.address().port}`;
-  const response = await fetch(`${baseUrl}/api/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Origin: baseUrl },
-    body: JSON.stringify({
-      provider: 'ChatGPT',
-      assistantMode: 'rider-support',
-      text: 'Mi pedido se demora, ¿qué hago?',
-      history: [],
-      memory: ''
-    })
-  });
-  assert.equal(response.status, 200);
-  const payload = await response.json();
-  assert.equal(payload.engine, 'Keras local');
-  assert.equal(payload.fallbackFrom, 'Ollama');
-  assert.equal(payload.reply, 'Siento que estés pasando por esta demora. Revisa el estado y contacta a soporte con el número del pedido.');
-  assert.equal(requestedCalls.length, 2);
-  assert.equal(requestedCalls[0].requestedUrl.hostname, 'ollama.test');
-  assert.equal(requestedCalls[0].requestedUrl.pathname, '/api/chat');
-  assert.equal(requestedCalls[1].requestedUrl.hostname, '127.0.0.1');
-  assert.equal(requestedCalls[1].requestedUrl.port, '5000');
-  assert.equal(requestedCalls[1].requestedUrl.pathname, '/preguntar');
-  assert.equal(requestedCalls[1].options.headers['Content-Type'], 'application/json');
-  const kerasBody = JSON.parse(requestedCalls[1].options.body);
-  assert.match(kerasBody.pregunta, /amabilidad, empatía y respeto/i);
-  assert.match(kerasBody.pregunta, /Mi pedido se demora, ¿qué hago\?/);
+  const statusResponse = await fetch(`${baseUrl}/api/status`);
+  assert.equal(statusResponse.status, 200);
+  const status = await statusResponse.json();
+  assert.equal(status.providers.chatgpt, true);
+  assert.equal(status.providers.gemini, true);
+  assert.equal(status.providers.botpress, true);
+  assert.equal(status.engine, 'Botpress');
 });
 
 test('keeps previous conversation context separate from assistant instructions', () => {
